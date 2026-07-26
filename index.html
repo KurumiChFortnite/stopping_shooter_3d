@@ -428,7 +428,7 @@ const enemyHead=new THREE.Mesh(new THREE.SphereGeometry(.19,18,12),new THREE.Mes
 const enemyGun=new THREE.Mesh(new THREE.BoxGeometry(.12,.12,.7),new THREE.MeshStandardMaterial({color:0x1b222a,metalness:.5,roughness:.4})); enemyGun.position.set(.21,1.24,-.28);
 enemy.add(enemyBody,enemyHead,enemyGun); scene.add(enemy);
 
-const player={pos:new THREE.Vector3(0,PLAYER_EYE,7.2),vel:new THREE.Vector3(),verticalVelocity:0,onGround:true,health:100,ammo:MAG_SIZE,reloading:false,reloadTimer:0,lastShot:99,fireCd:0,dashCd:0,dashTimer:0,dashRecovery:0,crouchAmount:0,crouching:false,weapon:'revolver',knifeCd:0,alive:true};
+const player={pos:new THREE.Vector3(0,PLAYER_EYE,7.2),vel:new THREE.Vector3(),verticalVelocity:0,onGround:true,health:100,ammo:MAG_SIZE,reloading:false,reloadTimer:0,lastShot:99,fireCd:0,dashCd:0,dashTimer:0,dashRecovery:0,crouchAmount:0,crouching:false,weapon:'revolver',weaponDrawTimer:0,weaponDrawDuration:.58,knifeCd:0,alive:true};
 const ai={health:100,alive:true,vel:new THREE.Vector3(),lastShot:99,fireCd:0,reloading:false,reloadTimer:0,ammo:MAG_SIZE,decision:0,strafe:1,target:new THREE.Vector3(),seenTime:0,heardPosition:new THREE.Vector3(),heardTimer:0,lastKnownPosition:new THREE.Vector3(),hasLastKnown:false,lookDirection:new THREE.Vector3(0,0,1),wallbangCd:0,strategy:'direct',strategyTimer:0,fastPeekTimer:0,peekNoiseTimer:0,jumpVelocity:0,onGround:true};
 let yaw=0,pitch=0,keys={},playing=false,paused=false,roundEnding=false,blueWins=0,redWins=0,round=1,messageTimer=0,hitTimer=0,damageTimer=0,shotRecoil=0;
 let totalDamageDealt=0,totalDamageTaken=0;
@@ -713,9 +713,9 @@ function collides(x,z,r=PLAYER_RADIUS){
 }
 function moveCircle(pos,dx,dz,r=PLAYER_RADIUS){if(!collides(pos.x+dx,pos.z,r))pos.x+=dx;if(!collides(pos.x,pos.z+dz,r))pos.z+=dz;}
 function showMessage(text,time=1.2){messageEl.textContent=text;messageEl.style.opacity='1';messageTimer=time;}
-function updateHUD(){healthEl.textContent=Math.max(0,Math.ceil(player.health));healthFill.style.width=`${Math.max(0,player.health)}%`;ammoEl.textContent=player.weapon==='knife'?'ナイフ':(player.reloading?`… / ${MAG_SIZE}`:`${player.ammo} / ${MAG_SIZE}`);scoreBlue.textContent=blueWins;scoreRed.textContent=redWins;roundText.textContent=`ROUND ${round}`;}
+function updateHUD(){healthEl.textContent=Math.max(0,Math.ceil(player.health));healthFill.style.width=`${Math.max(0,player.health)}%`;ammoEl.textContent=player.weapon==='knife'?'ナイフ':(player.weaponDrawTimer>0?'持ち替え中…':(player.reloading?`… / ${MAG_SIZE}`:`${player.ammo} / ${MAG_SIZE}`));scoreBlue.textContent=blueWins;scoreRed.textContent=redWins;roundText.textContent=`ROUND ${round}`;}
 function updateCrosshair(gap){const l=gameSettings.crosshairLength,t=gameSettings.crosshairThickness,c=gameSettings.crosshairColor;Object.assign(cross.top.style,{width:`${t}px`,height:`${l}px`,left:`${-t/2}px`,top:'0',background:c,transform:`translateY(${-gap-l}px)`});Object.assign(cross.bottom.style,{width:`${t}px`,height:`${l}px`,left:`${-t/2}px`,top:'0',background:c,transform:`translateY(${gap}px)`});Object.assign(cross.left.style,{height:`${t}px`,width:`${l}px`,top:`${-t/2}px`,left:'0',background:c,transform:`translateX(${-gap-l}px)`});Object.assign(cross.right.style,{height:`${t}px`,width:`${l}px`,top:`${-t/2}px`,left:'0',background:c,transform:`translateX(${gap}px)`});const d=Math.max(2,t+1);Object.assign(cross.dot.style,{width:`${d}px`,height:`${d}px`,left:`${-d/2}px`,top:`${-d/2}px`,background:c,display:gameSettings.crosshairDot?'block':'none'});}
-function resetRound(){touchActions.clear();document.querySelectorAll('.touchBtn.active').forEach(b=>b.classList.remove('active'));clearTracers();paused=false;pauseScreen.classList.add('hidden');playerStepTimer=0;enemyStepTimer=0;buildArena();player.pos.set(0,PLAYER_EYE,7.2);player.vel.set(0,0,0);player.verticalVelocity=0;player.onGround=true;player.health=100;player.ammo=MAG_SIZE;player.reloading=false;player.reloadTimer=0;player.lastShot=99;player.fireCd=0;player.dashCd=0;player.dashTimer=0;player.dashRecovery=0;player.crouchAmount=0;player.crouching=false;player.weapon='revolver';player.knifeCd=0;player.alive=true;enemy.position.set(0,0,-7.2);ai.health=100;ai.alive=true;ai.vel.set(0,0,0);ai.lastShot=99;ai.fireCd=(selectedDifficulty==='extra'||selectedDifficulty==='michiko')?0:.8;ai.ammo=MAG_SIZE;ai.reloading=false;ai.reloadTimer=0;ai.decision=0;ai.heardTimer=0;ai.heardPosition.set(0,0,0);ai.lastKnownPosition.set(0,0,0);ai.hasLastKnown=false;ai.lookDirection.set(0,0,1);ai.wallbangCd=0;ai.strategy='direct';ai.strategyTimer=0;ai.fastPeekTimer=0;ai.peekNoiseTimer=0;ai.jumpVelocity=0;ai.onGround=true;ai.target.set(0,0,0);enemy.visible=true;yaw=0;pitch=0;camera.rotation.set(0,0,0);roundEnding=false;showMessage(`ROUND ${round}`,1.1);updateHUD();}
+function resetRound(){touchActions.clear();document.querySelectorAll('.touchBtn.active').forEach(b=>b.classList.remove('active'));clearTracers();paused=false;pauseScreen.classList.add('hidden');playerStepTimer=0;enemyStepTimer=0;buildArena();player.pos.set(0,PLAYER_EYE,7.2);player.vel.set(0,0,0);player.verticalVelocity=0;player.onGround=true;player.health=100;player.ammo=MAG_SIZE;player.reloading=false;player.reloadTimer=0;player.lastShot=99;player.fireCd=0;player.dashCd=0;player.dashTimer=0;player.dashRecovery=0;player.crouchAmount=0;player.crouching=false;player.weapon='revolver';player.weaponDrawTimer=0;player.knifeCd=0;player.alive=true;enemy.position.set(0,0,-7.2);ai.health=100;ai.alive=true;ai.vel.set(0,0,0);ai.lastShot=99;ai.fireCd=(selectedDifficulty==='extra'||selectedDifficulty==='michiko')?0:.8;ai.ammo=MAG_SIZE;ai.reloading=false;ai.reloadTimer=0;ai.decision=0;ai.heardTimer=0;ai.heardPosition.set(0,0,0);ai.lastKnownPosition.set(0,0,0);ai.hasLastKnown=false;ai.lookDirection.set(0,0,1);ai.wallbangCd=0;ai.strategy='direct';ai.strategyTimer=0;ai.fastPeekTimer=0;ai.peekNoiseTimer=0;ai.jumpVelocity=0;ai.onGround=true;ai.target.set(0,0,0);enemy.visible=true;yaw=0;pitch=0;camera.rotation.set(0,0,0);roundEnding=false;showMessage(`ROUND ${round}`,1.1);updateHUD();}
 function startMatch(){ensureAudio();paused=false;settingsScreen.classList.add('hidden');pauseScreen.classList.add('hidden');blueWins=0;redWins=0;round=1;totalDamageDealt=0;totalDamageTaken=0;endScreen.classList.add('hidden');startScreen.classList.add('hidden');playing=true;resetRound();if(!isTouchDevice)renderer.domElement.requestPointerLock();}
 function endRound(playerWon){if(roundEnding)return;roundEnding=true;player.alive=false;ai.alive=false;if(playerWon){blueWins++;showMessage('ROUND WIN',1.8)}else{redWins++;showMessage('ROUND LOST',1.8)}updateHUD();setTimeout(()=>{if(blueWins>=MAX_WINS||redWins>=MAX_WINS){playing=false;paused=false;pauseScreen.classList.add('hidden');intentionalPointerUnlock=true;document.exitPointerLock();finalResult.textContent=blueWins>redWins?'VICTORY':'DEFEAT';finalResult.style.color=blueWins>redWins?'#74cdff':'#ff6969';finalScore.innerHTML=`${blueWins} - ${redWins}<br><span style="font-size:18px;line-height:1.9">モード：${DIFFICULTIES[selectedDifficulty].label}<br>与えた合計ダメージ：${Math.round(totalDamageDealt)}<br>受けた合計ダメージ：${Math.round(totalDamageTaken)}</span>`;endScreen.classList.remove('hidden');}else{round++;resetRound();}},1900)}
 function startReload(entity,isPlayer){if(isPlayer&&player.weapon==='knife')return;if(entity.reloading||entity.ammo===MAG_SIZE||!entity.alive)return;entity.reloading=true;entity.reloadTimer=RELOAD_TIME;if(isPlayer)showMessage('RELOADING',.55)}
@@ -729,7 +729,7 @@ function countWallsBeforeTarget(origin,direction,targetDistance){
 }
 function playerShoot(){
   if(player.weapon==='knife'){knifeAttack();return}
-  if(!playing||roundEnding||!player.alive||player.reloading||player.fireCd>0||player.ammo<=0||(!isTouchDevice&&document.pointerLockElement!==renderer.domElement))return;
+  if(!playing||roundEnding||!player.alive||player.reloading||player.weaponDrawTimer>0||player.fireCd>0||player.ammo<=0||(!isTouchDevice&&document.pointerLockElement!==renderer.domElement))return;
   if(player.ammo<=0){startReload(player,true);return}
   const speed=Math.hypot(player.vel.x,player.vel.z),spread=spreadForPlayer(speed),dir=randomDirection(camera.rotation,spread);
   playGunshot(player.pos,false);player.ammo--;player.fireCd=.14;player.lastShot=0;weaponKick=1;shotRecoil=Math.min(22,shotRecoil+9);camera.rotation.x=Math.min(1.45,camera.rotation.x+.012);
@@ -1066,30 +1066,49 @@ function updateAI(dt){
   else if(ai.heardTimer>0)faceEnemyTarget(ai.heardPosition,1.25);
   else if(ai.strategy!=='direct'&&ai.target.lengthSq()>0)faceEnemyTarget(ai.target,1.25);
 }
-function updateTimers(dt){player.fireCd=Math.max(0,player.fireCd-dt);player.lastShot+=dt;player.dashCd=Math.max(0,player.dashCd-dt);player.dashTimer=Math.max(0,player.dashTimer-dt);player.dashRecovery=Math.max(0,player.dashRecovery-dt);player.knifeCd=Math.max(0,player.knifeCd-dt);ai.fireCd=Math.max(0,ai.fireCd-dt);ai.lastShot+=dt;if(player.reloading){player.reloadTimer-=dt;if(player.reloadTimer<=0){player.reloading=false;player.ammo=MAG_SIZE;updateHUD()}}if(ai.reloading){ai.reloadTimer-=dt;if(ai.reloadTimer<=0){ai.reloading=false;ai.ammo=MAG_SIZE}}if(messageTimer>0){messageTimer-=dt;if(messageTimer<=0)messageEl.style.opacity='0'}if(hitTimer>0){hitTimer-=dt;if(hitTimer<=0)hitmarker.style.opacity='0'}if(damageTimer>0){damageTimer-=dt;if(damageTimer<=0)damageFlash.style.opacity='0'}const gap=gameSettings.crosshairGap+Math.min(25,Math.hypot(player.vel.x,player.vel.z)*3.2+player.dashRecovery*18+shotRecoil);updateCrosshair(gap)}
+function updateTimers(dt){player.fireCd=Math.max(0,player.fireCd-dt);player.lastShot+=dt;player.dashCd=Math.max(0,player.dashCd-dt);player.dashTimer=Math.max(0,player.dashTimer-dt);player.dashRecovery=Math.max(0,player.dashRecovery-dt);player.weaponDrawTimer=Math.max(0,player.weaponDrawTimer-dt);player.knifeCd=Math.max(0,player.knifeCd-dt);ai.fireCd=Math.max(0,ai.fireCd-dt);ai.lastShot+=dt;if(player.reloading){player.reloadTimer-=dt;if(player.reloadTimer<=0){player.reloading=false;player.ammo=MAG_SIZE;updateHUD()}}if(ai.reloading){ai.reloadTimer-=dt;if(ai.reloadTimer<=0){ai.reloading=false;ai.ammo=MAG_SIZE}}if(messageTimer>0){messageTimer-=dt;if(messageTimer<=0)messageEl.style.opacity='0'}if(hitTimer>0){hitTimer-=dt;if(hitTimer<=0)hitmarker.style.opacity='0'}if(damageTimer>0){damageTimer-=dt;if(damageTimer<=0)damageFlash.style.opacity='0'}const gap=gameSettings.crosshairGap+Math.min(25,Math.hypot(player.vel.x,player.vel.z)*3.2+player.dashRecovery*18+shotRecoil);updateCrosshair(gap)}
 function equipKnife(){
   if(!playing||!player.alive||roundEnding||player.weapon==='knife')return;
-  player.weapon='knife';player.reloading=false;
+  player.weapon='knife';player.reloading=false;player.weaponDrawTimer=0;
   showMessage('ナイフ装備：移動速度 1.3倍',.8);updateHUD();
 }
 function equipWeapon(){
   if(!playing||!player.alive||roundEnding||player.weapon==='revolver')return;
-  player.weapon='revolver';showMessage('リボルバー装備',.65);updateHUD();
+  player.weapon='revolver';player.weaponDrawTimer=player.weaponDrawDuration;
+  showMessage('リボルバーを持ち出しています…',.55);updateHUD();
 }
 function knifeAttack(){
   if(!playing||paused||roundEnding||!player.alive||player.weapon!=='knife'||player.knifeCd>0)return;
-  player.knifeCd=.48;knifeSwing=1;playGunshot(player.pos,false);
-  const dir=new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion).normalize();
-  raycaster.set(camera.position,dir);raycaster.far=2.25;
-  const hits=raycaster.intersectObjects([...obstacleMeshes,enemyBody,enemyHead],false);
+  player.knifeCd=.48;knifeSwing=1;
+
+  // ナイフは弾を飛ばさず、正面±45度・腕が届く距離を扇形で判定する
+  const attackRange=2.05;
+  const halfAngle=Math.cos(THREE.MathUtils.degToRad(45));
+  const origin=camera.position.clone();
+  const forward=new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion);
+  forward.y=0;
+  if(forward.lengthSq()<.0001)return;
+  forward.normalize();
+
+  const target=enemy.position.clone().add(new THREE.Vector3(0,1.15,0));
+  const toEnemy=target.clone().sub(origin);
+  const horizontal=new THREE.Vector3(toEnemy.x,0,toEnemy.z);
+  const distance=horizontal.length();
+  if(distance>attackRange||distance<.001||Math.abs(toEnemy.y)>.95)return;
+
+  const direction=horizontal.clone().normalize();
+  if(forward.dot(direction)<halfAngle)return;
+
+  // 敵との間に壁がある場合はナイフが届かない
+  raycaster.set(origin,target.clone().sub(origin).normalize());
+  raycaster.far=origin.distanceTo(target);
+  const wallHit=raycaster.intersectObjects(obstacleMeshes,false)[0];
   raycaster.far=Infinity;
-  const end=hits.length?hits[0].point.clone():camera.position.clone().add(dir.clone().multiplyScalar(2.25));
-  createTracer(camera.position.clone().add(dir.clone().multiplyScalar(.35)),end,0xddeeff);
-  if(hits.length&&(hits[0].object===enemyBody||hits[0].object===enemyHead)){
-    totalDamageDealt+=Math.min(50,Math.max(0,ai.health));
-    ai.health-=50;hitmarker.style.opacity='1';hitmarker.style.filter='drop-shadow(0 0 5px #fff)';hitTimer=.14;
-    if(ai.health<=0){ai.health=0;enemy.visible=false;endRound(true)}
-  }
+  if(wallHit)return;
+
+  totalDamageDealt+=Math.min(50,Math.max(0,ai.health));
+  ai.health-=50;hitmarker.style.opacity='1';hitmarker.style.filter='drop-shadow(0 0 5px #fff)';hitTimer=.14;
+  if(ai.health<=0){ai.health=0;enemy.visible=false;endRound(true)}
 }
 function updateViewModel(dt){
   revolverModel.visible=playing&&player.alive&&player.weapon==='revolver';
@@ -1099,8 +1118,10 @@ function updateViewModel(dt){
   const speed=Math.hypot(player.vel.x,player.vel.z);
   viewBob+=dt*(4.5+speed*1.25);
   const bob=playing&&!paused&&player.onGround?Math.sin(viewBob)*Math.min(.018,speed*.004):0;
-  revolverModel.position.set(.47,-.43+bob,-.88+weaponKick*.09);
-  revolverModel.rotation.set(-.05-weaponKick*.24,-.12,weaponKick*.07);
+  const drawProgress=player.weaponDrawDuration>0?1-player.weaponDrawTimer/player.weaponDrawDuration:1;
+  const drawEase=THREE.MathUtils.smoothstep(THREE.MathUtils.clamp(drawProgress,0,1),0,1);
+  revolverModel.position.set(.47+.20*(1-drawEase),-.43+bob-.62*(1-drawEase),-.88+weaponKick*.09+.18*(1-drawEase));
+  revolverModel.rotation.set(-.05-weaponKick*.24+.72*(1-drawEase),-.12-.28*(1-drawEase),weaponKick*.07+.32*(1-drawEase));
   knifeModel.position.set(.45,-.42+bob,-.72);
   knifeModel.rotation.set(.05-knifeSwing*.55,-.25-knifeSwing*.35,-.18-knifeSwing*.85);
 }
@@ -1202,7 +1223,7 @@ function returnHome(){
   startScreen.classList.remove('hidden');
   intentionalPointerUnlock=true;
   if(document.pointerLockElement)document.exitPointerLock();
-  player.health=100;player.ammo=MAG_SIZE;player.reloading=false;player.weapon='revolver';player.alive=true;
+  player.health=100;player.ammo=MAG_SIZE;player.reloading=false;player.weapon='revolver';player.weaponDrawTimer=0;player.alive=true;
   enemy.visible=true;updateHUD();
 }
 startButton.addEventListener('click',startMatch);
