@@ -14,9 +14,10 @@
 }
 *{box-sizing:border-box}
 html,body{width:100%;height:100%;margin:0;overflow:hidden;background:#05080d;color:var(--text);font-family:"Segoe UI","Yu Gothic UI",Meiryo,sans-serif}
-canvas{display:block;width:100%;height:100%}
-#game{position:fixed;inset:0}
-#hud{position:fixed;inset:0;pointer-events:none;z-index:5;text-shadow:0 2px 4px #000}
+canvas{display:block;width:100%;height:100%;touch-action:none}
+#playArea{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(100vw,177.7778vh);height:min(100vh,56.25vw);aspect-ratio:16/9;background:#000;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.12),0 0 40px rgba(0,0,0,.85)}
+#game{position:absolute;inset:0}
+#hud{position:absolute;inset:0;pointer-events:none;z-index:5;text-shadow:0 2px 4px #000}
 #topBar{position:absolute;top:16px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:18px;padding:10px 18px;border:1px solid rgba(255,255,255,.18);border-radius:10px;background:rgba(5,10,17,.72);font-weight:800}
 #scoreBlue{color:var(--blue);font-size:24px} #scoreRed{color:var(--red);font-size:24px}
 #roundText{min-width:115px;text-align:center;color:#fff}
@@ -78,11 +79,29 @@ button:hover{filter:brightness(1.12)}
 .settingsFooter button{min-width:170px;margin:4px 0;padding:11px 16px;font-size:15px}
 #settingsScreen{align-items:flex-start;padding-top:clamp(42px,8vh,96px);padding-bottom:clamp(70px,12vh,140px);scroll-padding-top:42px;scroll-padding-bottom:70px}
 @keyframes keyPulse{from{filter:brightness(.95)}to{filter:brightness(1.35)}}
-#pauseHint{position:fixed;left:50%;bottom:10px;z-index:7;transform:translateX(-50%);padding:6px 12px;border-radius:7px;background:rgba(0,0,0,.5);font-size:12px;color:#d7e1eb;pointer-events:none}
+#pauseHint{position:absolute;left:50%;bottom:10px;z-index:7;transform:translateX(-50%);padding:6px 12px;border-radius:7px;background:rgba(0,0,0,.5);font-size:12px;color:#d7e1eb;pointer-events:none}
+
+#mobileControls{position:fixed;inset:0;z-index:12;display:none;pointer-events:none;touch-action:none;user-select:none;-webkit-user-select:none}
+.touchSide{position:absolute;top:0;bottom:0;width:max(96px,calc((100vw - min(100vw,177.7778vh))/2));min-width:96px;pointer-events:auto;display:flex;align-items:center;justify-content:center;padding:10px}
+#touchLeft{left:0}.touchSide.right{right:0}
+.dpad{position:relative;width:150px;height:150px}
+.touchBtn{position:absolute;pointer-events:auto;margin:0;min-width:0;width:54px;height:54px;padding:0;border-radius:16px;border:1px solid rgba(151,222,255,.8);background:rgba(15,56,82,.72);font-size:15px;line-height:1;color:#fff;backdrop-filter:blur(3px);touch-action:none}
+.touchBtn.active{filter:brightness(1.45);transform:scale(.96)}
+.dpad .up{left:48px;top:0}.dpad .down{left:48px;bottom:0}.dpad .left{left:0;top:48px}.dpad .right{right:0;top:48px}
+#touchRight{right:0;align-items:stretch;justify-content:stretch;flex-direction:column;gap:8px}
+#lookPad{position:relative;flex:1;min-height:150px;width:100%;border:1px solid rgba(255,255,255,.16);border-radius:18px;background:rgba(255,255,255,.035);touch-action:none}
+#lookPad::after{content:'視点';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:13px;color:rgba(255,255,255,.45);pointer-events:none}
+.actionCluster{display:grid;grid-template-columns:repeat(2,58px);gap:8px;justify-content:center}
+.actionCluster .touchBtn{position:relative;width:58px;height:52px;border-radius:14px;font-size:12px}
+.actionCluster .shoot{grid-column:1/-1;width:124px;height:58px;background:rgba(145,35,43,.78);border-color:#ff8e96;font-size:16px}
+#touchPause{position:fixed;right:10px;top:10px;width:44px;height:44px;border-radius:50%;z-index:2}
+@media(pointer:coarse){#mobileControls{display:block}#pauseHint{display:none}.screen{z-index:30}}
+@media(pointer:coarse) and (max-aspect-ratio:16/9){.touchSide{width:27vw;min-width:88px;padding:6px}.dpad{transform:scale(.8)}#playArea{width:100vw;height:56.25vw}.touchSide{top:calc(50% - 28.125vw);bottom:calc(50% - 28.125vw);background:linear-gradient(90deg,rgba(2,6,10,.82),rgba(2,6,10,.2))}.touchSide.right{background:linear-gradient(270deg,rgba(2,6,10,.82),rgba(2,6,10,.2))}#lookPad{min-height:90px}.actionCluster{grid-template-columns:repeat(2,48px);gap:5px}.actionCluster .touchBtn{width:48px;height:42px;font-size:10px}.actionCluster .shoot{width:101px;height:48px}}
 @media(max-width:700px){#settingsScreen{padding-top:34px;padding-bottom:90px}.panel{padding:20px 15px}.keybindGrid{grid-template-columns:1fr}.instructions{font-size:14px}#healthBox{width:180px;left:12px}.screen{align-items:flex-start}.notice{font-size:12px}.settingsKeyGrid{grid-template-columns:1fr 1fr}.settingsKeyGrid .label{grid-column:1/-1;margin-top:5px}.settingRow{grid-template-columns:1fr}.settingValue{text-align:left}}
 </style>
 </head>
 <body>
+<div id="playArea">
 <div id="game"></div>
 <div id="hud">
   <div id="topBar"><span id="scoreBlue">0</span><span id="roundText">ROUND 1</span><span id="scoreRed">0</span></div>
@@ -92,6 +111,29 @@ button:hover{filter:brightness(1.12)}
   <div id="crosshair"><div id="chTop" class="crossLine"></div><div id="chBottom" class="crossLine"></div><div id="chLeft" class="crossLine"></div><div id="chRight" class="crossLine"></div><div id="chDot"></div></div>
 </div>
 <div id="pauseHint"><span id="pauseHintKey">Esc</span>でポーズ</div>
+</div>
+<div id="mobileControls" aria-label="タッチ操作">
+  <div id="touchLeft" class="touchSide">
+    <div class="dpad">
+      <button class="touchBtn up" data-touch-action="forward">▲</button>
+      <button class="touchBtn down" data-touch-action="backward">▼</button>
+      <button class="touchBtn left" data-touch-action="left">◀</button>
+      <button class="touchBtn right" data-touch-action="right">▶</button>
+    </div>
+  </div>
+  <div id="touchRight" class="touchSide right">
+    <div id="lookPad" aria-label="視点操作エリア"></div>
+    <div class="actionCluster">
+      <button class="touchBtn shoot" data-touch-action="shoot">射撃</button>
+      <button class="touchBtn" data-touch-action="jump">ジャンプ</button>
+      <button class="touchBtn" data-touch-action="dash">ダッシュ</button>
+      <button class="touchBtn" data-touch-action="reload">リロード</button>
+      <button class="touchBtn" data-touch-action="crouch">しゃがみ</button>
+      <button class="touchBtn" data-touch-action="walk">低速</button>
+    </div>
+  </div>
+  <button id="touchPause" class="touchBtn" data-touch-action="pause">Ⅱ</button>
+</div>
 <div id="pauseScreen" class="screen hidden">
   <div class="panel">
     <h1>PAUSE</h1>
@@ -165,6 +207,10 @@ const MAX_WINS=5, MAG_SIZE=6, RAPID_TIME=.4, RELOAD_TIME=1.5;
 const BASE_MOUSE_SENSITIVITY=.00154; // 感度100%時
 const PLAYER_RADIUS=.34, PLAYER_EYE=1.62, CROUCH_DROP=.62, ARENA=18, GRAVITY=18, JUMP_SPEED=6.2;
 const game=document.getElementById('game');
+const playArea=document.getElementById('playArea');
+const mobileControls=document.getElementById('mobileControls');
+const lookPad=document.getElementById('lookPad');
+const touchButtons=[...document.querySelectorAll('[data-touch-action]')];
 const startScreen=document.getElementById('startScreen');
 const endScreen=document.getElementById('endScreen');
 const pauseScreen=document.getElementById('pauseScreen');
@@ -212,10 +258,10 @@ const previewCross={top:document.getElementById('previewTop'),bottom:document.ge
 const scene=new THREE.Scene();
 scene.background=new THREE.Color(0x0b1420);
 scene.fog=new THREE.Fog(0x0b1420,15,34);
-const camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,.05,80);
+const camera=new THREE.PerspectiveCamera(75,16/9,.05,80);
 const renderer=new THREE.WebGLRenderer({antialias:true});
 renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-renderer.setSize(innerWidth,innerHeight);
+renderer.setSize(playArea.clientWidth,playArea.clientHeight,false);
 renderer.shadowMap.enabled=true;
 renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 game.appendChild(renderer.domElement);
@@ -275,6 +321,7 @@ const DEFAULT_BINDINGS={
 const DEFAULT_SETTINGS={sensitivity:100,crosshairColor:'#f4fbff',crosshairLength:8,crosshairThickness:2,crosshairGap:5,crosshairDot:true};
 const BINDINGS_STORAGE_KEY='tacticalDuelKeyBindingsV2';
 const SETTINGS_STORAGE_KEY='tacticalDuelVisualSettingsV1';
+const touchActions=new Set();
 let bindings=loadBindings();
 let gameSettings=loadGameSettings();
 let listeningTarget=null;
@@ -330,7 +377,7 @@ function assignBinding(action,slot,code){
   }
   bindings[action][slot]=code;listeningTarget=null;saveBindings();bindStatus.textContent=`${bindingLabel(code)} を設定して保存しました。`;updateBindingUI();
 }
-function actionPressed(action){return bindings[action].some(code=>code&&keys[code]);}
+function actionPressed(action){return touchActions.has(action)||bindings[action].some(code=>code&&keys[code]);}
 function actionsForCode(code){return Object.keys(bindings).filter(action=>bindings[action].includes(code));}
 function applyGameSettings(){
   sensitivityRange.value=gameSettings.sensitivity;sensitivityValue.textContent=`${gameSettings.sensitivity}%`;
@@ -519,7 +566,7 @@ function emitPlayerFootstep(){
   ai.heardPosition.copy(player.pos);
   ai.heardTimer=DIFFICULTIES[selectedDifficulty].hearingTime;
 }
-function pauseGame(){
+function pauseGame(){touchActions.clear();document.querySelectorAll('.touchBtn.active').forEach(b=>b.classList.remove('active'));
   if(!playing||roundEnding||paused)return;
   paused=true;keys={};pauseScreen.classList.remove('hidden');
 }
@@ -536,7 +583,7 @@ function moveCircle(pos,dx,dz,r=PLAYER_RADIUS){if(!collides(pos.x+dx,pos.z,r))po
 function showMessage(text,time=1.2){messageEl.textContent=text;messageEl.style.opacity='1';messageTimer=time;}
 function updateHUD(){healthEl.textContent=Math.max(0,Math.ceil(player.health));healthFill.style.width=`${Math.max(0,player.health)}%`;ammoEl.textContent=player.reloading?`… / ${MAG_SIZE}`:`${player.ammo} / ${MAG_SIZE}`;scoreBlue.textContent=blueWins;scoreRed.textContent=redWins;roundText.textContent=`ROUND ${round}`;}
 function updateCrosshair(gap){const l=gameSettings.crosshairLength,t=gameSettings.crosshairThickness,c=gameSettings.crosshairColor;Object.assign(cross.top.style,{width:`${t}px`,height:`${l}px`,left:`${-t/2}px`,top:'0',background:c,transform:`translateY(${-gap-l}px)`});Object.assign(cross.bottom.style,{width:`${t}px`,height:`${l}px`,left:`${-t/2}px`,top:'0',background:c,transform:`translateY(${gap}px)`});Object.assign(cross.left.style,{height:`${t}px`,width:`${l}px`,top:`${-t/2}px`,left:'0',background:c,transform:`translateX(${-gap-l}px)`});Object.assign(cross.right.style,{height:`${t}px`,width:`${l}px`,top:`${-t/2}px`,left:'0',background:c,transform:`translateX(${gap}px)`});const d=Math.max(2,t+1);Object.assign(cross.dot.style,{width:`${d}px`,height:`${d}px`,left:`${-d/2}px`,top:`${-d/2}px`,background:c,display:gameSettings.crosshairDot?'block':'none'});}
-function resetRound(){clearTracers();paused=false;pauseScreen.classList.add('hidden');playerStepTimer=0;enemyStepTimer=0;buildArena();player.pos.set(0,PLAYER_EYE,7.2);player.vel.set(0,0,0);player.verticalVelocity=0;player.onGround=true;player.health=100;player.ammo=MAG_SIZE;player.reloading=false;player.reloadTimer=0;player.lastShot=99;player.fireCd=0;player.dashCd=0;player.dashTimer=0;player.dashRecovery=0;player.crouchAmount=0;player.crouching=false;player.alive=true;enemy.position.set(0,0,-7.2);ai.health=100;ai.alive=true;ai.vel.set(0,0,0);ai.lastShot=99;ai.fireCd=.8;ai.ammo=MAG_SIZE;ai.reloading=false;ai.reloadTimer=0;ai.decision=0;ai.heardTimer=0;ai.heardPosition.set(0,0,0);enemy.visible=true;yaw=0;pitch=0;camera.rotation.set(0,0,0);roundEnding=false;showMessage(`ROUND ${round}`,1.1);updateHUD();}
+function resetRound(){touchActions.clear();document.querySelectorAll('.touchBtn.active').forEach(b=>b.classList.remove('active'));clearTracers();paused=false;pauseScreen.classList.add('hidden');playerStepTimer=0;enemyStepTimer=0;buildArena();player.pos.set(0,PLAYER_EYE,7.2);player.vel.set(0,0,0);player.verticalVelocity=0;player.onGround=true;player.health=100;player.ammo=MAG_SIZE;player.reloading=false;player.reloadTimer=0;player.lastShot=99;player.fireCd=0;player.dashCd=0;player.dashTimer=0;player.dashRecovery=0;player.crouchAmount=0;player.crouching=false;player.alive=true;enemy.position.set(0,0,-7.2);ai.health=100;ai.alive=true;ai.vel.set(0,0,0);ai.lastShot=99;ai.fireCd=.8;ai.ammo=MAG_SIZE;ai.reloading=false;ai.reloadTimer=0;ai.decision=0;ai.heardTimer=0;ai.heardPosition.set(0,0,0);enemy.visible=true;yaw=0;pitch=0;camera.rotation.set(0,0,0);roundEnding=false;showMessage(`ROUND ${round}`,1.1);updateHUD();}
 function startMatch(){ensureAudio();paused=false;settingsScreen.classList.add('hidden');pauseScreen.classList.add('hidden');blueWins=0;redWins=0;round=1;endScreen.classList.add('hidden');startScreen.classList.add('hidden');playing=true;resetRound();renderer.domElement.requestPointerLock();}
 function endRound(playerWon){if(roundEnding)return;roundEnding=true;player.alive=false;ai.alive=false;if(playerWon){blueWins++;showMessage('ROUND WIN',1.8)}else{redWins++;showMessage('ROUND LOST',1.8)}updateHUD();setTimeout(()=>{if(blueWins>=MAX_WINS||redWins>=MAX_WINS){playing=false;paused=false;pauseScreen.classList.add('hidden');intentionalPointerUnlock=true;document.exitPointerLock();finalResult.textContent=blueWins>redWins?'VICTORY':'DEFEAT';finalResult.style.color=blueWins>redWins?'#74cdff':'#ff6969';finalScore.textContent=`${blueWins} - ${redWins}`;endScreen.classList.remove('hidden');}else{round++;resetRound();}},1900)}
 function startReload(entity,isPlayer){if(entity.reloading||entity.ammo===MAG_SIZE||!entity.alive)return;entity.reloading=true;entity.reloadTimer=RELOAD_TIME;if(isPlayer)showMessage('RELOADING',.55)}
@@ -655,7 +702,32 @@ window.addEventListener('mouseup',e=>keys[`Mouse${e.button}`]=false);
 window.addEventListener('contextmenu',e=>e.preventDefault());
 renderer.domElement.addEventListener('click',()=>{ensureAudio();if(paused){resumeGame();return}if(playing&&document.pointerLockElement!==renderer.domElement)renderer.domElement.requestPointerLock()});
 document.addEventListener('pointerlockchange',()=>{if(document.pointerLockElement===renderer.domElement)return;if(intentionalPointerUnlock){intentionalPointerUnlock=false;return}if(playing&&!roundEnding)pauseGame()});
-window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+function resizeGame(){const w=playArea.clientWidth,h=playArea.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}
+window.addEventListener('resize',resizeGame);
+
+function setTouchAction(action,active,button){
+  if(active)touchActions.add(action);else touchActions.delete(action);
+  button?.classList.toggle('active',active);
+}
+function triggerTouchAction(action){
+  ensureAudio();
+  if(!playing||paused){if(action==='pause'&&paused)resumeGame();return}
+  if(action==='shoot')playerShoot();
+  else if(action==='reload')startReload(player,true);
+  else if(action==='jump')jump();
+  else if(action==='dash')dash();
+  else if(action==='pause')pauseGame();
+}
+for(const button of touchButtons){
+  const action=button.dataset.touchAction;
+  button.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();button.setPointerCapture?.(e.pointerId);setTouchAction(action,true,button);triggerTouchAction(action)});
+  const release=e=>{e.preventDefault();setTouchAction(action,false,button)};
+  button.addEventListener('pointerup',release);button.addEventListener('pointercancel',release);button.addEventListener('lostpointercapture',()=>setTouchAction(action,false,button));
+}
+let lookPointer=null,lookX=0,lookY=0;
+lookPad.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();lookPointer=e.pointerId;lookX=e.clientX;lookY=e.clientY;lookPad.setPointerCapture?.(e.pointerId);ensureAudio()});
+lookPad.addEventListener('pointermove',e=>{if(e.pointerId!==lookPointer||!playing||paused)return;e.preventDefault();const dx=e.clientX-lookX,dy=e.clientY-lookY;lookX=e.clientX;lookY=e.clientY;const sensitivity=BASE_MOUSE_SENSITIVITY*(gameSettings.sensitivity/100)*2.15;yaw-=dx*sensitivity;pitch-=dy*sensitivity;pitch=THREE.MathUtils.clamp(pitch,-1.35,1.35)});
+const endLook=e=>{if(e.pointerId===lookPointer)lookPointer=null};lookPad.addEventListener('pointerup',endLook);lookPad.addEventListener('pointercancel',endLook);
 difficultyButtons.forEach(button=>button.addEventListener('click',()=>{
   selectedDifficulty=button.dataset.difficulty;
   difficultyButtons.forEach(b=>b.classList.toggle('selected',b===button));
@@ -671,7 +743,7 @@ restartButton.addEventListener('click',startMatch);
 resumeButton.addEventListener('click',resumeGame);
 
 function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.033);if(playing&&!paused){updateTracers(dt)}if(playing&&!paused&&!roundEnding){updateTimers(dt);updatePlayer(dt);updateAI(dt)}renderer.render(scene,camera)}
-buildArena();camera.position.copy(player.pos);updateHUD();updateBindingUI();applyGameSettings();loop();
+buildArena();resizeGame();camera.position.copy(player.pos);updateHUD();updateBindingUI();applyGameSettings();loop();
 </script>
 </body>
 </html>
