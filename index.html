@@ -50,8 +50,35 @@ button:hover{filter:brightness(1.12)}
 .difficultyButton{min-width:135px;margin:0;padding:11px 17px;background:rgba(20,42,62,.9);border-color:rgba(116,205,255,.55);font-size:17px}
 .difficultyButton.selected{background:linear-gradient(#da4251,#8f1f2b);border-color:#ff8790;box-shadow:0 0 18px rgba(255,82,96,.35)}
 #difficultyDescription{min-height:48px;margin:10px auto 2px;color:#d9e7f3;line-height:1.55}
+.keybindGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 14px;margin:17px 0;padding:15px 18px;text-align:left;background:rgba(255,255,255,.045);border-left:4px solid #74cdff}
+.keybindItem{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}
+.keybindItem span{font-weight:750;white-space:nowrap}
+.keybindButton{min-width:112px;margin:0;padding:8px 10px;border-radius:7px;border:1px solid rgba(116,205,255,.68);background:rgba(18,51,73,.92);font-size:14px;color:#fff}
+.keybindButton.listening{background:#8f1f2b;border-color:#ff8790;animation:keyPulse .8s infinite alternate}
+.keybindActions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:2px 0 12px}
+.keybindActions button{min-width:160px;margin:0;padding:9px 14px;font-size:14px}
+#bindStatus{min-height:22px;color:#ffe9aa;font-size:13px;text-align:center;margin-bottom:4px}
+.settingsButton{min-width:170px;margin:8px 5px 0;padding:10px 16px;font-size:15px}
+.settingsPanel{width:min(920px,96vw);text-align:left}
+.settingsHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.settingsHeader h1{font-size:clamp(28px,5vw,48px);margin:0}
+.settingsSection{margin:14px 0;padding:16px;border:1px solid rgba(116,205,255,.28);border-radius:12px;background:rgba(255,255,255,.035)}
+.settingsSection h2{margin:0 0 12px;color:#8bd8ff;font-size:20px}
+.settingsKeyGrid{display:grid;grid-template-columns:minmax(120px,1fr) 140px 140px;gap:9px 10px;align-items:center}
+.settingsKeyGrid .label{font-weight:800}
+.bindSlot{min-width:0;width:100%;margin:0;padding:8px 7px;font-size:13px}
+.settingRow{display:grid;grid-template-columns:190px 1fr 90px;gap:12px;align-items:center;margin:12px 0}
+.settingRow input[type="range"]{width:100%}
+.settingValue{text-align:center;padding:7px 8px;border-radius:7px;background:rgba(0,0,0,.3);font-weight:800}
+.crosshairPreviewWrap{height:140px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:radial-gradient(circle,#26384a,#0b1119);overflow:hidden}
+#crosshairPreview{position:relative;width:0;height:0}
+.previewLine{position:absolute;border-radius:2px;box-shadow:0 0 3px #000}
+#previewDot{position:absolute;border-radius:50%;box-shadow:0 0 3px #000}
+.settingsFooter{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.settingsFooter button{min-width:170px;margin:4px 0;padding:11px 16px;font-size:15px}
+@keyframes keyPulse{from{filter:brightness(.95)}to{filter:brightness(1.35)}}
 #pauseHint{position:fixed;left:50%;bottom:10px;z-index:7;transform:translateX(-50%);padding:6px 12px;border-radius:7px;background:rgba(0,0,0,.5);font-size:12px;color:#d7e1eb;pointer-events:none}
-@media(max-width:700px){.panel{padding:20px 15px}.instructions{font-size:14px}#healthBox{width:180px;left:12px}.screen{align-items:flex-start}.notice{font-size:12px}}
+@media(max-width:700px){.panel{padding:20px 15px}.keybindGrid{grid-template-columns:1fr}.instructions{font-size:14px}#healthBox{width:180px;left:12px}.screen{align-items:flex-start}.notice{font-size:12px}.settingsKeyGrid{grid-template-columns:1fr 1fr}.settingsKeyGrid .label{grid-column:1/-1;margin-top:5px}.settingRow{grid-template-columns:1fr}.settingValue{text-align:left}}
 </style>
 </head>
 <body>
@@ -59,16 +86,16 @@ button:hover{filter:brightness(1.12)}
 <div id="hud">
   <div id="topBar"><span id="scoreBlue">0</span><span id="roundText">ROUND 1</span><span id="scoreRed">0</span></div>
   <div id="healthBox"><div id="healthLabel">HP <span id="health">100</span></div><div id="healthTrack"><div id="healthFill"></div></div></div>
-  <div id="ammoBox"><div id="ammo">6 / 6</div><div id="ammoSub">R：リロード</div></div>
+  <div id="ammoBox"><div id="ammo">6 / 6</div><div id="ammoSub"><span id="reloadHint">R</span>：リロード</div></div>
   <div id="message"></div><div id="damageFlash"></div><div id="hitmarker"></div>
   <div id="crosshair"><div id="chTop" class="crossLine"></div><div id="chBottom" class="crossLine"></div><div id="chLeft" class="crossLine"></div><div id="chRight" class="crossLine"></div><div id="chDot"></div></div>
 </div>
-<div id="pauseHint">Escでポーズ</div>
+<div id="pauseHint"><span id="pauseHintKey">Esc</span>でポーズ</div>
 <div id="pauseScreen" class="screen hidden">
   <div class="panel">
     <h1>PAUSE</h1>
     <div class="subtitle">ゲームを一時停止しています</div>
-    <button id="resumeButton">ゲームに戻る</button>
+    <button id="resumeButton">ゲームに戻る</button><button id="pauseSettingsButton" class="settingsButton">設定</button>
     <div class="notice" style="margin-top:18px;text-align:center">画面をクリックしても再開できます。</div>
   </div>
 </div>
@@ -83,17 +110,48 @@ button:hover{filter:brightness(1.12)}
     </div>
     <div id="difficultyDescription">標準的な強さ。足音を追跡し、停止時は高い精度で射撃します。</div>
     <button id="startButton">ゲームスタート</button>
-    <div class="instructions">
-      <strong>移動：</strong>W・A・S・D　／　<strong>視点：</strong>マウス<br>
-      <strong>射撃：</strong>左クリック　／　<strong>リロード：</strong>R<br>
-      <strong>低速歩行：</strong>Shift　／　<strong>ジャンプ：</strong>Space<br>
-      <strong>ダッシュ：</strong>Ctrl<br>
-      <strong>ポーズ：</strong>Esc
-    </div>
+    <button id="startSettingsButton" class="settingsButton">設定を開く</button>
+    <div class="instructions" id="compactInstructions"></div>
     <div class="notice">
       停止してから撃つと高精度になります。通常移動では足音が鳴り、敵もその方向を調べに来ます。Shiftを押しながら歩くと足音は鳴りません。移動撃ち、ダッシュ直後、前の弾から0.4秒未満の連射は大きく外れます。マガジンは6発、リロードは1.5秒です。ヘッドショットは一撃、胴体は34ダメージ。5ラウンド先取です。<br><br>
       Three.jsをインターネット経由で読み込むため、起動時に通信が必要です。PC向け初版です。
     </div>
+  </div>
+</div>
+
+<div id="settingsScreen" class="screen hidden">
+  <div class="panel settingsPanel">
+    <div class="settingsHeader"><h1>SETTINGS</h1><button id="closeSettingsButton" class="settingsButton" style="margin:0">閉じる</button></div>
+    <div class="settingsSection">
+      <h2>キーバインド</h2>
+      <div class="settingsKeyGrid" id="settingsKeyGrid">
+        <div class="label">前進</div><button class="keybindButton bindSlot" data-action="forward" data-slot="0"></button><button class="keybindButton bindSlot" data-action="forward" data-slot="1"></button>
+        <div class="label">後退</div><button class="keybindButton bindSlot" data-action="backward" data-slot="0"></button><button class="keybindButton bindSlot" data-action="backward" data-slot="1"></button>
+        <div class="label">左移動</div><button class="keybindButton bindSlot" data-action="left" data-slot="0"></button><button class="keybindButton bindSlot" data-action="left" data-slot="1"></button>
+        <div class="label">右移動</div><button class="keybindButton bindSlot" data-action="right" data-slot="0"></button><button class="keybindButton bindSlot" data-action="right" data-slot="1"></button>
+        <div class="label">射撃</div><button class="keybindButton bindSlot" data-action="shoot" data-slot="0"></button><button class="keybindButton bindSlot" data-action="shoot" data-slot="1"></button>
+        <div class="label">リロード</div><button class="keybindButton bindSlot" data-action="reload" data-slot="0"></button><button class="keybindButton bindSlot" data-action="reload" data-slot="1"></button>
+        <div class="label">低速歩行</div><button class="keybindButton bindSlot" data-action="walk" data-slot="0"></button><button class="keybindButton bindSlot" data-action="walk" data-slot="1"></button>
+        <div class="label">ジャンプ</div><button class="keybindButton bindSlot" data-action="jump" data-slot="0"></button><button class="keybindButton bindSlot" data-action="jump" data-slot="1"></button>
+        <div class="label">ダッシュ</div><button class="keybindButton bindSlot" data-action="dash" data-slot="0"></button><button class="keybindButton bindSlot" data-action="dash" data-slot="1"></button>
+        <div class="label">ポーズ</div><button class="keybindButton bindSlot" data-action="pause" data-slot="0"></button><button class="keybindButton bindSlot" data-action="pause" data-slot="1"></button>
+      </div>
+      <div id="bindStatus">変更したいボタンを押してから、新しいキーまたはマウスボタンを押してください。</div>
+    </div>
+    <div class="settingsSection">
+      <h2>マウス感度</h2>
+      <div class="settingRow"><label for="sensitivityRange">視点移動の速さ</label><input id="sensitivityRange" type="range" min="20" max="200" step="1"><div id="sensitivityValue" class="settingValue"></div></div>
+    </div>
+    <div class="settingsSection">
+      <h2>クロスヘア</h2>
+      <div class="crosshairPreviewWrap"><div id="crosshairPreview"><div id="previewTop" class="previewLine"></div><div id="previewBottom" class="previewLine"></div><div id="previewLeft" class="previewLine"></div><div id="previewRight" class="previewLine"></div><div id="previewDot"></div></div></div>
+      <div class="settingRow"><label for="crosshairColor">色</label><input id="crosshairColor" type="color"><div id="crosshairColorValue" class="settingValue"></div></div>
+      <div class="settingRow"><label for="crosshairLength">線の長さ</label><input id="crosshairLength" type="range" min="3" max="20" step="1"><div id="crosshairLengthValue" class="settingValue"></div></div>
+      <div class="settingRow"><label for="crosshairThickness">線の太さ</label><input id="crosshairThickness" type="range" min="1" max="6" step="1"><div id="crosshairThicknessValue" class="settingValue"></div></div>
+      <div class="settingRow"><label for="crosshairBaseGap">基本の隙間</label><input id="crosshairBaseGap" type="range" min="0" max="16" step="1"><div id="crosshairBaseGapValue" class="settingValue"></div></div>
+      <div class="settingRow"><label for="crosshairDot">中央の点</label><input id="crosshairDot" type="checkbox" style="width:24px;height:24px"><div id="crosshairDotValue" class="settingValue"></div></div>
+    </div>
+    <div class="settingsFooter"><button id="resetSettingsButton">すべて初期設定に戻す</button></div>
   </div>
 </div>
 <div id="endScreen" class="screen hidden"><div class="panel"><h1 id="finalResult">VICTORY</h1><div id="finalScore" class="subtitle" style="font-size:28px"></div><button id="restartButton">もう一度遊ぶ</button></div></div>
@@ -102,7 +160,7 @@ button:hover{filter:brightness(1.12)}
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js';
 
 const MAX_WINS=5, MAG_SIZE=6, RAPID_TIME=.4, RELOAD_TIME=1.5;
-const MOUSE_SENSITIVITY=.00154; // 以前の約70%
+const BASE_MOUSE_SENSITIVITY=.00154; // 感度100%時
 const PLAYER_RADIUS=.34, PLAYER_EYE=1.62, ARENA=18, GRAVITY=18, JUMP_SPEED=6.2;
 const game=document.getElementById('game');
 const startScreen=document.getElementById('startScreen');
@@ -115,6 +173,28 @@ const finalResult=document.getElementById('finalResult');
 const finalScore=document.getElementById('finalScore');
 const difficultyDescription=document.getElementById('difficultyDescription');
 const difficultyButtons=[...document.querySelectorAll('.difficultyButton')];
+const settingsScreen=document.getElementById('settingsScreen');
+const startSettingsButton=document.getElementById('startSettingsButton');
+const pauseSettingsButton=document.getElementById('pauseSettingsButton');
+const closeSettingsButton=document.getElementById('closeSettingsButton');
+const keybindButtons=[...document.querySelectorAll('.keybindButton')];
+const resetSettingsButton=document.getElementById('resetSettingsButton');
+const compactInstructions=document.getElementById('compactInstructions');
+const sensitivityRange=document.getElementById('sensitivityRange');
+const sensitivityValue=document.getElementById('sensitivityValue');
+const crosshairColor=document.getElementById('crosshairColor');
+const crosshairColorValue=document.getElementById('crosshairColorValue');
+const crosshairLength=document.getElementById('crosshairLength');
+const crosshairLengthValue=document.getElementById('crosshairLengthValue');
+const crosshairThickness=document.getElementById('crosshairThickness');
+const crosshairThicknessValue=document.getElementById('crosshairThicknessValue');
+const crosshairBaseGap=document.getElementById('crosshairBaseGap');
+const crosshairBaseGapValue=document.getElementById('crosshairBaseGapValue');
+const crosshairDot=document.getElementById('crosshairDot');
+const crosshairDotValue=document.getElementById('crosshairDotValue');
+const bindStatus=document.getElementById('bindStatus');
+const reloadHint=document.getElementById('reloadHint');
+const pauseHintKey=document.getElementById('pauseHintKey');
 const healthEl=document.getElementById('health');
 const healthFill=document.getElementById('healthFill');
 const ammoEl=document.getElementById('ammo');
@@ -124,7 +204,8 @@ const roundText=document.getElementById('roundText');
 const messageEl=document.getElementById('message');
 const hitmarker=document.getElementById('hitmarker');
 const damageFlash=document.getElementById('damageFlash');
-const cross={top:document.getElementById('chTop'),bottom:document.getElementById('chBottom'),left:document.getElementById('chLeft'),right:document.getElementById('chRight')};
+const cross={top:document.getElementById('chTop'),bottom:document.getElementById('chBottom'),left:document.getElementById('chLeft'),right:document.getElementById('chRight'),dot:document.getElementById('chDot')};
+const previewCross={top:document.getElementById('previewTop'),bottom:document.getElementById('previewBottom'),left:document.getElementById('previewLeft'),right:document.getElementById('previewRight'),dot:document.getElementById('previewDot')};
 
 const scene=new THREE.Scene();
 scene.background=new THREE.Color(0x0b1420);
@@ -185,6 +266,92 @@ let audioContext=null;
 const clock=new THREE.Clock(); const raycaster=new THREE.Raycaster();
 const tracers=[];
 
+const DEFAULT_BINDINGS={
+  forward:['KeyW','ArrowUp'],backward:['KeyS','ArrowDown'],left:['KeyA','ArrowLeft'],right:['KeyD','ArrowRight'],
+  shoot:['Mouse0',''],reload:['KeyR',''],walk:['ShiftLeft','ShiftRight'],jump:['Space',''],dash:['ControlLeft','ControlRight'],pause:['Escape','KeyP']
+};
+const DEFAULT_SETTINGS={sensitivity:100,crosshairColor:'#f4fbff',crosshairLength:8,crosshairThickness:2,crosshairGap:5,crosshairDot:true};
+const BINDINGS_STORAGE_KEY='tacticalDuelKeyBindingsV2';
+const SETTINGS_STORAGE_KEY='tacticalDuelVisualSettingsV1';
+let bindings=loadBindings();
+let gameSettings=loadGameSettings();
+let listeningTarget=null;
+let settingsReturnScreen='start';
+
+function normalizeBindings(saved){
+  const result={};
+  for(const [action,defaults] of Object.entries(DEFAULT_BINDINGS)){
+    const value=saved?.[action];
+    if(Array.isArray(value))result[action]=[value[0]||'',value[1]||''];
+    else if(typeof value==='string')result[action]=[value,defaults[1]||''];
+    else result[action]=[...defaults];
+  }
+  return result;
+}
+function loadBindings(){
+  try{return normalizeBindings(JSON.parse(localStorage.getItem(BINDINGS_STORAGE_KEY)||localStorage.getItem('tacticalDuelKeyBindingsV1')||'null'));}
+  catch{return normalizeBindings(null);}
+}
+function saveBindings(){localStorage.setItem(BINDINGS_STORAGE_KEY,JSON.stringify(bindings));}
+function loadGameSettings(){
+  try{return {...DEFAULT_SETTINGS,...JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY)||'{}')};}
+  catch{return {...DEFAULT_SETTINGS};}
+}
+function saveGameSettings(){localStorage.setItem(SETTINGS_STORAGE_KEY,JSON.stringify(gameSettings));}
+function bindingLabel(code){
+  if(!code)return '未設定';
+  const labels={Space:'Space',Escape:'Esc',ShiftLeft:'左Shift',ShiftRight:'右Shift',ControlLeft:'左Ctrl',ControlRight:'右Ctrl',AltLeft:'左Alt',AltRight:'右Alt',ArrowUp:'↑',ArrowDown:'↓',ArrowLeft:'←',ArrowRight:'→',Mouse0:'左クリック',Mouse1:'ホイールクリック',Mouse2:'右クリック',Mouse3:'マウス戻る',Mouse4:'マウス進む'};
+  if(labels[code])return labels[code];if(code.startsWith('Key'))return code.slice(3);if(code.startsWith('Digit'))return code.slice(5);if(code.startsWith('Numpad'))return 'Num '+code.slice(6);return code.replace(/Left$/,' 左').replace(/Right$/,' 右');
+}
+function updateCompactInstructions(){
+  const label=a=>bindings[a].filter(Boolean).map(bindingLabel).join(' / ')||'未設定';
+  compactInstructions.innerHTML=`移動：${label('forward')}・${label('backward')}・${label('left')}・${label('right')}<br>射撃：${label('shoot')}　リロード：${label('reload')}<br>低速歩行：${label('walk')}　ジャンプ：${label('jump')}　ダッシュ：${label('dash')}<br>ポーズ：${label('pause')}`;
+}
+function updateBindingUI(){
+  for(const button of keybindButtons){
+    const action=button.dataset.action,slot=Number(button.dataset.slot);
+    const active=listeningTarget&&listeningTarget.action===action&&listeningTarget.slot===slot;
+    button.textContent=active?'入力してください…':bindingLabel(bindings[action][slot]);
+    button.classList.toggle('listening',active);
+  }
+  reloadHint.textContent=bindingLabel(bindings.reload[0]||bindings.reload[1]);
+  pauseHintKey.textContent=bindingLabel(bindings.pause[0]||bindings.pause[1]);
+  updateCompactInstructions();
+}
+function beginBinding(action,slot){listeningTarget={action,slot};bindStatus.textContent='割り当てたいキーまたはマウスボタンを押してください。Esc単独はキャンセルではなく割り当て可能です。';updateBindingUI();}
+function assignBinding(action,slot,code){
+  for(const [otherAction,codes] of Object.entries(bindings)){
+    for(let otherSlot=0;otherSlot<2;otherSlot++){
+      if(otherAction===action&&otherSlot===slot)continue;
+      if(codes[otherSlot]===code)codes[otherSlot]='';
+    }
+  }
+  bindings[action][slot]=code;listeningTarget=null;saveBindings();bindStatus.textContent=`${bindingLabel(code)} を設定して保存しました。`;updateBindingUI();
+}
+function actionPressed(action){return bindings[action].some(code=>code&&keys[code]);}
+function actionsForCode(code){return Object.keys(bindings).filter(action=>bindings[action].includes(code));}
+function applyGameSettings(){
+  sensitivityRange.value=gameSettings.sensitivity;sensitivityValue.textContent=`${gameSettings.sensitivity}%`;
+  crosshairColor.value=gameSettings.crosshairColor;crosshairColorValue.textContent=gameSettings.crosshairColor.toUpperCase();
+  crosshairLength.value=gameSettings.crosshairLength;crosshairLengthValue.textContent=`${gameSettings.crosshairLength}px`;
+  crosshairThickness.value=gameSettings.crosshairThickness;crosshairThicknessValue.textContent=`${gameSettings.crosshairThickness}px`;
+  crosshairBaseGap.value=gameSettings.crosshairGap;crosshairBaseGapValue.textContent=`${gameSettings.crosshairGap}px`;
+  crosshairDot.checked=gameSettings.crosshairDot;crosshairDotValue.textContent=gameSettings.crosshairDot?'表示':'非表示';
+  for(const c of [cross.top,cross.bottom,cross.left,cross.right])c.style.background=gameSettings.crosshairColor;
+  cross.dot.style.background=gameSettings.crosshairColor;cross.dot.style.display=gameSettings.crosshairDot?'block':'none';
+  updateCrosshair(gameSettings.crosshairGap);updateCrosshairPreview();
+}
+function updateCrosshairPreview(){
+  const g=gameSettings.crosshairGap,l=gameSettings.crosshairLength,t=gameSettings.crosshairThickness,c=gameSettings.crosshairColor;
+  const set=(el,css)=>Object.assign(el.style,css);
+  set(previewCross.top,{background:c,width:`${t}px`,height:`${l}px`,left:`${-t/2}px`,top:`${-g-l}px`});
+  set(previewCross.bottom,{background:c,width:`${t}px`,height:`${l}px`,left:`${-t/2}px`,top:`${g}px`});
+  set(previewCross.left,{background:c,width:`${l}px`,height:`${t}px`,left:`${-g-l}px`,top:`${-t/2}px`});
+  set(previewCross.right,{background:c,width:`${l}px`,height:`${t}px`,left:`${g}px`,top:`${-t/2}px`});
+  set(previewCross.dot,{background:c,width:`${Math.max(2,t+1)}px`,height:`${Math.max(2,t+1)}px`,left:`${-Math.max(2,t+1)/2}px`,top:`${-Math.max(2,t+1)/2}px`,display:gameSettings.crosshairDot?'block':'none'});
+}
+function openSettings(from){settingsReturnScreen=from;listeningTarget=null;settingsScreen.classList.remove('hidden');if(from==='start')startScreen.classList.add('hidden');else pauseScreen.classList.add('hidden');updateBindingUI();applyGameSettings();}
+function closeSettings(){settingsScreen.classList.add('hidden');if(settingsReturnScreen==='start')startScreen.classList.remove('hidden');else pauseScreen.classList.remove('hidden');listeningTarget=null;updateBindingUI();}
 
 function ensureAudio(){
   if(!audioContext){
@@ -366,9 +533,9 @@ function collides(x,z,r=PLAYER_RADIUS){
 function moveCircle(pos,dx,dz,r=PLAYER_RADIUS){if(!collides(pos.x+dx,pos.z,r))pos.x+=dx;if(!collides(pos.x,pos.z+dz,r))pos.z+=dz;}
 function showMessage(text,time=1.2){messageEl.textContent=text;messageEl.style.opacity='1';messageTimer=time;}
 function updateHUD(){healthEl.textContent=Math.max(0,Math.ceil(player.health));healthFill.style.width=`${Math.max(0,player.health)}%`;ammoEl.textContent=player.reloading?`… / ${MAG_SIZE}`:`${player.ammo} / ${MAG_SIZE}`;scoreBlue.textContent=blueWins;scoreRed.textContent=redWins;roundText.textContent=`ROUND ${round}`;}
-function updateCrosshair(gap){cross.top.style.transform=`translateY(${-gap-8}px)`;cross.bottom.style.transform=`translateY(${gap}px)`;cross.left.style.transform=`translateX(${-gap-8}px)`;cross.right.style.transform=`translateX(${gap}px)`;}
+function updateCrosshair(gap){const l=gameSettings.crosshairLength,t=gameSettings.crosshairThickness,c=gameSettings.crosshairColor;Object.assign(cross.top.style,{width:`${t}px`,height:`${l}px`,left:`${-t/2}px`,top:'0',background:c,transform:`translateY(${-gap-l}px)`});Object.assign(cross.bottom.style,{width:`${t}px`,height:`${l}px`,left:`${-t/2}px`,top:'0',background:c,transform:`translateY(${gap}px)`});Object.assign(cross.left.style,{height:`${t}px`,width:`${l}px`,top:`${-t/2}px`,left:'0',background:c,transform:`translateX(${-gap-l}px)`});Object.assign(cross.right.style,{height:`${t}px`,width:`${l}px`,top:`${-t/2}px`,left:'0',background:c,transform:`translateX(${gap}px)`});const d=Math.max(2,t+1);Object.assign(cross.dot.style,{width:`${d}px`,height:`${d}px`,left:`${-d/2}px`,top:`${-d/2}px`,background:c,display:gameSettings.crosshairDot?'block':'none'});}
 function resetRound(){clearTracers();paused=false;pauseScreen.classList.add('hidden');playerStepTimer=0;enemyStepTimer=0;buildArena();player.pos.set(0,PLAYER_EYE,7.2);player.vel.set(0,0,0);player.verticalVelocity=0;player.onGround=true;player.health=100;player.ammo=MAG_SIZE;player.reloading=false;player.reloadTimer=0;player.lastShot=99;player.fireCd=0;player.dashCd=0;player.dashTimer=0;player.dashRecovery=0;player.alive=true;enemy.position.set(0,0,-7.2);ai.health=100;ai.alive=true;ai.vel.set(0,0,0);ai.lastShot=99;ai.fireCd=.8;ai.ammo=MAG_SIZE;ai.reloading=false;ai.reloadTimer=0;ai.decision=0;ai.heardTimer=0;ai.heardPosition.set(0,0,0);enemy.visible=true;yaw=0;pitch=0;camera.rotation.set(0,0,0);roundEnding=false;showMessage(`ROUND ${round}`,1.1);updateHUD();}
-function startMatch(){ensureAudio();paused=false;pauseScreen.classList.add('hidden');blueWins=0;redWins=0;round=1;endScreen.classList.add('hidden');startScreen.classList.add('hidden');playing=true;resetRound();renderer.domElement.requestPointerLock();}
+function startMatch(){ensureAudio();paused=false;settingsScreen.classList.add('hidden');pauseScreen.classList.add('hidden');blueWins=0;redWins=0;round=1;endScreen.classList.add('hidden');startScreen.classList.add('hidden');playing=true;resetRound();renderer.domElement.requestPointerLock();}
 function endRound(playerWon){if(roundEnding)return;roundEnding=true;player.alive=false;ai.alive=false;if(playerWon){blueWins++;showMessage('ROUND WIN',1.8)}else{redWins++;showMessage('ROUND LOST',1.8)}updateHUD();setTimeout(()=>{if(blueWins>=MAX_WINS||redWins>=MAX_WINS){playing=false;paused=false;pauseScreen.classList.add('hidden');intentionalPointerUnlock=true;document.exitPointerLock();finalResult.textContent=blueWins>redWins?'VICTORY':'DEFEAT';finalResult.style.color=blueWins>redWins?'#74cdff':'#ff6969';finalScore.textContent=`${blueWins} - ${redWins}`;endScreen.classList.remove('hidden');}else{round++;resetRound();}},1900)}
 function startReload(entity,isPlayer){if(entity.reloading||entity.ammo===MAG_SIZE||!entity.alive)return;entity.reloading=true;entity.reloadTimer=RELOAD_TIME;if(isPlayer)showMessage('RELOADING',.55)}
 function spreadForPlayer(speed){let deg=.08;if(speed>.08)deg=6+Math.min(10,speed*1.4);if(player.dashRecovery>0)deg+=8*(player.dashRecovery/.65);if(player.lastShot<RAPID_TIME)deg=Math.max(deg,18+Math.random()*12);deg+=shotRecoil*.5;return THREE.MathUtils.degToRad(deg);}
@@ -376,16 +543,62 @@ function randomDirection(base,spread){const e=new THREE.Euler(pitch+(Math.random
 function playerShoot(){if(!playing||roundEnding||!player.alive||player.reloading||player.fireCd>0||player.ammo<=0||document.pointerLockElement!==renderer.domElement)return;if(player.ammo<=0){startReload(player,true);return}const speed=Math.hypot(player.vel.x,player.vel.z);const spread=spreadForPlayer(speed);const dir=randomDirection(camera.rotation,spread);playGunshot(player.pos,false);player.ammo--;player.fireCd=.14;player.lastShot=0;shotRecoil=Math.min(22,shotRecoil+9);camera.rotation.x=Math.min(1.45,camera.rotation.x+.012);raycaster.set(camera.position,dir);const targets=[...obstacleMeshes,enemyBody,enemyHead];const hits=raycaster.intersectObjects(targets,false);const cameraRight=new THREE.Vector3(1,0,0).applyQuaternion(camera.quaternion);const cameraDown=new THREE.Vector3(0,-1,0).applyQuaternion(camera.quaternion);const tracerStart=camera.position.clone().add(dir.clone().multiplyScalar(.6)).add(cameraRight.multiplyScalar(.22)).add(cameraDown.multiplyScalar(.18));const tracerEnd=hits.length?hits[0].point.clone():camera.position.clone().add(dir.clone().multiplyScalar(45));createTracer(tracerStart,tracerEnd,0xfff2a0);if(hits.length){const h=hits[0];if(h.object===enemyHead||h.object===enemyBody){const dmg=h.object===enemyHead?100:34;ai.health-=dmg;hitmarker.style.opacity='1';hitmarker.style.filter=h.object===enemyHead?'drop-shadow(0 0 5px #ff3434)':'none';hitTimer=.13;if(ai.health<=0){ai.health=0;enemy.visible=false;endRound(true)}}}if(player.ammo===0)showMessage('弾切れ：Rでリロード',.9);updateHUD();}
 function lineOfSight(){const from=enemy.position.clone().add(new THREE.Vector3(0,1.55,0));const to=player.pos.clone();const dir=to.clone().sub(from);const dist=dir.length();raycaster.set(from,dir.normalize());const hit=raycaster.intersectObjects(obstacleMeshes,false)[0];return !hit||hit.distance>dist;}
 function enemyShoot(){if(!ai.alive||ai.reloading||ai.fireCd>0||ai.ammo<=0)return;const cfg=DIFFICULTIES[selectedDifficulty];const rapid=ai.lastShot<RAPID_TIME;playGunshot(enemy.position,true);ai.ammo--;ai.fireCd=cfg.fireDelay;ai.lastShot=0;const moving=Math.hypot(ai.vel.x,ai.vel.z)>.2;let hitChance=moving?cfg.hitMoving:cfg.hitStill;if(rapid)hitChance*=.55;const headChance=cfg.headChance;const didHit=Math.random()<hitChance;const aimedAtHead=didHit&&Math.random()<headChance;const tracerStart=enemy.position.clone().add(new THREE.Vector3(0,1.32,0));const tracerTarget=player.pos.clone();if(aimedAtHead)tracerTarget.y+=.12;else tracerTarget.y-=.25;if(!didHit){tracerTarget.x+=(Math.random()<.5?-1:1)*(1.1+Math.random()*1.8);tracerTarget.y+=(Math.random()-.5)*1.1;tracerTarget.z+=(Math.random()-.5)*1.2;}const tracerDir=tracerTarget.clone().sub(tracerStart).normalize();raycaster.set(tracerStart,tracerDir);const wallHit=raycaster.intersectObjects(obstacleMeshes,false)[0];const tracerEnd=wallHit?wallHit.point.clone():tracerStart.clone().add(tracerDir.multiplyScalar(45));createTracer(tracerStart,tracerEnd,0xff6b55);if(didHit){const dmg=aimedAtHead?100:25;player.health-=dmg;damageFlash.style.opacity='1';damageTimer=.12;if(player.health<=0){player.health=0;endRound(false)}}if(ai.ammo===0)startReload(ai,false);updateHUD();}
-function updatePlayer(dt){if(!player.alive)return;const forward=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));const right=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));let ix=0,iz=0;if(keys.KeyW)iz+=1;if(keys.KeyS)iz-=1;if(keys.KeyD)ix+=1;if(keys.KeyA)ix-=1;const input=forward.multiplyScalar(iz).add(right.multiplyScalar(ix));if(input.lengthSq()>0)input.normalize();const walking=keys.ShiftLeft||keys.ShiftRight;let max=walking?2.1:4.2;if(player.dashTimer>0)max=10.8;const desired=input.multiplyScalar(max);const accel=player.dashTimer>0?50:22;player.vel.x=THREE.MathUtils.damp(player.vel.x,desired.x,accel,dt);player.vel.z=THREE.MathUtils.damp(player.vel.z,desired.z,accel,dt);if(ix===0&&iz===0){player.vel.x=THREE.MathUtils.damp(player.vel.x,0,40,dt);player.vel.z=THREE.MathUtils.damp(player.vel.z,0,40,dt);shotRecoil=THREE.MathUtils.damp(shotRecoil,0,7,dt)}else shotRecoil=THREE.MathUtils.damp(shotRecoil,0,2.2,dt);moveCircle(player.pos,player.vel.x*dt,player.vel.z*dt);player.verticalVelocity-=GRAVITY*dt;player.pos.y+=player.verticalVelocity*dt;if(player.pos.y<=PLAYER_EYE){player.pos.y=PLAYER_EYE;player.verticalVelocity=0;player.onGround=true}const speed=Math.hypot(player.vel.x,player.vel.z);if(speed>.45&&!walking&&player.onGround){playerStepTimer-=dt;if(playerStepTimer<=0){emitPlayerFootstep();playerStepTimer=player.dashTimer>0?.18:.36}}else playerStepTimer=Math.min(playerStepTimer,.08);camera.position.copy(player.pos);camera.rotation.set(pitch,yaw,0,'YXZ');}
+function updatePlayer(dt){if(!player.alive)return;const forward=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));const right=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));let ix=0,iz=0;if(actionPressed('forward'))iz+=1;if(actionPressed('backward'))iz-=1;if(actionPressed('right'))ix+=1;if(actionPressed('left'))ix-=1;const input=forward.multiplyScalar(iz).add(right.multiplyScalar(ix));if(input.lengthSq()>0)input.normalize();const walking=actionPressed('walk');let max=walking?2.1:4.2;if(player.dashTimer>0)max=10.8;const desired=input.multiplyScalar(max);const accel=player.dashTimer>0?50:22;player.vel.x=THREE.MathUtils.damp(player.vel.x,desired.x,accel,dt);player.vel.z=THREE.MathUtils.damp(player.vel.z,desired.z,accel,dt);if(ix===0&&iz===0){player.vel.x=THREE.MathUtils.damp(player.vel.x,0,40,dt);player.vel.z=THREE.MathUtils.damp(player.vel.z,0,40,dt);shotRecoil=THREE.MathUtils.damp(shotRecoil,0,7,dt)}else shotRecoil=THREE.MathUtils.damp(shotRecoil,0,2.2,dt);moveCircle(player.pos,player.vel.x*dt,player.vel.z*dt);player.verticalVelocity-=GRAVITY*dt;player.pos.y+=player.verticalVelocity*dt;if(player.pos.y<=PLAYER_EYE){player.pos.y=PLAYER_EYE;player.verticalVelocity=0;player.onGround=true}const speed=Math.hypot(player.vel.x,player.vel.z);if(speed>.45&&!walking&&player.onGround){playerStepTimer-=dt;if(playerStepTimer<=0){emitPlayerFootstep();playerStepTimer=player.dashTimer>0?.18:.36}}else playerStepTimer=Math.min(playerStepTimer,.08);camera.position.copy(player.pos);camera.rotation.set(pitch,yaw,0,'YXZ');}
 function updateAI(dt){if(!ai.alive||roundEnding)return;const cfg=DIFFICULTIES[selectedDifficulty];ai.heardTimer=Math.max(0,ai.heardTimer-dt);const toPlayer=player.pos.clone().sub(enemy.position);toPlayer.y=0;const dist=toPlayer.length();const sees=lineOfSight();ai.seenTime=sees?ai.seenTime+dt:0;ai.decision-=dt;if(ai.decision<=0){ai.decision=cfg.decisionMin+Math.random()*cfg.decisionRandom;ai.strafe=Math.random()<.5?-1:1}let move=new THREE.Vector3();if(sees){const dir=toPlayer.clone().normalize();const side=new THREE.Vector3(-dir.z,0,dir.x).multiplyScalar(ai.strafe);if(dist>7)move.add(dir);if(dist<4.2)move.sub(dir);move.addScaledVector(side,.8);if(ai.seenTime>cfg.reaction&&Math.random()<cfg.shootChance){move.multiplyScalar(.12);enemyShoot()}}else if(ai.heardTimer>0){const toSound=ai.heardPosition.clone().sub(enemy.position);toSound.y=0;if(toSound.length()>.65)move.copy(toSound.normalize());else ai.heardTimer=0}else{const center=new THREE.Vector3(0,0,0).sub(enemy.position).normalize();move.copy(center)}if(move.lengthSq()>0)move.normalize();const speed=sees?cfg.seenSpeed:ai.heardTimer>0?cfg.hearingSpeed:1.8;ai.vel.lerp(move.multiplyScalar(speed),1-Math.exp(-5*dt));moveCircle(enemy.position,ai.vel.x*dt,ai.vel.z*dt,.34);const aiSpeed=Math.hypot(ai.vel.x,ai.vel.z);if(aiSpeed>.45){enemyStepTimer-=dt;if(enemyStepTimer<=0){playFootstep(enemy.position,true);enemyStepTimer=.4}}else enemyStepTimer=Math.min(enemyStepTimer,.08);if(sees)enemy.lookAt(player.pos.x,1.25,player.pos.z);else if(ai.heardTimer>0)enemy.lookAt(ai.heardPosition.x,1.25,ai.heardPosition.z);}
-function updateTimers(dt){player.fireCd=Math.max(0,player.fireCd-dt);player.lastShot+=dt;player.dashCd=Math.max(0,player.dashCd-dt);player.dashTimer=Math.max(0,player.dashTimer-dt);player.dashRecovery=Math.max(0,player.dashRecovery-dt);ai.fireCd=Math.max(0,ai.fireCd-dt);ai.lastShot+=dt;if(player.reloading){player.reloadTimer-=dt;if(player.reloadTimer<=0){player.reloading=false;player.ammo=MAG_SIZE;updateHUD()}}if(ai.reloading){ai.reloadTimer-=dt;if(ai.reloadTimer<=0){ai.reloading=false;ai.ammo=MAG_SIZE}}if(messageTimer>0){messageTimer-=dt;if(messageTimer<=0)messageEl.style.opacity='0'}if(hitTimer>0){hitTimer-=dt;if(hitTimer<=0)hitmarker.style.opacity='0'}if(damageTimer>0){damageTimer-=dt;if(damageTimer<=0)damageFlash.style.opacity='0'}const gap=5+Math.min(25,Math.hypot(player.vel.x,player.vel.z)*3.2+player.dashRecovery*18+shotRecoil);updateCrosshair(gap)}
+function updateTimers(dt){player.fireCd=Math.max(0,player.fireCd-dt);player.lastShot+=dt;player.dashCd=Math.max(0,player.dashCd-dt);player.dashTimer=Math.max(0,player.dashTimer-dt);player.dashRecovery=Math.max(0,player.dashRecovery-dt);ai.fireCd=Math.max(0,ai.fireCd-dt);ai.lastShot+=dt;if(player.reloading){player.reloadTimer-=dt;if(player.reloadTimer<=0){player.reloading=false;player.ammo=MAG_SIZE;updateHUD()}}if(ai.reloading){ai.reloadTimer-=dt;if(ai.reloadTimer<=0){ai.reloading=false;ai.ammo=MAG_SIZE}}if(messageTimer>0){messageTimer-=dt;if(messageTimer<=0)messageEl.style.opacity='0'}if(hitTimer>0){hitTimer-=dt;if(hitTimer<=0)hitmarker.style.opacity='0'}if(damageTimer>0){damageTimer-=dt;if(damageTimer<=0)damageFlash.style.opacity='0'}const gap=gameSettings.crosshairGap+Math.min(25,Math.hypot(player.vel.x,player.vel.z)*3.2+player.dashRecovery*18+shotRecoil);updateCrosshair(gap)}
 function dash(){if(!playing||!player.alive||player.dashCd>0||player.reloading)return;player.dashTimer=.18;player.dashCd=3.2;player.dashRecovery=.65;shotRecoil=Math.max(shotRecoil,14)}
 function jump(){if(!playing||!player.alive||!player.onGround||player.reloading)return;player.onGround=false;player.verticalVelocity=JUMP_SPEED;shotRecoil=Math.max(shotRecoil,8)}
 
-window.addEventListener('keydown',e=>{if(e.code==='Escape')return;if(paused)return;keys[e.code]=true;if(e.code==='KeyR')startReload(player,true);if(e.code==='Space'){e.preventDefault();jump()}if(e.code==='ControlLeft'||e.code==='ControlRight'){e.preventDefault();dash()}});
+keybindButtons.forEach(button=>button.addEventListener('click',e=>{e.stopPropagation();beginBinding(button.dataset.action,Number(button.dataset.slot))}));
+startSettingsButton.addEventListener('click',()=>openSettings('start'));
+pauseSettingsButton.addEventListener('click',()=>openSettings('pause'));
+closeSettingsButton.addEventListener('click',closeSettings);
+resetSettingsButton.addEventListener('click',()=>{bindings=normalizeBindings(null);gameSettings={...DEFAULT_SETTINGS};saveBindings();saveGameSettings();listeningTarget=null;bindStatus.textContent='キーバインド・感度・クロスヘアを初期設定に戻しました。';updateBindingUI();applyGameSettings()});
+function bindSettingInput(el,event,fn){el.addEventListener(event,()=>{fn();saveGameSettings();applyGameSettings()})}
+bindSettingInput(sensitivityRange,'input',()=>gameSettings.sensitivity=Number(sensitivityRange.value));
+bindSettingInput(crosshairColor,'input',()=>gameSettings.crosshairColor=crosshairColor.value);
+bindSettingInput(crosshairLength,'input',()=>gameSettings.crosshairLength=Number(crosshairLength.value));
+bindSettingInput(crosshairThickness,'input',()=>gameSettings.crosshairThickness=Number(crosshairThickness.value));
+bindSettingInput(crosshairBaseGap,'input',()=>gameSettings.crosshairGap=Number(crosshairBaseGap.value));
+bindSettingInput(crosshairDot,'change',()=>gameSettings.crosshairDot=crosshairDot.checked);
+
+window.addEventListener('keydown',e=>{
+  if(listeningTarget){e.preventDefault();e.stopPropagation();if(e.code==='Backspace'||e.code==='Delete'){bindings[listeningTarget.action][listeningTarget.slot]='';listeningTarget=null;saveBindings();bindStatus.textContent='割り当てを解除しました。';updateBindingUI();return;}assignBinding(listeningTarget.action,listeningTarget.slot,e.code);return;}
+  const actions=actionsForCode(e.code);
+  if(actions.includes('pause')){
+    e.preventDefault();
+    if(paused)resumeGame();else pauseGame();
+    return;
+  }
+  if(paused)return;
+  keys[e.code]=true;
+  if(e.repeat)return;
+  if(actions.includes('reload'))startReload(player,true);
+  if(actions.includes('jump')){e.preventDefault();jump()}
+  if(actions.includes('dash')){e.preventDefault();dash()}
+  if(actions.includes('shoot'))playerShoot();
+});
 window.addEventListener('keyup',e=>keys[e.code]=false);
-window.addEventListener('mousemove',e=>{if(document.pointerLockElement!==renderer.domElement||!playing||paused)return;yaw-=e.movementX*MOUSE_SENSITIVITY;pitch-=e.movementY*MOUSE_SENSITIVITY;pitch=THREE.MathUtils.clamp(pitch,-1.35,1.35)});
-window.addEventListener('mousedown',e=>{ensureAudio();if(e.button!==0)return;if(paused){resumeGame();return}if(document.pointerLockElement===renderer.domElement){playerShoot();}else if(playing){renderer.domElement.requestPointerLock();}});
+window.addEventListener('mousemove',e=>{if(document.pointerLockElement!==renderer.domElement||!playing||paused)return;const sensitivity=BASE_MOUSE_SENSITIVITY*(gameSettings.sensitivity/100);yaw-=e.movementX*sensitivity;pitch-=e.movementY*sensitivity;pitch=THREE.MathUtils.clamp(pitch,-1.35,1.35)});
+window.addEventListener('mousedown',e=>{
+  ensureAudio();
+  const code=`Mouse${e.button}`;
+  if(listeningTarget){e.preventDefault();e.stopPropagation();assignBinding(listeningTarget.action,listeningTarget.slot,code);return}
+  if(e.target.closest&&e.target.closest('.screen'))return;
+  if(e.button===2)e.preventDefault();
+  const actions=actionsForCode(code);
+  keys[code]=true;
+  if(paused){resumeGame();return}
+  if(document.pointerLockElement===renderer.domElement){
+    if(actions.includes('shoot'))playerShoot();
+    if(actions.includes('jump'))jump();
+    if(actions.includes('dash'))dash();
+    if(actions.includes('reload'))startReload(player,true);
+    if(actions.includes('pause'))pauseGame();
+  }else if(playing){renderer.domElement.requestPointerLock();}
+});
+window.addEventListener('mouseup',e=>keys[`Mouse${e.button}`]=false);
+window.addEventListener('contextmenu',e=>e.preventDefault());
 renderer.domElement.addEventListener('click',()=>{ensureAudio();if(paused){resumeGame();return}if(playing&&document.pointerLockElement!==renderer.domElement)renderer.domElement.requestPointerLock()});
 document.addEventListener('pointerlockchange',()=>{if(document.pointerLockElement===renderer.domElement)return;if(intentionalPointerUnlock){intentionalPointerUnlock=false;return}if(playing&&!roundEnding)pauseGame()});
 window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
@@ -404,7 +617,7 @@ restartButton.addEventListener('click',startMatch);
 resumeButton.addEventListener('click',resumeGame);
 
 function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.033);if(playing&&!paused){updateTracers(dt)}if(playing&&!paused&&!roundEnding){updateTimers(dt);updatePlayer(dt);updateAI(dt)}renderer.render(scene,camera)}
-buildArena();camera.position.copy(player.pos);updateHUD();updateCrosshair(5);loop();
+buildArena();camera.position.copy(player.pos);updateHUD();updateBindingUI();applyGameSettings();loop();
 </script>
 </body>
 </html>
