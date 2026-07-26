@@ -50,7 +50,6 @@ button:hover{filter:brightness(1.12)}
 .difficultyRow{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:18px 0 4px}
 .difficultyButton{min-width:135px;margin:0;padding:11px 17px;background:rgba(20,42,62,.9);border-color:rgba(116,205,255,.55);font-size:17px}
 .difficultyButton.selected{background:linear-gradient(#da4251,#8f1f2b);border-color:#ff8790;box-shadow:0 0 18px rgba(255,82,96,.35)}
-#difficultyDescription{min-height:48px;margin:10px auto 2px;color:#d9e7f3;line-height:1.55}
 .keybindGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px 14px;margin:17px 0;padding:15px 18px;text-align:left;background:rgba(255,255,255,.045);border-left:4px solid #74cdff}
 .keybindItem{display:flex;align-items:center;justify-content:space-between;gap:10px;min-width:0}
 .keybindItem span{font-weight:750;white-space:nowrap}
@@ -82,55 +81,56 @@ button:hover{filter:brightness(1.12)}
 #pauseHint{position:absolute;left:50%;bottom:10px;z-index:7;transform:translateX(-50%);padding:6px 12px;border-radius:7px;background:rgba(0,0,0,.5);font-size:12px;color:#d7e1eb;pointer-events:none}
 
 #mobileControls{
-  --touch-panel-w:clamp(145px,15vw,230px);
-  --touch-game-w:min(calc(100vw - var(--touch-panel-w) - var(--touch-panel-w)),177.7778vh);
+  --touch-left-w:clamp(180px,19vw,250px);
+  --touch-right-w:clamp(260px,28vw,390px);
+  --touch-game-w:min(calc(100vw - var(--touch-left-w) - var(--touch-right-w)),177.7778vh);
   --touch-game-h:calc(var(--touch-game-w) * .5625);
   position:fixed;inset:0;z-index:12;display:none;pointer-events:none;
   touch-action:none;user-select:none;-webkit-user-select:none
 }
 .touchSide{
-  position:absolute;top:50%;width:var(--touch-panel-w);height:min(var(--touch-game-h),100vh);
+  position:absolute;top:50%;height:min(var(--touch-game-h),100vh);
   transform:translateY(-50%);pointer-events:auto;display:flex;align-items:center;
-  justify-content:center;padding:10px 8px;overflow:hidden
+  justify-content:center;padding:8px;overflow:visible
 }
-#touchLeft{left:0;padding-left:12px;padding-right:3px}
-.touchSide.right{right:0;padding-left:3px;padding-right:12px}
-.dpad{position:relative;width:136px;height:136px;flex:0 0 auto}
+#touchLeft{left:0;width:var(--touch-left-w);justify-content:flex-end;padding-right:14px}
+.touchSide.right{right:0;width:var(--touch-right-w)}
+.dpad{position:relative;width:186px;height:186px;flex:0 0 auto;overflow:visible}
 .touchBtn{
-  position:absolute;pointer-events:auto;margin:0;min-width:0;width:52px;height:52px;padding:0;
-  border-radius:15px;border:1px solid rgba(151,222,255,.85);background:rgba(15,56,82,.78);
-  font-size:15px;line-height:1;color:#fff;backdrop-filter:blur(3px);touch-action:none;
+  position:absolute;pointer-events:auto;margin:0;min-width:0;width:58px;height:58px;padding:0;
+  border-radius:15px;border:1px solid rgba(151,222,255,.85);background:rgba(15,56,82,.82);
+  font-size:16px;line-height:1;color:#fff;backdrop-filter:blur(3px);touch-action:none;
   box-shadow:0 4px 14px rgba(0,0,0,.25)
 }
 .touchBtn.active{filter:brightness(1.45);transform:scale(.96)}
-.dpad .up{left:42px;top:0}.dpad .down{left:42px;bottom:0}.dpad .left{left:0;top:42px}.dpad .right{right:0;top:42px}
+.dpad .up{left:64px;top:0}.dpad .down{left:64px;bottom:0}.dpad .left{left:0;top:64px}.dpad .right{right:0;top:64px}
 #touchRight{
-  right:0;align-items:stretch;justify-content:flex-start;flex-direction:column;gap:7px;
-  padding-top:56px;padding-bottom:8px
+  right:0;align-items:stretch;justify-content:flex-start;flex-direction:column;gap:8px;
+  padding:48px 14px 8px 10px
 }
 #lookPad{
-  position:relative;flex:1 1 auto;min-height:150px;width:100%;border:1px solid rgba(255,255,255,.20);
-  border-radius:24px;background:rgba(255,255,255,.045);touch-action:none;overflow:hidden
+  position:relative;flex:1 1 auto;min-height:190px;width:100%;border:1px solid rgba(255,255,255,.22);
+  border-radius:25px;background:rgba(255,255,255,.05);touch-action:none;overflow:hidden
 }
 #lookPad::before{
-  content:'';position:absolute;left:50%;top:50%;width:9px;height:9px;transform:translate(-50%,-50%);
-  border-radius:50%;background:rgba(255,255,255,.45);pointer-events:none
+  content:'';position:absolute;left:50%;top:50%;width:10px;height:10px;transform:translate(-50%,-50%);
+  border-radius:50%;background:rgba(255,255,255,.48);pointer-events:none
 }
 #lookPad::after{
-  content:'視点操作';position:absolute;left:50%;top:14px;transform:translateX(-50%);
-  font-size:12px;color:rgba(116,205,255,.82);font-weight:800;white-space:nowrap;pointer-events:none
+  content:'視点操作';position:absolute;left:50%;top:13px;transform:translateX(-50%);
+  font-size:13px;color:rgba(116,205,255,.9);font-weight:800;white-space:nowrap;pointer-events:none
 }
-.actionCluster{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;width:100%}
+.actionCluster{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%}
 .actionCluster .touchBtn{
   position:relative;width:100%;height:48px;border-radius:13px;font-size:11px;font-weight:800
 }
 .actionCluster .shoot{
-  grid-column:1/-1;width:100%;height:57px;background:rgba(145,35,43,.84);
+  grid-column:1/-1;width:100%;height:58px;background:rgba(145,35,43,.88);
   border-color:#ff8e96;font-size:16px
 }
 #touchPause{
-  position:fixed;right:12px;top:calc(50% - min(var(--touch-game-h),100vh)/2 + 8px);
-  width:44px;height:44px;border-radius:50%;z-index:2
+  position:fixed;right:15px;top:calc(50% - min(var(--touch-game-h),100vh)/2 + 8px);
+  width:42px;height:42px;border-radius:50%;z-index:2
 }
 @media(pointer:coarse){
   #mobileControls{display:block}
@@ -138,29 +138,28 @@ button:hover{filter:brightness(1.12)}
   .screen{z-index:30}
   #playArea{width:var(--touch-game-w);height:auto;aspect-ratio:16/9}
 }
-@media(pointer:coarse) and (max-height:520px){
-  #mobileControls{--touch-panel-w:clamp(138px,15vw,210px)}
-  .touchSide{padding-top:5px;padding-bottom:5px}
-  .dpad{width:126px;height:126px}
-  .touchBtn{width:48px;height:48px;font-size:14px}
-  .dpad .up{left:39px}.dpad .down{left:39px}.dpad .left{top:39px}.dpad .right{top:39px}
-  #touchRight{padding-top:50px;gap:5px}
-  #lookPad{min-height:118px;border-radius:20px}
+@media(pointer:coarse) and (max-height:560px){
+  #mobileControls{--touch-left-w:clamp(170px,19vw,225px);--touch-right-w:clamp(245px,28vw,350px)}
+  .touchSide{padding-top:4px;padding-bottom:4px}
+  .dpad{width:172px;height:172px}
+  .touchBtn{width:54px;height:54px;font-size:14px}
+  .dpad .up{left:59px}.dpad .down{left:59px}.dpad .left{top:59px}.dpad .right{top:59px}
+  #touchRight{padding-top:43px;gap:5px}
+  #lookPad{min-height:142px;border-radius:20px}
   .actionCluster{gap:5px}
-  .actionCluster .touchBtn{height:40px;font-size:10px}
-  .actionCluster .shoot{height:48px;font-size:14px}
-  #touchPause{width:40px;height:40px;right:9px}
+  .actionCluster .touchBtn{height:39px;font-size:10px}
+  .actionCluster .shoot{height:46px;font-size:14px}
+  #touchPause{width:38px;height:38px;right:10px}
 }
 @media(pointer:coarse) and (orientation:portrait){
-  #mobileControls{--touch-panel-w:clamp(110px,24vw,150px)}
-  #playArea{width:calc(100vw - 20px);height:auto;top:44%;}
-  .touchSide{top:44%;height:min(56.25vw,62vh);background:rgba(2,6,10,.34)}
-  #touchLeft{left:0}.touchSide.right{right:0}
-  .dpad{transform:scale(.78)}
-  #touchRight{padding-top:46px}
-  #lookPad{min-height:90px}
-  .actionCluster .touchBtn{height:38px;font-size:9px}
-  .actionCluster .shoot{height:44px;font-size:13px}
+  #mobileControls{--touch-left-w:clamp(112px,25vw,155px);--touch-right-w:clamp(145px,34vw,205px)}
+  #playArea{width:calc(100vw - 16px);height:auto;top:43%}
+  .touchSide{top:43%;height:min(56.25vw,62vh);background:rgba(2,6,10,.34)}
+  .dpad{transform:scale(.72)}
+  #touchRight{padding-top:42px;padding-right:5px}
+  #lookPad{min-height:105px}
+  .actionCluster .touchBtn{height:37px;font-size:9px}
+  .actionCluster .shoot{height:43px;font-size:13px}
 }
 @media(max-width:700px){#settingsScreen{padding-top:34px;padding-bottom:90px}.panel{padding:20px 15px}.keybindGrid{grid-template-columns:1fr}.instructions{font-size:14px}#healthBox{width:180px;left:12px}.screen{align-items:flex-start}.notice{font-size:12px}.settingsKeyGrid{grid-template-columns:1fr 1fr}.settingsKeyGrid .label{grid-column:1/-1;margin-top:5px}.settingRow{grid-template-columns:1fr}.settingValue{text-align:left}}
 </style>
@@ -191,7 +190,8 @@ button:hover{filter:brightness(1.12)}
     <div class="actionCluster">
       <button class="touchBtn shoot" data-touch-action="shoot">射撃</button>
       <button class="touchBtn" data-touch-action="jump">ジャンプ</button>
-      <button class="touchBtn" data-touch-action="dash">ダッシュ</button>
+      <button class="touchBtn" data-touch-action="knife">ナイフ</button>
+      <button class="touchBtn" data-touch-action="weapon">リボルバー</button>
       <button class="touchBtn" data-touch-action="reload">リロード</button>
       <button class="touchBtn" data-touch-action="crouch">しゃがみ</button>
       <button class="touchBtn" data-touch-action="walk">低速</button>
@@ -203,7 +203,7 @@ button:hover{filter:brightness(1.12)}
   <div class="panel">
     <h1>PAUSE</h1>
     <div class="subtitle">ゲームを一時停止しています</div>
-    <button id="resumeButton">ゲームに戻る</button><button id="pauseSettingsButton" class="settingsButton">設定</button>
+    <button id="resumeButton">ゲームに戻る</button><button id="pauseSettingsButton" class="settingsButton">設定</button><button id="pauseHomeButton" class="settingsButton">ホームに戻る</button>
     <div class="notice" style="margin-top:18px;text-align:center">画面をクリックしても再開できます。</div>
   </div>
 </div>
@@ -215,13 +215,13 @@ button:hover{filter:brightness(1.12)}
       <button class="difficultyButton" data-difficulty="easy">Easy</button>
       <button class="difficultyButton selected" data-difficulty="normal">Normal</button>
       <button class="difficultyButton" data-difficulty="hard">Hard</button>
+      <button class="difficultyButton" data-difficulty="extra">Extra</button>
     </div>
-    <div id="difficultyDescription">標準的な強さ。足音を追跡し、停止時は高い精度で射撃します。</div>
     <button id="startButton">ゲームスタート</button>
     <button id="startSettingsButton" class="settingsButton">設定を開く</button>
     <div class="instructions" id="compactInstructions"></div>
     <div class="notice">
-      停止してから撃つと高精度になります。通常移動では足音が鳴り、敵もその方向を調べに来ます。Shiftを押しながら歩くと足音は鳴りません。しゃがみ中は視点が下がり、移動速度が遅くなります。移動撃ち、ダッシュ直後、前の弾から0.4秒未満の連射は大きく外れます。マガジンは6発、リロードは1.5秒です。ヘッドショットは一撃、胴体は34ダメージ。5ラウンド先取です。<br><br>
+      停止してから撃つと高精度になります。通常移動では足音が鳴り、敵もその方向を調べに来ます。Shiftを押しながら歩くと足音は鳴りません。しゃがみ中は視点が下がり、移動速度が遅くなります。移動撃ち、前の弾から0.4秒未満の連射は大きく外れます。リボルバーは6発、リロードは1.5秒です。ヘッドショットは一撃、胴体は34ダメージ。5ラウンド先取です。<br><br>
       Three.jsをインターネット経由で読み込むため、起動時に通信が必要です。PC向け初版です。
     </div>
   </div>
@@ -242,7 +242,8 @@ button:hover{filter:brightness(1.12)}
         <div class="label">低速歩行</div><button class="keybindButton bindSlot" data-action="walk" data-slot="0"></button><button class="keybindButton bindSlot" data-action="walk" data-slot="1"></button>
         <div class="label">しゃがみ</div><button class="keybindButton bindSlot" data-action="crouch" data-slot="0"></button><button class="keybindButton bindSlot" data-action="crouch" data-slot="1"></button>
         <div class="label">ジャンプ</div><button class="keybindButton bindSlot" data-action="jump" data-slot="0"></button><button class="keybindButton bindSlot" data-action="jump" data-slot="1"></button>
-        <div class="label">ダッシュ</div><button class="keybindButton bindSlot" data-action="dash" data-slot="0"></button><button class="keybindButton bindSlot" data-action="dash" data-slot="1"></button>
+        <div class="label">ナイフ装備</div><button class="keybindButton bindSlot" data-action="knife" data-slot="0"></button><button class="keybindButton bindSlot" data-action="knife" data-slot="1"></button>
+        <div class="label">リボルバー装備</div><button class="keybindButton bindSlot" data-action="weapon" data-slot="0"></button><button class="keybindButton bindSlot" data-action="weapon" data-slot="1"></button>
         <div class="label">ポーズ</div><button class="keybindButton bindSlot" data-action="pause" data-slot="0"></button><button class="keybindButton bindSlot" data-action="pause" data-slot="1"></button>
       </div>
       <div id="bindStatus">変更したいボタンを押してから、新しいキーまたはマウスボタンを押してください。</div>
@@ -263,14 +264,14 @@ button:hover{filter:brightness(1.12)}
     <div class="settingsFooter"><button id="resetSettingsButton">すべて初期設定に戻す</button></div>
   </div>
 </div>
-<div id="endScreen" class="screen hidden"><div class="panel"><h1 id="finalResult">VICTORY</h1><div id="finalScore" class="subtitle" style="font-size:28px"></div><button id="restartButton">もう一度遊ぶ</button></div></div>
+<div id="endScreen" class="screen hidden"><div class="panel"><h1 id="finalResult">VICTORY</h1><div id="finalScore" class="subtitle" style="font-size:28px"></div><button id="restartButton">もう一度遊ぶ</button><button id="endHomeButton" class="settingsButton">ホームに戻る</button></div></div>
 
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js';
 
 const MAX_WINS=5, MAG_SIZE=6, RAPID_TIME=.4, RELOAD_TIME=1.5;
 const BASE_MOUSE_SENSITIVITY=.00154; // 感度100%時
-const PLAYER_RADIUS=.34, PLAYER_EYE=1.62, CROUCH_DROP=.62, ARENA=18, GRAVITY=18, JUMP_SPEED=6.2;
+const PLAYER_RADIUS=.25, PLAYER_EYE=1.62, CROUCH_DROP=.62, ARENA=18, GRAVITY=18, JUMP_SPEED=6.2;
 const game=document.getElementById('game');
 const playArea=document.getElementById('playArea');
 const mobileControls=document.getElementById('mobileControls');
@@ -282,9 +283,10 @@ const pauseScreen=document.getElementById('pauseScreen');
 const resumeButton=document.getElementById('resumeButton');
 const startButton=document.getElementById('startButton');
 const restartButton=document.getElementById('restartButton');
+const pauseHomeButton=document.getElementById('pauseHomeButton');
+const endHomeButton=document.getElementById('endHomeButton');
 const finalResult=document.getElementById('finalResult');
 const finalScore=document.getElementById('finalScore');
-const difficultyDescription=document.getElementById('difficultyDescription');
 const difficultyButtons=[...document.querySelectorAll('.difficultyButton')];
 const settingsScreen=document.getElementById('settingsScreen');
 const startSettingsButton=document.getElementById('startSettingsButton');
@@ -330,6 +332,54 @@ renderer.setSize(playArea.clientWidth,playArea.clientHeight,false);
 renderer.shadowMap.enabled=true;
 renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 game.appendChild(renderer.domElement);
+scene.add(camera);
+
+// 一人称視点のリボルバーとナイフ
+const viewModel=new THREE.Group();
+viewModel.position.set(0,0,0);
+camera.add(viewModel);
+
+function vmMaterial(color,metalness=.25,roughness=.55){
+  const material=new THREE.MeshStandardMaterial({color,metalness,roughness,depthTest:false,depthWrite:false});
+  return material;
+}
+function vmMesh(geometry,material){
+  const mesh=new THREE.Mesh(geometry,material);
+  mesh.renderOrder=100;
+  return mesh;
+}
+const skinMat=vmMaterial(0xc58c6b,.02,.85);
+const gloveMat=vmMaterial(0x10161d,.12,.8);
+const gunDark=vmMaterial(0x20252b,.72,.28);
+const gunMetal=vmMaterial(0x515963,.85,.2);
+const gripMat=vmMaterial(0x382821,.18,.68);
+const bladeMat=vmMaterial(0xcad6df,.92,.14);
+
+const revolverModel=new THREE.Group();
+revolverModel.position.set(.47,-.43,-.88);
+revolverModel.rotation.set(-.05,-.12,0);
+const revolverBarrel=vmMesh(new THREE.BoxGeometry(.11,.11,.62),gunDark);revolverBarrel.position.set(0,.03,-.25);
+const revolverTop=vmMesh(new THREE.BoxGeometry(.095,.055,.48),gunMetal);revolverTop.position.set(0,.105,-.22);
+const revolverCylinder=vmMesh(new THREE.CylinderGeometry(.105,.105,.16,16),gunMetal);revolverCylinder.rotation.z=Math.PI/2;revolverCylinder.position.set(0,0,.03);
+const revolverFrame=vmMesh(new THREE.BoxGeometry(.15,.18,.24),gunDark);revolverFrame.position.set(0,-.03,.12);
+const revolverGrip=vmMesh(new THREE.BoxGeometry(.13,.32,.15),gripMat);revolverGrip.position.set(0,-.23,.20);revolverGrip.rotation.x=-.23;
+const revolverHand=vmMesh(new THREE.CapsuleGeometry(.105,.33,5,10),gloveMat);revolverHand.position.set(.01,-.32,.34);revolverHand.rotation.x=-.65;
+const revolverArm=vmMesh(new THREE.CapsuleGeometry(.13,.55,5,10),skinMat);revolverArm.position.set(.10,-.55,.55);revolverArm.rotation.x=-.85;
+revolverModel.add(revolverBarrel,revolverTop,revolverCylinder,revolverFrame,revolverGrip,revolverHand,revolverArm);
+viewModel.add(revolverModel);
+
+const knifeModel=new THREE.Group();
+knifeModel.position.set(.45,-.42,-.72);
+knifeModel.rotation.set(.05,-.25,-.18);
+const knifeBlade=vmMesh(new THREE.BoxGeometry(.055,.035,.62),bladeMat);knifeBlade.position.set(0,.05,-.30);
+const knifeTip=vmMesh(new THREE.ConeGeometry(.06,.22,4),bladeMat);knifeTip.rotation.x=-Math.PI/2;knifeTip.rotation.z=Math.PI/4;knifeTip.position.set(0,.05,-.72);
+const knifeGuard=vmMesh(new THREE.BoxGeometry(.26,.055,.06),gunMetal);knifeGuard.position.set(0,.03,.02);
+const knifeHandle=vmMesh(new THREE.CylinderGeometry(.07,.075,.34,12),gripMat);knifeHandle.rotation.x=Math.PI/2;knifeHandle.position.set(0,.02,.21);
+const knifeHand=vmMesh(new THREE.CapsuleGeometry(.105,.34,5,10),gloveMat);knifeHand.position.set(.02,-.20,.35);knifeHand.rotation.x=-.65;
+const knifeArm=vmMesh(new THREE.CapsuleGeometry(.13,.55,5,10),skinMat);knifeArm.position.set(.12,-.48,.57);knifeArm.rotation.x=-.82;
+knifeModel.add(knifeBlade,knifeTip,knifeGuard,knifeHandle,knifeHand,knifeArm);
+viewModel.add(knifeModel);
+let weaponKick=0,knifeSwing=0,viewBob=0;
 
 scene.add(new THREE.HemisphereLight(0xaedcff,0x17202b,1.45));
 const sun=new THREE.DirectionalLight(0xffffff,1.6); sun.position.set(8,15,5); sun.castShadow=true; sun.shadow.mapSize.set(2048,2048); sun.shadow.camera.left=-18; sun.shadow.camera.right=18; sun.shadow.camera.top=18; sun.shadow.camera.bottom=-18; scene.add(sun);
@@ -360,12 +410,12 @@ function buildArena(){
 }
 
 const enemy=new THREE.Group();
-const enemyBody=new THREE.Mesh(new THREE.CapsuleGeometry(.34,.85,5,10),new THREE.MeshStandardMaterial({color:0xe84d55,roughness:.55})); enemyBody.position.y=1.0; enemyBody.castShadow=true; enemyBody.userData.part='body';
-const enemyHead=new THREE.Mesh(new THREE.SphereGeometry(.25,18,12),new THREE.MeshStandardMaterial({color:0xffb0a3,roughness:.6})); enemyHead.position.y=1.76; enemyHead.castShadow=true; enemyHead.userData.part='head';
-const enemyGun=new THREE.Mesh(new THREE.BoxGeometry(.12,.12,.7),new THREE.MeshStandardMaterial({color:0x1b222a,metalness:.5,roughness:.4})); enemyGun.position.set(.28,1.24,-.28);
+const enemyBody=new THREE.Mesh(new THREE.CapsuleGeometry(.235,.90,5,10),new THREE.MeshStandardMaterial({color:0xe84d55,roughness:.55})); enemyBody.position.y=1.0; enemyBody.castShadow=true; enemyBody.userData.part='body';
+const enemyHead=new THREE.Mesh(new THREE.SphereGeometry(.19,18,12),new THREE.MeshStandardMaterial({color:0xffb0a3,roughness:.6})); enemyHead.position.y=1.76; enemyHead.castShadow=true; enemyHead.userData.part='head';
+const enemyGun=new THREE.Mesh(new THREE.BoxGeometry(.12,.12,.7),new THREE.MeshStandardMaterial({color:0x1b222a,metalness:.5,roughness:.4})); enemyGun.position.set(.21,1.24,-.28);
 enemy.add(enemyBody,enemyHead,enemyGun); scene.add(enemy);
 
-const player={pos:new THREE.Vector3(0,PLAYER_EYE,7.2),vel:new THREE.Vector3(),verticalVelocity:0,onGround:true,health:100,ammo:MAG_SIZE,reloading:false,reloadTimer:0,lastShot:99,fireCd:0,dashCd:0,dashTimer:0,dashRecovery:0,crouchAmount:0,crouching:false,alive:true};
+const player={pos:new THREE.Vector3(0,PLAYER_EYE,7.2),vel:new THREE.Vector3(),verticalVelocity:0,onGround:true,health:100,ammo:MAG_SIZE,reloading:false,reloadTimer:0,lastShot:99,fireCd:0,dashCd:0,dashTimer:0,dashRecovery:0,crouchAmount:0,crouching:false,weapon:'revolver',knifeCd:0,alive:true};
 const ai={health:100,alive:true,vel:new THREE.Vector3(),lastShot:99,fireCd:0,reloading:false,reloadTimer:0,ammo:MAG_SIZE,decision:0,strafe:1,target:new THREE.Vector3(),seenTime:0,heardPosition:new THREE.Vector3(),heardTimer:0};
 let yaw=0,pitch=0,keys={},playing=false,paused=false,roundEnding=false,blueWins=0,redWins=0,round=1,messageTimer=0,hitTimer=0,damageTimer=0,shotRecoil=0;
 let playerStepTimer=0,enemyStepTimer=0,intentionalPointerUnlock=false;
@@ -373,15 +423,17 @@ let selectedDifficulty='normal';
 const DIFFICULTIES={
   easy:{label:'Easy',hitMoving:.20,hitStill:.48,headChance:.18,fireDelay:1.05,reaction:.55,shootChance:.58,hearingTime:1.8,hearingSpeed:2.05,seenSpeed:1.9,decisionMin:.85,decisionRandom:.85},
   normal:{label:'Normal',hitMoving:.38,hitStill:.72,headChance:.50,fireDelay:.75,reaction:.25,shootChance:.85,hearingTime:2.8,hearingSpeed:2.5,seenSpeed:2.2,decisionMin:.65,decisionRandom:.70},
-  hard:{label:'Hard',hitMoving:.70,hitStill:.94,headChance:.82,fireDelay:.48,reaction:.08,shootChance:.98,hearingTime:5.5,hearingSpeed:3.45,seenSpeed:3.0,decisionMin:.25,decisionRandom:.30}
+  hard:{label:'Hard',hitMoving:.70,hitStill:.94,headChance:.82,fireDelay:.48,reaction:.08,shootChance:.98,hearingTime:5.5,hearingSpeed:3.45,seenSpeed:3.0,decisionMin:.25,decisionRandom:.30},
+  extra:{label:'Extra',hitMoving:1,hitStill:1,headChance:1,fireDelay:.34,reaction:0,shootChance:1,hearingTime:7,hearingSpeed:4.0,seenSpeed:3.4,decisionMin:.12,decisionRandom:.12,instantHead:true}
 };
 let audioContext=null;
 const clock=new THREE.Clock(); const raycaster=new THREE.Raycaster();
 const tracers=[];
+const isTouchDevice=matchMedia('(pointer:coarse)').matches||navigator.maxTouchPoints>0;
 
 const DEFAULT_BINDINGS={
   forward:['KeyW','ArrowUp'],backward:['KeyS','ArrowDown'],left:['KeyA','ArrowLeft'],right:['KeyD','ArrowRight'],
-  shoot:['Mouse0',''],reload:['KeyR',''],walk:['ShiftLeft','ShiftRight'],crouch:['KeyC',''],jump:['Space',''],dash:['ControlLeft','ControlRight'],pause:['Escape','KeyP']
+  shoot:['Mouse0',''],reload:['KeyR',''],walk:['ShiftLeft','ShiftRight'],crouch:['KeyC',''],jump:['Space',''],knife:['ControlLeft','ControlRight'],weapon:['KeyQ',''],pause:['Escape','KeyP']
 };
 const DEFAULT_SETTINGS={sensitivity:100,crosshairColor:'#f4fbff',crosshairLength:8,crosshairThickness:2,crosshairGap:5,crosshairDot:true};
 const BINDINGS_STORAGE_KEY='tacticalDuelKeyBindingsV2';
@@ -395,7 +447,7 @@ let settingsReturnScreen='start';
 function normalizeBindings(saved){
   const result={};
   for(const [action,defaults] of Object.entries(DEFAULT_BINDINGS)){
-    const value=saved?.[action];
+    const value=saved?.[action] ?? (action==='knife' ? saved?.dash : undefined);
     if(Array.isArray(value))result[action]=[value[0]||'',value[1]||''];
     else if(typeof value==='string')result[action]=[value,defaults[1]||''];
     else result[action]=[...defaults];
@@ -419,7 +471,7 @@ function bindingLabel(code){
 }
 function updateCompactInstructions(){
   const label=a=>bindings[a].filter(Boolean).map(bindingLabel).join(' / ')||'未設定';
-  compactInstructions.innerHTML=`移動：${label('forward')}・${label('backward')}・${label('left')}・${label('right')}<br>射撃：${label('shoot')}　リロード：${label('reload')}<br>低速歩行：${label('walk')}　しゃがみ：${label('crouch')}<br>ジャンプ：${label('jump')}　ダッシュ：${label('dash')}　ポーズ：${label('pause')}`;
+  compactInstructions.innerHTML=`移動：${label('forward')}・${label('backward')}・${label('left')}・${label('right')}<br>射撃：${label('shoot')}　リロード：${label('reload')}<br>低速歩行：${label('walk')}　しゃがみ：${label('crouch')}<br>ジャンプ：${label('jump')}　ナイフ：${label('knife')}　武器：${label('weapon')}　ポーズ：${label('pause')}`;
 }
 function updateBindingUI(){
   for(const button of keybindButtons){
@@ -646,17 +698,17 @@ function collides(x,z,r=PLAYER_RADIUS){
 }
 function moveCircle(pos,dx,dz,r=PLAYER_RADIUS){if(!collides(pos.x+dx,pos.z,r))pos.x+=dx;if(!collides(pos.x,pos.z+dz,r))pos.z+=dz;}
 function showMessage(text,time=1.2){messageEl.textContent=text;messageEl.style.opacity='1';messageTimer=time;}
-function updateHUD(){healthEl.textContent=Math.max(0,Math.ceil(player.health));healthFill.style.width=`${Math.max(0,player.health)}%`;ammoEl.textContent=player.reloading?`… / ${MAG_SIZE}`:`${player.ammo} / ${MAG_SIZE}`;scoreBlue.textContent=blueWins;scoreRed.textContent=redWins;roundText.textContent=`ROUND ${round}`;}
+function updateHUD(){healthEl.textContent=Math.max(0,Math.ceil(player.health));healthFill.style.width=`${Math.max(0,player.health)}%`;ammoEl.textContent=player.weapon==='knife'?'ナイフ':(player.reloading?`… / ${MAG_SIZE}`:`${player.ammo} / ${MAG_SIZE}`);scoreBlue.textContent=blueWins;scoreRed.textContent=redWins;roundText.textContent=`ROUND ${round}`;}
 function updateCrosshair(gap){const l=gameSettings.crosshairLength,t=gameSettings.crosshairThickness,c=gameSettings.crosshairColor;Object.assign(cross.top.style,{width:`${t}px`,height:`${l}px`,left:`${-t/2}px`,top:'0',background:c,transform:`translateY(${-gap-l}px)`});Object.assign(cross.bottom.style,{width:`${t}px`,height:`${l}px`,left:`${-t/2}px`,top:'0',background:c,transform:`translateY(${gap}px)`});Object.assign(cross.left.style,{height:`${t}px`,width:`${l}px`,top:`${-t/2}px`,left:'0',background:c,transform:`translateX(${-gap-l}px)`});Object.assign(cross.right.style,{height:`${t}px`,width:`${l}px`,top:`${-t/2}px`,left:'0',background:c,transform:`translateX(${gap}px)`});const d=Math.max(2,t+1);Object.assign(cross.dot.style,{width:`${d}px`,height:`${d}px`,left:`${-d/2}px`,top:`${-d/2}px`,background:c,display:gameSettings.crosshairDot?'block':'none'});}
-function resetRound(){touchActions.clear();document.querySelectorAll('.touchBtn.active').forEach(b=>b.classList.remove('active'));clearTracers();paused=false;pauseScreen.classList.add('hidden');playerStepTimer=0;enemyStepTimer=0;buildArena();player.pos.set(0,PLAYER_EYE,7.2);player.vel.set(0,0,0);player.verticalVelocity=0;player.onGround=true;player.health=100;player.ammo=MAG_SIZE;player.reloading=false;player.reloadTimer=0;player.lastShot=99;player.fireCd=0;player.dashCd=0;player.dashTimer=0;player.dashRecovery=0;player.crouchAmount=0;player.crouching=false;player.alive=true;enemy.position.set(0,0,-7.2);ai.health=100;ai.alive=true;ai.vel.set(0,0,0);ai.lastShot=99;ai.fireCd=.8;ai.ammo=MAG_SIZE;ai.reloading=false;ai.reloadTimer=0;ai.decision=0;ai.heardTimer=0;ai.heardPosition.set(0,0,0);enemy.visible=true;yaw=0;pitch=0;camera.rotation.set(0,0,0);roundEnding=false;showMessage(`ROUND ${round}`,1.1);updateHUD();}
-function startMatch(){ensureAudio();paused=false;settingsScreen.classList.add('hidden');pauseScreen.classList.add('hidden');blueWins=0;redWins=0;round=1;endScreen.classList.add('hidden');startScreen.classList.add('hidden');playing=true;resetRound();renderer.domElement.requestPointerLock();}
+function resetRound(){touchActions.clear();document.querySelectorAll('.touchBtn.active').forEach(b=>b.classList.remove('active'));clearTracers();paused=false;pauseScreen.classList.add('hidden');playerStepTimer=0;enemyStepTimer=0;buildArena();player.pos.set(0,PLAYER_EYE,7.2);player.vel.set(0,0,0);player.verticalVelocity=0;player.onGround=true;player.health=100;player.ammo=MAG_SIZE;player.reloading=false;player.reloadTimer=0;player.lastShot=99;player.fireCd=0;player.dashCd=0;player.dashTimer=0;player.dashRecovery=0;player.crouchAmount=0;player.crouching=false;player.weapon='revolver';player.knifeCd=0;player.alive=true;enemy.position.set(0,0,-7.2);ai.health=100;ai.alive=true;ai.vel.set(0,0,0);ai.lastShot=99;ai.fireCd=selectedDifficulty==='extra'?0:.8;ai.ammo=MAG_SIZE;ai.reloading=false;ai.reloadTimer=0;ai.decision=0;ai.heardTimer=0;ai.heardPosition.set(0,0,0);enemy.visible=true;yaw=0;pitch=0;camera.rotation.set(0,0,0);roundEnding=false;showMessage(`ROUND ${round}`,1.1);updateHUD();}
+function startMatch(){ensureAudio();paused=false;settingsScreen.classList.add('hidden');pauseScreen.classList.add('hidden');blueWins=0;redWins=0;round=1;endScreen.classList.add('hidden');startScreen.classList.add('hidden');playing=true;resetRound();if(!isTouchDevice)renderer.domElement.requestPointerLock();}
 function endRound(playerWon){if(roundEnding)return;roundEnding=true;player.alive=false;ai.alive=false;if(playerWon){blueWins++;showMessage('ROUND WIN',1.8)}else{redWins++;showMessage('ROUND LOST',1.8)}updateHUD();setTimeout(()=>{if(blueWins>=MAX_WINS||redWins>=MAX_WINS){playing=false;paused=false;pauseScreen.classList.add('hidden');intentionalPointerUnlock=true;document.exitPointerLock();finalResult.textContent=blueWins>redWins?'VICTORY':'DEFEAT';finalResult.style.color=blueWins>redWins?'#74cdff':'#ff6969';finalScore.textContent=`${blueWins} - ${redWins}`;endScreen.classList.remove('hidden');}else{round++;resetRound();}},1900)}
-function startReload(entity,isPlayer){if(entity.reloading||entity.ammo===MAG_SIZE||!entity.alive)return;entity.reloading=true;entity.reloadTimer=RELOAD_TIME;if(isPlayer)showMessage('RELOADING',.55)}
+function startReload(entity,isPlayer){if(isPlayer&&player.weapon==='knife')return;if(entity.reloading||entity.ammo===MAG_SIZE||!entity.alive)return;entity.reloading=true;entity.reloadTimer=RELOAD_TIME;if(isPlayer)showMessage('RELOADING',.55)}
 function spreadForPlayer(speed){let deg=.08;if(speed>.08)deg=6+Math.min(10,speed*1.4);if(player.dashRecovery>0)deg+=8*(player.dashRecovery/.65);if(player.lastShot<RAPID_TIME)deg=Math.max(deg,18+Math.random()*12);deg+=shotRecoil*.5;return THREE.MathUtils.degToRad(deg);}
 function randomDirection(base,spread){const e=new THREE.Euler(pitch+(Math.random()-.5)*spread,yaw+(Math.random()-.5)*spread,0,'YXZ');return new THREE.Vector3(0,0,-1).applyEuler(e).normalize();}
-function playerShoot(){if(!playing||roundEnding||!player.alive||player.reloading||player.fireCd>0||player.ammo<=0||document.pointerLockElement!==renderer.domElement)return;if(player.ammo<=0){startReload(player,true);return}const speed=Math.hypot(player.vel.x,player.vel.z);const spread=spreadForPlayer(speed);const dir=randomDirection(camera.rotation,spread);playGunshot(player.pos,false);player.ammo--;player.fireCd=.14;player.lastShot=0;shotRecoil=Math.min(22,shotRecoil+9);camera.rotation.x=Math.min(1.45,camera.rotation.x+.012);raycaster.set(camera.position,dir);const targets=[...obstacleMeshes,enemyBody,enemyHead];const hits=raycaster.intersectObjects(targets,false);const cameraRight=new THREE.Vector3(1,0,0).applyQuaternion(camera.quaternion);const cameraDown=new THREE.Vector3(0,-1,0).applyQuaternion(camera.quaternion);const tracerStart=camera.position.clone().add(dir.clone().multiplyScalar(.6)).add(cameraRight.multiplyScalar(.22)).add(cameraDown.multiplyScalar(.18));const tracerEnd=hits.length?hits[0].point.clone():camera.position.clone().add(dir.clone().multiplyScalar(45));createTracer(tracerStart,tracerEnd,0xfff2a0);if(hits.length){const h=hits[0];if(h.object===enemyHead||h.object===enemyBody){const dmg=h.object===enemyHead?100:34;ai.health-=dmg;hitmarker.style.opacity='1';hitmarker.style.filter=h.object===enemyHead?'drop-shadow(0 0 5px #ff3434)':'none';hitTimer=.13;if(ai.health<=0){ai.health=0;enemy.visible=false;endRound(true)}}}if(player.ammo===0)showMessage('弾切れ：Rでリロード',.9);updateHUD();}
+function playerShoot(){if(player.weapon==='knife'){knifeAttack();return}if(!playing||roundEnding||!player.alive||player.reloading||player.fireCd>0||player.ammo<=0||(!isTouchDevice&&document.pointerLockElement!==renderer.domElement))return;if(player.ammo<=0){startReload(player,true);return}const speed=Math.hypot(player.vel.x,player.vel.z);const spread=spreadForPlayer(speed);const dir=randomDirection(camera.rotation,spread);playGunshot(player.pos,false);player.ammo--;player.fireCd=.14;player.lastShot=0;weaponKick=1;shotRecoil=Math.min(22,shotRecoil+9);camera.rotation.x=Math.min(1.45,camera.rotation.x+.012);raycaster.set(camera.position,dir);const targets=[...obstacleMeshes,enemyBody,enemyHead];const hits=raycaster.intersectObjects(targets,false);const cameraRight=new THREE.Vector3(1,0,0).applyQuaternion(camera.quaternion);const cameraDown=new THREE.Vector3(0,-1,0).applyQuaternion(camera.quaternion);const tracerStart=camera.position.clone().add(dir.clone().multiplyScalar(.6)).add(cameraRight.multiplyScalar(.22)).add(cameraDown.multiplyScalar(.18));const tracerEnd=hits.length?hits[0].point.clone():camera.position.clone().add(dir.clone().multiplyScalar(45));createTracer(tracerStart,tracerEnd,0xfff2a0);if(hits.length){const h=hits[0];if(h.object===enemyHead||h.object===enemyBody){const dmg=h.object===enemyHead?100:34;ai.health-=dmg;hitmarker.style.opacity='1';hitmarker.style.filter=h.object===enemyHead?'drop-shadow(0 0 5px #ff3434)':'none';hitTimer=.13;if(ai.health<=0){ai.health=0;enemy.visible=false;endRound(true)}}}if(player.ammo===0)showMessage('弾切れ：Rでリロード',.9);updateHUD();}
 function lineOfSight(){const from=enemy.position.clone().add(new THREE.Vector3(0,1.55,0));const to=camera.position.clone();const dir=to.clone().sub(from);const dist=dir.length();raycaster.set(from,dir.normalize());const hit=raycaster.intersectObjects(obstacleMeshes,false)[0];return !hit||hit.distance>dist;}
-function enemyShoot(){if(!ai.alive||ai.reloading||ai.fireCd>0||ai.ammo<=0)return;const cfg=DIFFICULTIES[selectedDifficulty];const rapid=ai.lastShot<RAPID_TIME;playGunshot(enemy.position,true);ai.ammo--;ai.fireCd=cfg.fireDelay;ai.lastShot=0;const moving=Math.hypot(ai.vel.x,ai.vel.z)>.2;let hitChance=moving?cfg.hitMoving:cfg.hitStill;if(rapid)hitChance*=.55;const headChance=cfg.headChance;const didHit=Math.random()<hitChance;const aimedAtHead=didHit&&Math.random()<headChance;const tracerStart=enemy.position.clone().add(new THREE.Vector3(0,1.32,0));const tracerTarget=camera.position.clone();if(aimedAtHead)tracerTarget.y+=.12;else tracerTarget.y-=.25;if(!didHit){tracerTarget.x+=(Math.random()<.5?-1:1)*(1.1+Math.random()*1.8);tracerTarget.y+=(Math.random()-.5)*1.1;tracerTarget.z+=(Math.random()-.5)*1.2;}const tracerDir=tracerTarget.clone().sub(tracerStart).normalize();raycaster.set(tracerStart,tracerDir);const wallHit=raycaster.intersectObjects(obstacleMeshes,false)[0];const tracerEnd=wallHit?wallHit.point.clone():tracerStart.clone().add(tracerDir.multiplyScalar(45));createTracer(tracerStart,tracerEnd,0xff6b55);if(didHit){const dmg=aimedAtHead?100:25;player.health-=dmg;damageFlash.style.opacity='1';damageTimer=.12;if(player.health<=0){player.health=0;endRound(false)}}if(ai.ammo===0)startReload(ai,false);updateHUD();}
+function enemyShoot(){if(!ai.alive||ai.reloading||ai.fireCd>0||ai.ammo<=0)return;const cfg=DIFFICULTIES[selectedDifficulty];const rapid=ai.lastShot<RAPID_TIME;playGunshot(enemy.position,true);ai.ammo--;ai.fireCd=cfg.fireDelay;ai.lastShot=0;const moving=Math.hypot(ai.vel.x,ai.vel.z)>.2;let hitChance=moving?cfg.hitMoving:cfg.hitStill;if(rapid)hitChance*=.55;const headChance=cfg.headChance;const didHit=cfg.instantHead?true:Math.random()<hitChance;const playerJumping=!player.onGround||player.verticalVelocity>.12;const aimedAtHead=didHit&&(cfg.instantHead?!playerJumping:Math.random()<headChance);const tracerStart=enemy.position.clone().add(new THREE.Vector3(0,1.32,0));const tracerTarget=camera.position.clone();if(aimedAtHead)tracerTarget.y+=.12;else tracerTarget.y-=.25;if(!didHit){tracerTarget.x+=(Math.random()<.5?-1:1)*(1.1+Math.random()*1.8);tracerTarget.y+=(Math.random()-.5)*1.1;tracerTarget.z+=(Math.random()-.5)*1.2;}const tracerDir=tracerTarget.clone().sub(tracerStart).normalize();raycaster.set(tracerStart,tracerDir);const wallHit=raycaster.intersectObjects(obstacleMeshes,false)[0];const tracerEnd=wallHit?wallHit.point.clone():tracerStart.clone().add(tracerDir.multiplyScalar(45));createTracer(tracerStart,tracerEnd,0xff6b55);if(didHit){const dmg=aimedAtHead?100:25;player.health-=dmg;damageFlash.style.opacity='1';damageTimer=.12;if(player.health<=0){player.health=0;endRound(false)}}if(ai.ammo===0)startReload(ai,false);updateHUD();}
 function updatePlayer(dt){
   if(!player.alive)return;
   const forward=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));
@@ -676,7 +728,7 @@ function updatePlayer(dt){
   let max=4.2;
   if(walking)max=2.1;
   if(player.crouching)max=walking?1.25:1.65;
-  if(player.dashTimer>0)max=10.8;
+  if(player.weapon==='knife')max*=1.3;
 
   const desired=input.multiplyScalar(max);
   const accel=player.dashTimer>0?50:22;
@@ -710,9 +762,44 @@ function updatePlayer(dt){
   camera.position.y-=CROUCH_DROP*player.crouchAmount;
   camera.rotation.set(pitch,yaw,0,'YXZ');
 }
-function updateAI(dt){if(!ai.alive||roundEnding)return;const cfg=DIFFICULTIES[selectedDifficulty];ai.heardTimer=Math.max(0,ai.heardTimer-dt);const toPlayer=player.pos.clone().sub(enemy.position);toPlayer.y=0;const dist=toPlayer.length();const sees=lineOfSight();ai.seenTime=sees?ai.seenTime+dt:0;ai.decision-=dt;if(ai.decision<=0){ai.decision=cfg.decisionMin+Math.random()*cfg.decisionRandom;ai.strafe=Math.random()<.5?-1:1}let move=new THREE.Vector3();if(sees){const dir=toPlayer.clone().normalize();const side=new THREE.Vector3(-dir.z,0,dir.x).multiplyScalar(ai.strafe);if(dist>7)move.add(dir);if(dist<4.2)move.sub(dir);move.addScaledVector(side,.8);if(ai.seenTime>cfg.reaction&&Math.random()<cfg.shootChance){move.multiplyScalar(.12);enemyShoot()}}else if(ai.heardTimer>0){const toSound=ai.heardPosition.clone().sub(enemy.position);toSound.y=0;if(toSound.length()>.65)move.copy(toSound.normalize());else ai.heardTimer=0}else{const center=new THREE.Vector3(0,0,0).sub(enemy.position).normalize();move.copy(center)}if(move.lengthSq()>0)move.normalize();const speed=sees?cfg.seenSpeed:ai.heardTimer>0?cfg.hearingSpeed:1.8;ai.vel.lerp(move.multiplyScalar(speed),1-Math.exp(-5*dt));moveCircle(enemy.position,ai.vel.x*dt,ai.vel.z*dt,.34);const aiSpeed=Math.hypot(ai.vel.x,ai.vel.z);if(aiSpeed>.45){enemyStepTimer-=dt;if(enemyStepTimer<=0){playFootstep(enemy.position,true);enemyStepTimer=.4}}else enemyStepTimer=Math.min(enemyStepTimer,.08);if(sees)enemy.lookAt(camera.position.x,camera.position.y,camera.position.z);else if(ai.heardTimer>0)enemy.lookAt(ai.heardPosition.x,1.25,ai.heardPosition.z);}
-function updateTimers(dt){player.fireCd=Math.max(0,player.fireCd-dt);player.lastShot+=dt;player.dashCd=Math.max(0,player.dashCd-dt);player.dashTimer=Math.max(0,player.dashTimer-dt);player.dashRecovery=Math.max(0,player.dashRecovery-dt);ai.fireCd=Math.max(0,ai.fireCd-dt);ai.lastShot+=dt;if(player.reloading){player.reloadTimer-=dt;if(player.reloadTimer<=0){player.reloading=false;player.ammo=MAG_SIZE;updateHUD()}}if(ai.reloading){ai.reloadTimer-=dt;if(ai.reloadTimer<=0){ai.reloading=false;ai.ammo=MAG_SIZE}}if(messageTimer>0){messageTimer-=dt;if(messageTimer<=0)messageEl.style.opacity='0'}if(hitTimer>0){hitTimer-=dt;if(hitTimer<=0)hitmarker.style.opacity='0'}if(damageTimer>0){damageTimer-=dt;if(damageTimer<=0)damageFlash.style.opacity='0'}const gap=gameSettings.crosshairGap+Math.min(25,Math.hypot(player.vel.x,player.vel.z)*3.2+player.dashRecovery*18+shotRecoil);updateCrosshair(gap)}
-function dash(){if(!playing||!player.alive||player.dashCd>0||player.reloading||actionPressed('crouch'))return;player.dashTimer=.18;player.dashCd=3.2;player.dashRecovery=.65;shotRecoil=Math.max(shotRecoil,14)}
+function updateAI(dt){if(!ai.alive||roundEnding)return;const cfg=DIFFICULTIES[selectedDifficulty];ai.heardTimer=Math.max(0,ai.heardTimer-dt);const toPlayer=player.pos.clone().sub(enemy.position);toPlayer.y=0;const dist=toPlayer.length();const sees=lineOfSight();ai.seenTime=sees?ai.seenTime+dt:0;ai.decision-=dt;if(ai.decision<=0){ai.decision=cfg.decisionMin+Math.random()*cfg.decisionRandom;ai.strafe=Math.random()<.5?-1:1}let move=new THREE.Vector3();if(sees){const dir=toPlayer.clone().normalize();const side=new THREE.Vector3(-dir.z,0,dir.x).multiplyScalar(ai.strafe);if(dist>7)move.add(dir);if(dist<4.2)move.sub(dir);move.addScaledVector(side,.8);if(ai.seenTime>cfg.reaction&&Math.random()<cfg.shootChance){enemyShoot()}}else if(ai.heardTimer>0){const toSound=ai.heardPosition.clone().sub(enemy.position);toSound.y=0;if(toSound.length()>.65)move.copy(toSound.normalize());else ai.heardTimer=0}else{const center=new THREE.Vector3(0,0,0).sub(enemy.position).normalize();move.copy(center)}if(move.lengthSq()>0)move.normalize();const speed=sees?cfg.seenSpeed:ai.heardTimer>0?cfg.hearingSpeed:1.8;ai.vel.lerp(move.multiplyScalar(speed),1-Math.exp(-5*dt));moveCircle(enemy.position,ai.vel.x*dt,ai.vel.z*dt,.25);const aiSpeed=Math.hypot(ai.vel.x,ai.vel.z);if(aiSpeed>.45){enemyStepTimer-=dt;if(enemyStepTimer<=0){playFootstep(enemy.position,true);enemyStepTimer=.4}}else enemyStepTimer=Math.min(enemyStepTimer,.08);if(sees)enemy.lookAt(camera.position.x,camera.position.y,camera.position.z);else if(ai.heardTimer>0)enemy.lookAt(ai.heardPosition.x,1.25,ai.heardPosition.z);}
+function updateTimers(dt){player.fireCd=Math.max(0,player.fireCd-dt);player.lastShot+=dt;player.dashCd=Math.max(0,player.dashCd-dt);player.dashTimer=Math.max(0,player.dashTimer-dt);player.dashRecovery=Math.max(0,player.dashRecovery-dt);player.knifeCd=Math.max(0,player.knifeCd-dt);ai.fireCd=Math.max(0,ai.fireCd-dt);ai.lastShot+=dt;if(player.reloading){player.reloadTimer-=dt;if(player.reloadTimer<=0){player.reloading=false;player.ammo=MAG_SIZE;updateHUD()}}if(ai.reloading){ai.reloadTimer-=dt;if(ai.reloadTimer<=0){ai.reloading=false;ai.ammo=MAG_SIZE}}if(messageTimer>0){messageTimer-=dt;if(messageTimer<=0)messageEl.style.opacity='0'}if(hitTimer>0){hitTimer-=dt;if(hitTimer<=0)hitmarker.style.opacity='0'}if(damageTimer>0){damageTimer-=dt;if(damageTimer<=0)damageFlash.style.opacity='0'}const gap=gameSettings.crosshairGap+Math.min(25,Math.hypot(player.vel.x,player.vel.z)*3.2+player.dashRecovery*18+shotRecoil);updateCrosshair(gap)}
+function equipKnife(){
+  if(!playing||!player.alive||roundEnding||player.weapon==='knife')return;
+  player.weapon='knife';player.reloading=false;
+  showMessage('ナイフ装備：移動速度 1.3倍',.8);updateHUD();
+}
+function equipWeapon(){
+  if(!playing||!player.alive||roundEnding||player.weapon==='revolver')return;
+  player.weapon='revolver';showMessage('リボルバー装備',.65);updateHUD();
+}
+function knifeAttack(){
+  if(!playing||paused||roundEnding||!player.alive||player.weapon!=='knife'||player.knifeCd>0)return;
+  player.knifeCd=.48;knifeSwing=1;playGunshot(player.pos,false);
+  const dir=new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion).normalize();
+  raycaster.set(camera.position,dir);raycaster.far=2.25;
+  const hits=raycaster.intersectObjects([...obstacleMeshes,enemyBody,enemyHead],false);
+  raycaster.far=Infinity;
+  const end=hits.length?hits[0].point.clone():camera.position.clone().add(dir.clone().multiplyScalar(2.25));
+  createTracer(camera.position.clone().add(dir.clone().multiplyScalar(.35)),end,0xddeeff);
+  if(hits.length&&(hits[0].object===enemyBody||hits[0].object===enemyHead)){
+    ai.health-=50;hitmarker.style.opacity='1';hitmarker.style.filter='drop-shadow(0 0 5px #fff)';hitTimer=.14;
+    if(ai.health<=0){ai.health=0;enemy.visible=false;endRound(true)}
+  }
+}
+function updateViewModel(dt){
+  revolverModel.visible=playing&&player.alive&&player.weapon==='revolver';
+  knifeModel.visible=playing&&player.alive&&player.weapon==='knife';
+  weaponKick=THREE.MathUtils.damp(weaponKick,0,18,dt);
+  knifeSwing=THREE.MathUtils.damp(knifeSwing,0,13,dt);
+  const speed=Math.hypot(player.vel.x,player.vel.z);
+  viewBob+=dt*(4.5+speed*1.25);
+  const bob=playing&&!paused&&player.onGround?Math.sin(viewBob)*Math.min(.018,speed*.004):0;
+  revolverModel.position.set(.47,-.43+bob,-.88+weaponKick*.09);
+  revolverModel.rotation.set(-.05-weaponKick*.24,-.12,weaponKick*.07);
+  knifeModel.position.set(.45,-.42+bob,-.72);
+  knifeModel.rotation.set(.05-knifeSwing*.55,-.25-knifeSwing*.35,-.18-knifeSwing*.85);
+}
 function jump(){if(!playing||!player.alive||!player.onGround||player.reloading)return;player.onGround=false;player.verticalVelocity=JUMP_SPEED;shotRecoil=Math.max(shotRecoil,8)}
 
 keybindButtons.forEach(button=>button.addEventListener('click',e=>{e.stopPropagation();beginBinding(button.dataset.action,Number(button.dataset.slot))}));
@@ -741,7 +828,8 @@ window.addEventListener('keydown',e=>{
   if(e.repeat)return;
   if(actions.includes('reload'))startReload(player,true);
   if(actions.includes('jump')){e.preventDefault();jump()}
-  if(actions.includes('dash')){e.preventDefault();dash()}
+  if(actions.includes('knife')){e.preventDefault();equipKnife()}
+  if(actions.includes('weapon')){e.preventDefault();equipWeapon()}
   if(actions.includes('shoot'))playerShoot();
 });
 window.addEventListener('keyup',e=>keys[e.code]=false);
@@ -758,7 +846,8 @@ window.addEventListener('mousedown',e=>{
   if(document.pointerLockElement===renderer.domElement){
     if(actions.includes('shoot'))playerShoot();
     if(actions.includes('jump'))jump();
-    if(actions.includes('dash'))dash();
+    if(actions.includes('knife'))equipKnife();
+    if(actions.includes('weapon'))equipWeapon();
     if(actions.includes('reload'))startReload(player,true);
     if(actions.includes('pause'))pauseGame();
   }else if(playing){renderer.domElement.requestPointerLock();}
@@ -780,7 +869,8 @@ function triggerTouchAction(action){
   if(action==='shoot')playerShoot();
   else if(action==='reload')startReload(player,true);
   else if(action==='jump')jump();
-  else if(action==='dash')dash();
+  else if(action==='knife')equipKnife();
+  else if(action==='weapon')equipWeapon();
   else if(action==='pause')pauseGame();
 }
 for(const button of touchButtons){
@@ -796,18 +886,28 @@ const endLook=e=>{if(e.pointerId===lookPointer)lookPointer=null};lookPad.addEven
 difficultyButtons.forEach(button=>button.addEventListener('click',()=>{
   selectedDifficulty=button.dataset.difficulty;
   difficultyButtons.forEach(b=>b.classList.toggle('selected',b===button));
-  const descriptions={
-    easy:'初心者向け。敵の命中率・反応速度・ヘッドショット率が低めです。',
-    normal:'標準的な強さ。足音を追跡し、停止時は高い精度で射撃します。',
-    hard:'上級者向け。足音を長時間・高精度で追跡し、反応が速く、命中率とヘッドショット率が非常に高いです。'
-  };
-  difficultyDescription.textContent=descriptions[selectedDifficulty];
 }));
+function returnHome(){
+  touchActions.clear();
+  document.querySelectorAll('.touchBtn.active').forEach(b=>b.classList.remove('active'));
+  playing=false;paused=false;roundEnding=false;keys={};
+  clearTracers();
+  pauseScreen.classList.add('hidden');
+  endScreen.classList.add('hidden');
+  settingsScreen.classList.add('hidden');
+  startScreen.classList.remove('hidden');
+  intentionalPointerUnlock=true;
+  if(document.pointerLockElement)document.exitPointerLock();
+  player.health=100;player.ammo=MAG_SIZE;player.reloading=false;player.weapon='revolver';player.alive=true;
+  enemy.visible=true;updateHUD();
+}
 startButton.addEventListener('click',startMatch);
 restartButton.addEventListener('click',startMatch);
+pauseHomeButton.addEventListener('click',returnHome);
+endHomeButton.addEventListener('click',returnHome);
 resumeButton.addEventListener('click',resumeGame);
 
-function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.033);if(playing&&!paused){updateTracers(dt)}if(playing&&!paused&&!roundEnding){updateTimers(dt);updatePlayer(dt);updateAI(dt)}renderer.render(scene,camera)}
+function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.033);if(playing&&!paused){updateTracers(dt)}if(playing&&!paused&&!roundEnding){updateTimers(dt);updatePlayer(dt);updateAI(dt)}updateViewModel(dt);renderer.render(scene,camera)}
 buildArena();resizeGame();camera.position.copy(player.pos);updateHUD();updateBindingUI();applyGameSettings();loop();
 </script>
 </body>
