@@ -161,6 +161,7 @@ button:hover{filter:brightness(1.12)}
   .actionCluster .touchBtn{height:37px;font-size:9px}
   .actionCluster .shoot{height:43px;font-size:13px}
 }
+.versionTag{margin-top:14px;text-align:center;font-size:13px;font-weight:800;letter-spacing:.12em;color:#9eb4c8;opacity:.9}
 @media(max-width:700px){#settingsScreen{padding-top:34px;padding-bottom:90px}.panel{padding:20px 15px}.keybindGrid{grid-template-columns:1fr}.instructions{font-size:14px}#healthBox{width:180px;left:12px}.screen{align-items:flex-start}.notice{font-size:12px}.settingsKeyGrid{grid-template-columns:1fr 1fr}.settingsKeyGrid .label{grid-column:1/-1;margin-top:5px}.settingRow{grid-template-columns:1fr}.settingValue{text-align:left}}
 </style>
 </head>
@@ -220,6 +221,7 @@ button:hover{filter:brightness(1.12)}
     </div>
     <button id="startButton">ゲームスタート</button>
     <button id="startSettingsButton" class="settingsButton">設定を開く</button>
+    <div class="versionTag">Ver.1.2.2</div>
     <div class="instructions" id="compactInstructions"></div>
     <div class="notice">
       停止してから撃つと高精度になります。通常移動では足音が鳴り、敵もその方向を調べに来ます。Shiftを押しながら歩くと足音は鳴りません。しゃがみ中は視点が下がり、移動速度が遅くなります。移動撃ち、前の弾から0.4秒未満の連射は大きく外れます。リボルバーは6発、リロードは1.5秒です。ヘッドショットは一撃、胴体は34ダメージ。5ラウンド先取です。<br><br>
@@ -265,11 +267,13 @@ button:hover{filter:brightness(1.12)}
     <div class="settingsFooter"><button id="resetSettingsButton">すべて初期設定に戻す</button></div>
   </div>
 </div>
-<div id="endScreen" class="screen hidden"><div class="panel"><h1 id="finalResult">VICTORY</h1><div id="finalScore" class="subtitle" style="font-size:28px"></div><button id="restartButton">もう一度遊ぶ</button><button id="endHomeButton" class="settingsButton">ホームに戻る</button></div></div>
+<div id="endScreen" class="screen hidden"><div class="panel"><h1 id="finalResult">VICTORY</h1><div id="finalScore" class="subtitle" style="font-size:28px"></div><div class="versionTag">Ver.1.2.2</div><button id="restartButton">もう一度遊ぶ</button><button id="endHomeButton" class="settingsButton">ホームに戻る</button></div></div>
 
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js';
 
+const GAME_VERSION='1.2.2';
+document.querySelectorAll('.versionTag').forEach(el=>el.textContent=`Ver.${GAME_VERSION}`);
 const MAX_WINS=5, MAG_SIZE=6, RAPID_TIME=.4, RELOAD_TIME=1.5;
 const BASE_MOUSE_SENSITIVITY=.00154; // 感度100%時
 const PLAYER_RADIUS=.25, PLAYER_EYE=1.62, CROUCH_DROP=.62, ARENA=18, GRAVITY=18, JUMP_SPEED=6.2;
@@ -429,7 +433,7 @@ const enemyGun=new THREE.Mesh(new THREE.BoxGeometry(.12,.12,.7),new THREE.MeshSt
 enemy.add(enemyBody,enemyHead,enemyGun); scene.add(enemy);
 
 const player={pos:new THREE.Vector3(0,PLAYER_EYE,7.2),vel:new THREE.Vector3(),verticalVelocity:0,onGround:true,health:100,ammo:MAG_SIZE,reloading:false,reloadTimer:0,lastShot:99,fireCd:0,dashCd:0,dashTimer:0,dashRecovery:0,crouchAmount:0,crouching:false,weapon:'revolver',weaponDrawTimer:0,weaponDrawDuration:.58,knifeCd:0,alive:true};
-const ai={health:100,alive:true,vel:new THREE.Vector3(),lastShot:99,fireCd:0,reloading:false,reloadTimer:0,ammo:MAG_SIZE,decision:0,strafe:1,target:new THREE.Vector3(),seenTime:0,heardPosition:new THREE.Vector3(),heardTimer:0,lastKnownPosition:new THREE.Vector3(),hasLastKnown:false,lookDirection:new THREE.Vector3(0,0,1),wallbangCd:0,strategy:'direct',strategyTimer:0,fastPeekTimer:0,peekNoiseTimer:0,jumpVelocity:0,onGround:true};
+const ai={health:100,alive:true,vel:new THREE.Vector3(),lastShot:99,fireCd:0,reloading:false,reloadTimer:0,ammo:MAG_SIZE,decision:0,strafe:1,target:new THREE.Vector3(),seenTime:0,heardPosition:new THREE.Vector3(),heardTimer:0,lastKnownPosition:new THREE.Vector3(),hasLastKnown:false,lookDirection:new THREE.Vector3(0,0,1),wallbangCd:0,strategy:'direct',strategyTimer:0,fastPeekTimer:0,peekNoiseTimer:0,jumpVelocity:0,onGround:true,feintPhase:0,attackLane:0};
 let yaw=0,pitch=0,keys={},playing=false,paused=false,roundEnding=false,blueWins=0,redWins=0,round=1,messageTimer=0,hitTimer=0,damageTimer=0,shotRecoil=0;
 let totalDamageDealt=0,totalDamageTaken=0;
 let playerStepTimer=0,enemyStepTimer=0,intentionalPointerUnlock=false;
@@ -885,41 +889,60 @@ function tacticalCoverPoints(){
   }
   return points;
 }
-function chooseTacticalTarget(reference,preferFar=false){
+function chooseTacticalTarget(reference,preferFar=false,lane=0){
   const points=tacticalCoverPoints();
   if(!points.length)return reference.clone();
+  const enemyToReference=reference.clone().sub(enemy.position).setY(0);
+  if(enemyToReference.lengthSq()<.01)enemyToReference.set(0,0,-1);
+  enemyToReference.normalize();
+  const right=new THREE.Vector3(-enemyToReference.z,0,enemyToReference.x);
   let best=points[0],bestScore=-Infinity;
   for(const point of points){
     const fromEnemy=point.distanceTo(enemy.position);
     if(fromEnemy<1.4)continue;
     const fromReference=point.distanceTo(reference);
-    const fromPlayer=selectedDifficulty==='michiko'?point.distanceTo(player.pos):0;
-    let score=Math.random()*4+fromEnemy*.15;
-    if(preferFar)score+=fromReference*1.2+fromPlayer*.35;
-    else score-=fromReference*.18;
-    // 現在いる側と違う壁・角を選びやすくする
-    if(Math.sign(point.x)!==Math.sign(enemy.position.x))score+=1.8;
-    if(Math.sign(point.z)!==Math.sign(enemy.position.z))score+=1.2;
+    const offset=point.clone().sub(reference).setY(0);
+    const lateral=offset.dot(right);
+    const depth=offset.dot(enemyToReference);
+    let score=Math.random()*3.4+fromEnemy*.13;
+    if(preferFar)score+=fromReference*1.05;
+    else score-=fromReference*.16;
+    // lane=-1 は左、lane=1 は右、lane=2 は奥側から回り込む
+    if(lane===-1)score+=Math.max(0,-lateral)*1.55-Math.max(0,lateral)*.55;
+    if(lane===1)score+=Math.max(0,lateral)*1.55-Math.max(0,-lateral)*.55;
+    if(lane===2)score+=Math.max(0,depth)*1.6+Math.abs(lateral)*.42;
+    // 同じ方向ばかりにならないよう、現在位置と反対側の角を少し優遇
+    if(Math.sign(point.x)!==Math.sign(enemy.position.x))score+=1.15;
+    if(Math.sign(point.z)!==Math.sign(enemy.position.z))score+=.8;
     if(score>bestScore){bestScore=score;best=point;}
   }
   return best.clone();
 }
 function beginEnemyTactic(cfg,reference){
   const roll=Math.random();
-  const preferFar=Math.random()<.58;
-  if(roll<cfg.jumpPeekChance){
+  const preferFar=Math.random()<.68;
+  ai.feintPhase=0;
+  // 左右・奥側をランダムに選び、毎回同じ進路になりにくくする
+  const laneRoll=Math.random();
+  ai.attackLane=laneRoll<.36?-1:laneRoll<.72?1:2;
+  if(roll<.18){
+    // 一度片側を見せてから、逆方向へ切り返すフェイント
+    ai.strategy='feint';
+    ai.target.copy(chooseTacticalTarget(reference,true,ai.attackLane));
+    ai.strategyTimer=3.2+Math.random()*1.6;
+  }else if(roll<.18+cfg.jumpPeekChance){
     ai.strategy='jumpPeek';
-    ai.target.copy(chooseTacticalTarget(reference,preferFar));
+    ai.target.copy(chooseTacticalTarget(reference,preferFar,ai.attackLane));
     ai.strategyTimer=2.0+Math.random()*1.4;
-  }else if(roll<cfg.jumpPeekChance+cfg.fastPeekChance){
+  }else if(roll<.18+cfg.jumpPeekChance+cfg.fastPeekChance){
     ai.strategy='fastPeek';
-    ai.target.copy(chooseTacticalTarget(reference,preferFar));
+    ai.target.copy(chooseTacticalTarget(reference,preferFar,ai.attackLane));
     ai.strategyTimer=1.5+Math.random()*1.2;
     ai.fastPeekTimer=.75+Math.random()*.55;
   }else{
-    ai.strategy='flank';
-    ai.target.copy(chooseTacticalTarget(reference,preferFar));
-    ai.strategyTimer=2.6+Math.random()*2.0;
+    ai.strategy=ai.attackLane===2?'deepFlank':'flank';
+    ai.target.copy(chooseTacticalTarget(reference,true,ai.attackLane));
+    ai.strategyTimer=2.8+Math.random()*2.4;
   }
 }
 function updateAI(dt){
@@ -1006,9 +1029,18 @@ function updateAI(dt){
         ai.peekNoiseTimer=1.0+Math.random()*.35;
         ai.strategyTimer=1.0+Math.random()*.55;
         move.copy(ai.target).sub(enemy.position).setY(0).normalize();
+      }else if(ai.strategy==='feint'&&ai.feintPhase===0){
+        // 最初の進路を見せた後、反対側の壁へ切り返して別方向から攻める
+        ai.feintPhase=1;
+        ai.attackLane=ai.attackLane===-1?1:ai.attackLane===1?-1:(Math.random()<.5?-1:1);
+        const feintReference=selectedDifficulty==='michiko'?player.pos:(ai.heardTimer>0?ai.heardPosition:(ai.hasLastKnown?ai.lastKnownPosition:new THREE.Vector3(0,PLAYER_EYE,0)));
+        ai.target.copy(chooseTacticalTarget(feintReference,true,ai.attackLane));
+        ai.strategy='deepFlank';
+        ai.strategyTimer=2.2+Math.random()*1.5;
+        move.copy(ai.target).sub(enemy.position).setY(0).normalize();
       }else if(ai.strategy==='searchPeek'){
         // 確認ピーク後は再び別の壁へスニークで移動する
-        ai.target.copy(chooseTacticalTarget(enemy.position,true));
+        ai.target.copy(chooseTacticalTarget(enemy.position,true,Math.random()<.5?-1:1));
         ai.strategy='patrol';
         ai.strategyTimer=2.8+Math.random()*3.0;
       }else{
