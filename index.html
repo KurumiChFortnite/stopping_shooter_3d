@@ -272,7 +272,7 @@ button:hover{filter:brightness(1.12)}
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js';
 
-const GAME_VERSION='1.2.2';
+const GAME_VERSION='1.2.3';
 document.querySelectorAll('.versionTag').forEach(el=>el.textContent=`Ver.${GAME_VERSION}`);
 const MAX_WINS=5, MAG_SIZE=6, RAPID_TIME=.4, RELOAD_TIME=1.5;
 const BASE_MOUSE_SENSITIVITY=.00154; // 感度100%時
@@ -784,17 +784,20 @@ function enemyShoot(options={}){
   const enemyJumping=!ai.onGround||enemy.position.y>.06;
   let hitChance=moving?cfg.hitMoving:cfg.hitStill;if(rapid&&!wallbang)hitChance*=.55;
   if(enemyJumping)hitChance=Math.min(hitChance,.03);
-  const playerJumping=!player.onGround||player.verticalVelocity>.12;
+  const playerJumping=!player.onGround||Math.abs(player.verticalVelocity)>.12;
+  const playerHorizontalSpeed=Math.hypot(player.vel.x,player.vel.z);
+  const playerJumpPeeking=playerJumping&&playerHorizontalSpeed>.85;
+  const blockJumpPeekHeadshot=playerJumpPeeking&&selectedDifficulty!=='michiko';
   let didHit,aimedAtHead;
   if(enemyJumping){
     didHit=Math.random()<hitChance;
     aimedAtHead=false;
   }else if(wallbang){
     didHit=cfg.perfectWallbang?true:Math.random()<Math.max(.35,hitChance*.82);
-    aimedAtHead=didHit&&!playerJumping&&Math.random()<(cfg.wallbangHeadChance??.1);
+    aimedAtHead=didHit&&!blockJumpPeekHeadshot&&Math.random()<(cfg.wallbangHeadChance??.1);
   }else{
     didHit=cfg.instantHead?true:Math.random()<hitChance;
-    aimedAtHead=didHit&&(cfg.instantHead?!playerJumping:Math.random()<cfg.headChance);
+    aimedAtHead=didHit&&!blockJumpPeekHeadshot&&(cfg.instantHead?true:Math.random()<cfg.headChance);
   }
   const tracerStart=enemy.position.clone().add(new THREE.Vector3(0,1.32,0));
   const targetBase=options.target?options.target.clone():camera.position.clone();
