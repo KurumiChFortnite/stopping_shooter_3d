@@ -81,22 +81,87 @@ button:hover{filter:brightness(1.12)}
 @keyframes keyPulse{from{filter:brightness(.95)}to{filter:brightness(1.35)}}
 #pauseHint{position:absolute;left:50%;bottom:10px;z-index:7;transform:translateX(-50%);padding:6px 12px;border-radius:7px;background:rgba(0,0,0,.5);font-size:12px;color:#d7e1eb;pointer-events:none}
 
-#mobileControls{position:fixed;inset:0;z-index:12;display:none;pointer-events:none;touch-action:none;user-select:none;-webkit-user-select:none}
-.touchSide{position:absolute;top:0;bottom:0;width:max(96px,calc((100vw - min(100vw,177.7778vh))/2));min-width:96px;pointer-events:auto;display:flex;align-items:center;justify-content:center;padding:10px}
-#touchLeft{left:0}.touchSide.right{right:0}
-.dpad{position:relative;width:150px;height:150px}
-.touchBtn{position:absolute;pointer-events:auto;margin:0;min-width:0;width:54px;height:54px;padding:0;border-radius:16px;border:1px solid rgba(151,222,255,.8);background:rgba(15,56,82,.72);font-size:15px;line-height:1;color:#fff;backdrop-filter:blur(3px);touch-action:none}
+#mobileControls{
+  --touch-panel-w:clamp(145px,15vw,230px);
+  --touch-game-w:min(calc(100vw - var(--touch-panel-w) - var(--touch-panel-w)),177.7778vh);
+  --touch-game-h:calc(var(--touch-game-w) * .5625);
+  position:fixed;inset:0;z-index:12;display:none;pointer-events:none;
+  touch-action:none;user-select:none;-webkit-user-select:none
+}
+.touchSide{
+  position:absolute;top:50%;width:var(--touch-panel-w);height:min(var(--touch-game-h),100vh);
+  transform:translateY(-50%);pointer-events:auto;display:flex;align-items:center;
+  justify-content:center;padding:10px 8px;overflow:hidden
+}
+#touchLeft{left:0;padding-left:12px;padding-right:3px}
+.touchSide.right{right:0;padding-left:3px;padding-right:12px}
+.dpad{position:relative;width:136px;height:136px;flex:0 0 auto}
+.touchBtn{
+  position:absolute;pointer-events:auto;margin:0;min-width:0;width:52px;height:52px;padding:0;
+  border-radius:15px;border:1px solid rgba(151,222,255,.85);background:rgba(15,56,82,.78);
+  font-size:15px;line-height:1;color:#fff;backdrop-filter:blur(3px);touch-action:none;
+  box-shadow:0 4px 14px rgba(0,0,0,.25)
+}
 .touchBtn.active{filter:brightness(1.45);transform:scale(.96)}
-.dpad .up{left:48px;top:0}.dpad .down{left:48px;bottom:0}.dpad .left{left:0;top:48px}.dpad .right{right:0;top:48px}
-#touchRight{right:0;align-items:stretch;justify-content:stretch;flex-direction:column;gap:8px}
-#lookPad{position:relative;flex:1;min-height:150px;width:100%;border:1px solid rgba(255,255,255,.16);border-radius:18px;background:rgba(255,255,255,.035);touch-action:none}
-#lookPad::after{content:'視点';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:13px;color:rgba(255,255,255,.45);pointer-events:none}
-.actionCluster{display:grid;grid-template-columns:repeat(2,58px);gap:8px;justify-content:center}
-.actionCluster .touchBtn{position:relative;width:58px;height:52px;border-radius:14px;font-size:12px}
-.actionCluster .shoot{grid-column:1/-1;width:124px;height:58px;background:rgba(145,35,43,.78);border-color:#ff8e96;font-size:16px}
-#touchPause{position:fixed;right:10px;top:10px;width:44px;height:44px;border-radius:50%;z-index:2}
-@media(pointer:coarse){#mobileControls{display:block}#pauseHint{display:none}.screen{z-index:30}}
-@media(pointer:coarse) and (max-aspect-ratio:16/9){.touchSide{width:27vw;min-width:88px;padding:6px}.dpad{transform:scale(.8)}#playArea{width:100vw;height:56.25vw}.touchSide{top:calc(50% - 28.125vw);bottom:calc(50% - 28.125vw);background:linear-gradient(90deg,rgba(2,6,10,.82),rgba(2,6,10,.2))}.touchSide.right{background:linear-gradient(270deg,rgba(2,6,10,.82),rgba(2,6,10,.2))}#lookPad{min-height:90px}.actionCluster{grid-template-columns:repeat(2,48px);gap:5px}.actionCluster .touchBtn{width:48px;height:42px;font-size:10px}.actionCluster .shoot{width:101px;height:48px}}
+.dpad .up{left:42px;top:0}.dpad .down{left:42px;bottom:0}.dpad .left{left:0;top:42px}.dpad .right{right:0;top:42px}
+#touchRight{
+  right:0;align-items:stretch;justify-content:flex-start;flex-direction:column;gap:7px;
+  padding-top:56px;padding-bottom:8px
+}
+#lookPad{
+  position:relative;flex:1 1 auto;min-height:150px;width:100%;border:1px solid rgba(255,255,255,.20);
+  border-radius:24px;background:rgba(255,255,255,.045);touch-action:none;overflow:hidden
+}
+#lookPad::before{
+  content:'';position:absolute;left:50%;top:50%;width:9px;height:9px;transform:translate(-50%,-50%);
+  border-radius:50%;background:rgba(255,255,255,.45);pointer-events:none
+}
+#lookPad::after{
+  content:'視点操作';position:absolute;left:50%;top:14px;transform:translateX(-50%);
+  font-size:12px;color:rgba(116,205,255,.82);font-weight:800;white-space:nowrap;pointer-events:none
+}
+.actionCluster{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;width:100%}
+.actionCluster .touchBtn{
+  position:relative;width:100%;height:48px;border-radius:13px;font-size:11px;font-weight:800
+}
+.actionCluster .shoot{
+  grid-column:1/-1;width:100%;height:57px;background:rgba(145,35,43,.84);
+  border-color:#ff8e96;font-size:16px
+}
+#touchPause{
+  position:fixed;right:12px;top:calc(50% - min(var(--touch-game-h),100vh)/2 + 8px);
+  width:44px;height:44px;border-radius:50%;z-index:2
+}
+@media(pointer:coarse){
+  #mobileControls{display:block}
+  #pauseHint{display:none}
+  .screen{z-index:30}
+  #playArea{width:var(--touch-game-w);height:auto;aspect-ratio:16/9}
+}
+@media(pointer:coarse) and (max-height:520px){
+  #mobileControls{--touch-panel-w:clamp(138px,15vw,210px)}
+  .touchSide{padding-top:5px;padding-bottom:5px}
+  .dpad{width:126px;height:126px}
+  .touchBtn{width:48px;height:48px;font-size:14px}
+  .dpad .up{left:39px}.dpad .down{left:39px}.dpad .left{top:39px}.dpad .right{top:39px}
+  #touchRight{padding-top:50px;gap:5px}
+  #lookPad{min-height:118px;border-radius:20px}
+  .actionCluster{gap:5px}
+  .actionCluster .touchBtn{height:40px;font-size:10px}
+  .actionCluster .shoot{height:48px;font-size:14px}
+  #touchPause{width:40px;height:40px;right:9px}
+}
+@media(pointer:coarse) and (orientation:portrait){
+  #mobileControls{--touch-panel-w:clamp(110px,24vw,150px)}
+  #playArea{width:calc(100vw - 20px);height:auto;top:44%;}
+  .touchSide{top:44%;height:min(56.25vw,62vh);background:rgba(2,6,10,.34)}
+  #touchLeft{left:0}.touchSide.right{right:0}
+  .dpad{transform:scale(.78)}
+  #touchRight{padding-top:46px}
+  #lookPad{min-height:90px}
+  .actionCluster .touchBtn{height:38px;font-size:9px}
+  .actionCluster .shoot{height:44px;font-size:13px}
+}
 @media(max-width:700px){#settingsScreen{padding-top:34px;padding-bottom:90px}.panel{padding:20px 15px}.keybindGrid{grid-template-columns:1fr}.instructions{font-size:14px}#healthBox{width:180px;left:12px}.screen{align-items:flex-start}.notice{font-size:12px}.settingsKeyGrid{grid-template-columns:1fr 1fr}.settingsKeyGrid .label{grid-column:1/-1;margin-top:5px}.settingRow{grid-template-columns:1fr}.settingValue{text-align:left}}
 </style>
 </head>
