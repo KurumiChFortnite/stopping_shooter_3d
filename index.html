@@ -26,6 +26,13 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 #healthTrack{height:15px;border:1px solid rgba(255,255,255,.45);background:rgba(0,0,0,.55);overflow:hidden}
 #healthFill{height:100%;width:100%;background:linear-gradient(90deg,#38c6ff,#8ce4ff);transition:width .15s}
 #ammoBox{position:absolute;right:24px;bottom:18px;text-align:right}
+#abilityBar{position:absolute;left:50%;bottom:18px;transform:translateX(-50%);display:flex;gap:9px;pointer-events:auto}
+.abilityHudButton{min-width:112px;margin:0;padding:9px 10px;border-radius:9px;border:1px solid rgba(135,220,255,.75);background:rgba(9,38,58,.86);font-size:12px;line-height:1.25;color:#fff}
+.abilityHudButton.ready{box-shadow:0 0 14px rgba(82,200,255,.32)}
+.abilityHudButton.empty{opacity:.42;filter:grayscale(.7)}
+.abilityHudButton .abilityKey{display:block;color:#8bd8ff;font-size:11px;margin-top:3px}
+#flashOverlay{position:absolute;inset:0;z-index:8;pointer-events:none;background:#e8f7ff;opacity:0;transition:opacity .08s}
+.agentRow{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:12px 0 18px}.agentButton{min-width:190px;margin:0;padding:13px 18px;background:rgba(20,42,62,.9);border-color:rgba(116,205,255,.55)}.agentButton.selected{background:linear-gradient(#1aaed1,#11628c);border-color:#a8efff;box-shadow:0 0 20px rgba(82,200,255,.42)}.agentButton small{display:block;margin-top:4px;font-size:11px;color:#c7d8e7}.agentButton.yoru.selected{background:linear-gradient(#7257d8,#342175);border-color:#c3b5ff;box-shadow:0 0 20px rgba(133,105,255,.42)}.agentButton.none.selected{background:linear-gradient(#555,#222);border-color:#ddd;box-shadow:0 0 20px rgba(255,255,255,.22)}.abilityModeRow{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:12px 0}.abilityModeButton{min-width:220px;margin:0;padding:13px 18px;background:rgba(20,42,62,.9);border-color:rgba(116,205,255,.55)}.abilityModeButton.selected{background:linear-gradient(#555,#222);border-color:#fff;box-shadow:0 0 20px rgba(255,255,255,.22)}.abilityModeButton.enabled.selected{background:linear-gradient(#1aaed1,#11628c);border-color:#a8efff;box-shadow:0 0 20px rgba(82,200,255,.42)}#agentChoiceArea{margin-top:10px;max-height:54vh;overflow:auto;padding:4px 8px 12px;border-radius:10px;background:rgba(3,12,20,.35)}#agentChoiceArea.hidden{display:none}.agentRoleTitle{margin:13px 0 7px;font-weight:900;letter-spacing:.12em;color:#9ee8ff}.agentRow{gap:7px}.agentButton{min-width:145px;max-width:220px;font-size:14px;padding:10px 9px}.agentButton small{font-size:9px;line-height:1.25}
 #ammo{font-size:42px;font-weight:950;line-height:1}
 #ammoSub{color:#c7d3df;font-size:14px;margin-top:4px}
 #message{position:absolute;left:50%;top:22%;transform:translateX(-50%);font-size:clamp(24px,4vw,46px);font-weight:950;text-align:center;opacity:0;transition:opacity .15s;white-space:pre-line}
@@ -39,6 +46,10 @@ canvas{display:block;width:100%;height:100%;touch-action:none}
 #chLeft,#chRight{height:2px;width:8px;top:-1px}
 #chDot{position:absolute;width:3px;height:3px;left:-1.5px;top:-1.5px;border-radius:50%;background:#fff;box-shadow:0 0 3px #000}
 .screen{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(circle at center,rgba(20,39,61,.82),rgba(3,6,10,.97));overflow:auto}
+#startScreen{align-items:flex-start;justify-content:center;padding-top:clamp(16px,4vh,48px);padding-bottom:48px;scroll-padding-top:16px;overscroll-behavior:contain}
+#startScreen>.panel{margin:0 auto;flex:0 0 auto}
+#startScreen .abilityModeRow{position:sticky;top:-1px;z-index:4;padding:10px 6px;margin:8px -6px 4px;background:linear-gradient(180deg,rgba(12,23,36,.99) 0%,rgba(12,23,36,.96) 78%,rgba(12,23,36,0) 100%);border-radius:10px}
+#agentChoiceArea{scrollbar-gutter:stable}
 .screen.hidden{display:none}
 .panel{width:min(760px,96vw);padding:28px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(145deg,rgba(20,34,52,.98),rgba(7,13,22,.98));box-shadow:0 25px 90px rgba(0,0,0,.72);text-align:center}
 h1{margin:0 0 8px;color:#74cdff;font-size:clamp(32px,6vw,58px);line-height:1.05;text-shadow:0 0 22px rgba(74,190,255,.38)}
@@ -163,6 +174,225 @@ button:hover{filter:brightness(1.12)}
 }
 .versionTag{margin-top:14px;text-align:center;font-size:13px;font-weight:800;letter-spacing:.12em;color:#9eb4c8;opacity:.9}
 @media(max-width:700px){#settingsScreen{padding-top:34px;padding-bottom:90px}.panel{padding:20px 15px}.keybindGrid{grid-template-columns:1fr}.instructions{font-size:14px}#healthBox{width:180px;left:12px}.screen{align-items:flex-start}.notice{font-size:12px}.settingsKeyGrid{grid-template-columns:1fr 1fr}.settingsKeyGrid .label{grid-column:1/-1;margin-top:5px}.settingRow{grid-template-columns:1fr}.settingValue{text-align:left}}
+
+/* Ver.2.3.1: スマホ移動ボタンを画面左下に収める */
+@media(pointer:coarse){
+  #touchLeft{
+    position:fixed;
+    left:8px;
+    bottom:8px;
+    top:auto;
+    width:116px;
+    height:174px;
+    padding:0;
+    transform:none;
+    justify-content:flex-start;
+    align-items:flex-start;
+    background:transparent;
+    overflow:visible;
+  }
+  #touchLeft .dpad{
+    width:116px;
+    height:174px;
+    transform:none;
+    overflow:visible;
+  }
+  #touchLeft .touchBtn{
+    width:58px;
+    height:58px;
+  }
+  #touchLeft .dpad .up{
+    left:29px;
+    top:0;
+  }
+  #touchLeft .dpad .left{
+    left:0;
+    top:58px;
+  }
+  #touchLeft .dpad .right{
+    left:58px;
+    right:auto;
+    top:58px;
+  }
+  #touchLeft .dpad .down{
+    left:29px;
+    top:116px;
+    bottom:auto;
+  }
+}
+@media(pointer:coarse) and (max-height:560px){
+  #touchLeft{
+    left:6px;
+    bottom:6px;
+    width:108px;
+    height:162px;
+  }
+  #touchLeft .dpad{
+    width:108px;
+    height:162px;
+  }
+  #touchLeft .touchBtn{
+    width:54px;
+    height:54px;
+  }
+  #touchLeft .dpad .up{left:27px;top:0}
+  #touchLeft .dpad .left{left:0;top:54px}
+  #touchLeft .dpad .right{left:54px;top:54px}
+  #touchLeft .dpad .down{left:27px;top:108px}
+}
+@media(pointer:coarse) and (orientation:portrait){
+  #touchLeft{
+    left:8px;
+    bottom:8px;
+    top:auto;
+    transform:none;
+  }
+  #touchLeft .dpad{transform:none}
+}
+
+
+/* Ver.2.3.0: スマホ操作をすべて戦闘画面の下へ配置 */
+@media(pointer:coarse){
+  #mobileControls{
+    --control-h:206px;
+    display:block;
+    background:linear-gradient(to bottom,transparent calc(100% - var(--control-h)),rgba(3,8,14,.98) calc(100% - var(--control-h)));
+  }
+  #playArea{
+    top:6px;
+    left:50%;
+    transform:translateX(-50%);
+    width:min(calc(100vw - 12px),calc((100vh - var(--control-h) - 12px) * 1.777778));
+    height:auto;
+    aspect-ratio:16/9;
+  }
+  #abilityBar{display:none!important}
+  #touchLeft{
+    position:fixed;
+    left:8px;
+    bottom:8px;
+    top:auto;
+    width:116px;
+    height:174px;
+    padding:0;
+    transform:none;
+    justify-content:flex-start;
+    align-items:flex-start;
+    background:transparent;
+  }
+  #touchRight{
+    position:fixed;
+    left:132px;
+    right:8px;
+    bottom:8px;
+    top:auto;
+    width:auto;
+    height:190px;
+    padding:0;
+    transform:none;
+    display:grid;
+    grid-template-columns:minmax(120px,.8fr) minmax(300px,1.7fr);
+    gap:8px;
+    align-items:stretch;
+    background:transparent;
+  }
+  #lookPad{
+    min-height:0;
+    height:100%;
+    width:100%;
+    border-radius:18px;
+  }
+  .actionCluster{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(54px,1fr));
+    grid-auto-rows:42px;
+    gap:5px;
+    align-content:end;
+    width:100%;
+  }
+  .actionCluster .touchBtn{
+    position:relative;
+    width:100%;
+    height:42px;
+    min-width:0;
+    margin:0;
+    padding:0 3px;
+    border-radius:10px;
+    font-size:10px;
+  }
+  .actionCluster .shoot{
+    grid-column:3/5;
+    grid-row:1/3;
+    height:89px;
+    font-size:16px;
+  }
+  #touchPause{
+    position:fixed;
+    left:140px;
+    right:auto;
+    bottom:160px;
+    top:auto;
+    width:38px;
+    height:38px;
+    z-index:15;
+  }
+}
+@media(pointer:coarse) and (max-width:760px){
+  #mobileControls{--control-h:244px}
+  #touchLeft{left:6px;bottom:8px}
+  #touchRight{
+    left:128px;
+    right:6px;
+    bottom:8px;
+    height:226px;
+    grid-template-columns:minmax(90px,.62fr) minmax(190px,1.38fr);
+  }
+  .actionCluster{grid-template-columns:repeat(3,minmax(48px,1fr));grid-auto-rows:40px}
+  .actionCluster .touchBtn{height:40px;font-size:9px}
+  .actionCluster .shoot{grid-column:2/4;grid-row:1/3;height:85px;font-size:15px}
+  #touchPause{left:132px;bottom:198px}
+}
+@media(pointer:coarse) and (orientation:portrait){
+  #mobileControls{--control-h:330px}
+  #playArea{
+    top:8px;
+    width:calc(100vw - 12px);
+    height:auto;
+  }
+  #touchLeft{
+    left:8px;
+    bottom:10px;
+    width:108px;
+    height:162px;
+  }
+  #touchLeft .dpad{width:108px;height:162px}
+  #touchLeft .touchBtn{width:54px;height:54px}
+  #touchLeft .dpad .up{left:27px;top:0}
+  #touchLeft .dpad .left{left:0;top:54px}
+  #touchLeft .dpad .right{left:54px;top:54px}
+  #touchLeft .dpad .down{left:27px;top:108px}
+  #touchRight{
+    left:122px;
+    right:8px;
+    bottom:8px;
+    height:306px;
+    display:grid;
+    grid-template-columns:1fr;
+    grid-template-rows:92px 1fr;
+    gap:7px;
+  }
+  #lookPad{height:92px;border-radius:14px}
+  #lookPad::after{top:8px;font-size:11px}
+  .actionCluster{
+    grid-template-columns:repeat(3,minmax(44px,1fr));
+    grid-auto-rows:38px;
+    gap:4px;
+  }
+  .actionCluster .touchBtn{height:38px;font-size:8px;border-radius:9px}
+  .actionCluster .shoot{grid-column:2/4;grid-row:1/3;height:80px;font-size:14px}
+  #touchPause{left:8px;bottom:180px;width:36px;height:36px}
+}
+
 </style>
 </head>
 <body>
@@ -172,7 +402,13 @@ button:hover{filter:brightness(1.12)}
   <div id="topBar"><span id="scoreBlue">0</span><span id="roundText">ROUND 1</span><span id="scoreRed">0</span></div>
   <div id="healthBox"><div id="healthLabel">HP <span id="health">100</span></div><div id="healthTrack"><div id="healthFill"></div></div></div>
   <div id="ammoBox"><div id="ammo">6 / 6</div><div id="ammoSub"><span id="reloadHint">R</span>：リロード</div></div>
-  <div id="message"></div><div id="damageFlash"></div><div id="hitmarker"></div>
+  <div id="abilityBar">
+    <button id="smokeAbilityButton" class="abilityHudButton">クラウドバースト <b id="smokeCount">2</b><span id="smokeKey" class="abilityKey">Z</span></button>
+    <button id="updraftAbilityButton" class="abilityHudButton">アップドラフト <b id="updraftCount">1</b><span id="updraftKey" class="abilityKey">X</span></button>
+    <button id="dashAbilityButton" class="abilityHudButton">テイルウィンド <b id="dashCount">1</b><span id="dashKey" class="abilityKey">E</span></button>
+    <button id="ultimateAbilityButton" class="abilityHudButton" style="display:none">ディメンショナルドリフト <b id="ultimateCount">1</b><span id="ultimateKey" class="abilityKey">V</span></button>
+  </div>
+  <div id="message"></div><div id="damageFlash"></div><div id="flashOverlay"></div><div id="hitmarker"></div>
   <div id="crosshair"><div id="chTop" class="crossLine"></div><div id="chBottom" class="crossLine"></div><div id="chLeft" class="crossLine"></div><div id="chRight" class="crossLine"></div><div id="chDot"></div></div>
 </div>
 <div id="pauseHint"><span id="pauseHintKey">Esc</span>でポーズ</div>
@@ -196,6 +432,10 @@ button:hover{filter:brightness(1.12)}
       <button class="touchBtn" data-touch-action="reload">リロード</button>
       <button class="touchBtn" data-touch-action="crouch">しゃがみ</button>
       <button class="touchBtn" data-touch-action="walk">低速</button>
+      <button class="touchBtn" data-touch-action="abilitySmoke">スモーク</button>
+      <button class="touchBtn" data-touch-action="abilityUpdraft">上昇</button>
+      <button class="touchBtn" data-touch-action="abilityDash">能力3</button>
+      <button id="touchUltimate" class="touchBtn" data-touch-action="abilityUltimate" style="display:none">ULT</button>
     </div>
   </div>
   <button id="touchPause" class="touchBtn" data-touch-action="pause">Ⅱ</button>
@@ -212,6 +452,51 @@ button:hover{filter:brightness(1.12)}
   <div class="panel">
     <h1>3D TACTICAL<br>DUEL</h1>
     <div class="subtitle">ストッピング重視の一人称1対1シューティング</div>
+    <div class="abilityModeRow">
+      <button class="abilityModeButton selected" data-ability-mode="none">能力なし<small>お互いに銃・ナイフ・移動だけ</small></button>
+      <button class="abilityModeButton enabled" data-ability-mode="enabled">能力あり<small>自分のキャラを選択・敵はランダム</small></button>
+    </div>
+    <div id="agentChoiceArea" class="hidden">
+      <div class="subtitle" style="margin-top:8px">使用するエージェントを選択</div>
+      <div class="agentRoleTitle">コントローラー</div><div class="agentRow">
+<button class="agentButton brimstone" data-agent="brimstone">ブリムストーン<small>スカイスモーク / インセンディアリー / スティムビーコン / オービタルストライク</small></button>
+<button class="agentButton viper" data-agent="viper">ヴァイパー<small>スネークバイト / ポイズンクラウド / トキシックスクリーン / ヴァイパーズピット</small></button>
+<button class="agentButton omen" data-agent="omen">オーメン<small>パラノイア / ダークカヴァー / シュラウドステップ / フロム・ザ・シャドウズ</small></button>
+<button class="agentButton astra" data-agent="astra">アストラ<small>グラビティウェル / ノヴァパルス / ネビュラ / コズミックディバイド</small></button>
+<button class="agentButton harbor" data-agent="harbor">ハーバー<small>カスケード / コーヴ / ハイタイド / レコニング</small></button>
+<button class="agentButton clove" data-agent="clove">クローヴ<small>メドル / ルース / ピック・ミー・アップ / ノット・デッド・イェット</small></button>
+<button class="agentButton miks" data-agent="miks">ミクス<small>ハーモナイズ / Mパルス / ウェーブフォーム / ヘッドライナー</small></button>
+</div>
+<div class="agentRoleTitle">デュエリスト</div><div class="agentRow">
+<button class="agentButton jett" data-agent="jett">ジェット<small>クラウドバースト / アップドラフト / テイルウィンド / ブレードストーム</small></button>
+<button class="agentButton phoenix" data-agent="phoenix">フェニックス<small>ブレイズ / カーブボール / ホットハンド / ラン・イット・バック</small></button>
+<button class="agentButton raze" data-agent="raze">レイズ<small>ブームボット / ブラストパック / ペイント弾 / ショーストッパー</small></button>
+<button class="agentButton reyna" data-agent="reyna">レイナ<small>リーア / デバウアー / ディスミス / エンプレス</small></button>
+<button class="agentButton yoru" data-agent="yoru">ヨル<small>ブラインドサイド / ゲートクラッシュ / フェイクアウト / ディメンショナルドリフト</small></button>
+<button class="agentButton neon" data-agent="neon">ネオン<small>リレーボルト / ファストレーン / ハイギア / オーバードライブ</small></button>
+<button class="agentButton iso" data-agent="iso">アイソ<small>アンダーカット / ダブルタップ / コンティンジェンシー / キルコントラクト</small></button>
+<button class="agentButton waylay" data-agent="waylay">ウェイレイ<small>サチュレート / ライトスピード / リフラクト / コンバージェントパス</small></button>
+</div>
+<div class="agentRoleTitle">イニシエーター</div><div class="agentRow">
+<button class="agentButton sova" data-agent="sova">ソーヴァ<small>ショックボルト / リコンボルト / オウルドローン / ハンターズフューリー</small></button>
+<button class="agentButton breach" data-agent="breach">ブリーチ<small>アフターショック / フラッシュポイント / フォールトライン / ローリングサンダー</small></button>
+<button class="agentButton skye" data-agent="skye">スカイ<small>トレイルブレイザー / ガイディングライト / リグロース / シーカー</small></button>
+<button class="agentButton kayo" data-agent="kayo">KAY/O<small>フラグメント / フラッシュドライブ / ゼロポイント / ヌルコマンド</small></button>
+<button class="agentButton fade" data-agent="fade">フェイド<small>プラウラー / シーズ / ホウント / ナイトフォール</small></button>
+<button class="agentButton gekko" data-agent="gekko">ゲッコー<small>モッシュピット / ウィングマン / ディジー / スラッシュ</small></button>
+<button class="agentButton tejo" data-agent="tejo">テホ<small>ステルスドローン / スペシャルデリバリー / ガイデッドサルヴォ / アルマゲドン</small></button>
+</div>
+<div class="agentRoleTitle">センチネル</div><div class="agentRow">
+<button class="agentButton sage" data-agent="sage">セージ<small>スロウオーブ / ヒーリングオーブ / バリアオーブ / リザレクション</small></button>
+<button class="agentButton cypher" data-agent="cypher">サイファー<small>トラップワイヤー / サイバーケージ / スパイカメラ / ニューラルセフト</small></button>
+<button class="agentButton killjoy" data-agent="killjoy">キルジョイ<small>ナノスワーム / アラームボット / タレット / ロックダウン</small></button>
+<button class="agentButton chamber" data-agent="chamber">チェンバー<small>トレードマーク / ヘッドハンター / ランデヴー / ツール・ド・フォース</small></button>
+<button class="agentButton deadlock" data-agent="deadlock">デッドロック<small>グラヴィネット / ソニックセンサー / バリアメッシュ / アナイアレーション</small></button>
+<button class="agentButton vyse" data-agent="vyse">ヴァイス<small>レーザーヴァイン / シアー / アークローズ / スティールガーデン</small></button>
+<button class="agentButton veto" data-agent="veto">ヴィトー<small>チョークホールド / インターセプター / クロスカット / エボリューション</small></button>
+</div>
+      <div class="notice" style="margin-top:0;text-align:center">敵は全29エージェントからランダムに選ばれます。ジェットとヨルは専用実装、その他は1対1向けに再構成した能力です。</div>
+    </div>
     <div class="difficultyRow">
       <button class="difficultyButton" data-difficulty="easy">Easy</button>
       <button class="difficultyButton selected" data-difficulty="normal">Normal</button>
@@ -221,10 +506,10 @@ button:hover{filter:brightness(1.12)}
     </div>
     <button id="startButton">ゲームスタート</button>
     <button id="startSettingsButton" class="settingsButton">設定を開く</button>
-    <div class="versionTag">Ver.1.2.2</div>
+    <div class="versionTag">Ver.2.3.0</div>
     <div class="instructions" id="compactInstructions"></div>
     <div class="notice">
-      停止してから撃つと高精度になります。通常移動では足音が鳴り、敵もその方向を調べに来ます。Shiftを押しながら歩くと足音は鳴りません。しゃがみ中は視点が下がり、移動速度が遅くなります。移動撃ち、前の弾から0.4秒未満の連射は大きく外れます。リボルバーは6発、リロードは1.5秒です。ヘッドショットは一撃、胴体は34ダメージ。5ラウンド先取です。<br><br>
+      デフォルトは「能力なし」で、プレイヤーと敵の両方が能力を使いません。「能力あり」を選ぶと自分のエージェントを全29エージェントから選択でき、敵は試合開始時に全29エージェントからランダムに選ばれます。ヨルのゲートクラッシュは再入力でテレポート、Shiftを押しながら再入力するとフェイクテレポートになります。停止してから撃つと高精度になります。通常移動では足音が鳴り、敵もその方向を調べに来ます。能力なしでは双方とも能力を一切使えません。能力ありでは敵エージェントがランダムに決まります。能力ありでは、難易度が高いほど適切なタイミングや連携で使用します。Shiftを押しながら歩くと足音は鳴りません。しゃがみ中は視点が下がり、移動速度が遅くなります。移動撃ち、前の弾から0.4秒未満の連射は大きく外れます。リボルバーは6発、リロードは1.5秒です。ヘッドショットは一撃、胴体は34ダメージ。5ラウンド先取です。<br><br>
       Three.jsをインターネット経由で読み込むため、起動時に通信が必要です。PC向け初版です。
     </div>
   </div>
@@ -247,6 +532,10 @@ button:hover{filter:brightness(1.12)}
         <div class="label">ジャンプ</div><button class="keybindButton bindSlot" data-action="jump" data-slot="0"></button><button class="keybindButton bindSlot" data-action="jump" data-slot="1"></button>
         <div class="label">ナイフ装備</div><button class="keybindButton bindSlot" data-action="knife" data-slot="0"></button><button class="keybindButton bindSlot" data-action="knife" data-slot="1"></button>
         <div class="label">リボルバー装備</div><button class="keybindButton bindSlot" data-action="weapon" data-slot="0"></button><button class="keybindButton bindSlot" data-action="weapon" data-slot="1"></button>
+        <div class="label" id="abilityLabel1">能力1（クラウドバースト）</div><button class="keybindButton bindSlot" data-action="abilitySmoke" data-slot="0"></button><button class="keybindButton bindSlot" data-action="abilitySmoke" data-slot="1"></button>
+        <div class="label" id="abilityLabel2">能力2（アップドラフト）</div><button class="keybindButton bindSlot" data-action="abilityUpdraft" data-slot="0"></button><button class="keybindButton bindSlot" data-action="abilityUpdraft" data-slot="1"></button>
+        <div class="label" id="abilityLabel3">能力3（テイルウィンド）</div><button class="keybindButton bindSlot" data-action="abilityDash" data-slot="0"></button><button class="keybindButton bindSlot" data-action="abilityDash" data-slot="1"></button>
+        <div class="label" id="abilityLabel4">能力4（ヨルULT）</div><button class="keybindButton bindSlot" data-action="abilityUltimate" data-slot="0"></button><button class="keybindButton bindSlot" data-action="abilityUltimate" data-slot="1"></button>
         <div class="label">ポーズ</div><button class="keybindButton bindSlot" data-action="pause" data-slot="0"></button><button class="keybindButton bindSlot" data-action="pause" data-slot="1"></button>
       </div>
       <div id="bindStatus">変更したいボタンを押してから、新しいキーまたはマウスボタンを押してください。</div>
@@ -267,14 +556,194 @@ button:hover{filter:brightness(1.12)}
     <div class="settingsFooter"><button id="resetSettingsButton">すべて初期設定に戻す</button></div>
   </div>
 </div>
-<div id="endScreen" class="screen hidden"><div class="panel"><h1 id="finalResult">VICTORY</h1><div id="finalScore" class="subtitle" style="font-size:28px"></div><div class="versionTag">Ver.1.2.2</div><button id="restartButton">もう一度遊ぶ</button><button id="endHomeButton" class="settingsButton">ホームに戻る</button></div></div>
+<div id="endScreen" class="screen hidden"><div class="panel"><h1 id="finalResult">VICTORY</h1><div id="finalScore" class="subtitle" style="font-size:28px"></div><div class="versionTag">Ver.2.3.0</div><button id="restartButton">もう一度遊ぶ</button><button id="endHomeButton" class="settingsButton">ホームに戻る</button></div></div>
 
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js';
 
-const GAME_VERSION='1.2.3';
+const GAME_VERSION='2.3.2';
 document.querySelectorAll('.versionTag').forEach(el=>el.textContent=`Ver.${GAME_VERSION}`);
 const MAX_WINS=5, MAG_SIZE=6, RAPID_TIME=.4, RELOAD_TIME=1.5;
+const SMOKE_MAX=2, UPDRAFT_MAX=1, DASH_MAX=1, SMOKE_DURATION=2.5, SMOKE_RADIUS=1.75;
+const YORU_FLASH_MAX=2,YORU_GATE_MAX=1,YORU_FAKE_MAX=1,YORU_ULT_MAX=1,YORU_GATE_DURATION=20,YORU_ULT_DURATION=12;
+const AGENT_DATA={
+brimstone:{name:'ブリムストーン',role:'controller',color:0x6d93d5,abilities:[
+{name:'スティムビーコン',effect:'stim',charges:1},
+{name:'インセンディアリー',effect:'molly',charges:1},
+{name:'スカイスモーク',effect:'smoke',charges:2},
+{name:'オービタルストライク',effect:'damage',charges:1}
+]},
+viper:{name:'ヴァイパー',role:'controller',color:0xaf19f8,abilities:[
+{name:'スネークバイト',effect:'molly',charges:2},
+{name:'ポイズンクラウド',effect:'smoke',charges:1},
+{name:'トキシックスクリーン',effect:'wall',charges:1},
+{name:'ヴァイパーズピット',effect:'smoke',charges:1}
+]},
+omen:{name:'オーメン',role:'controller',color:0xf424c0,abilities:[
+{name:'シュラウドステップ',effect:'teleport',charges:1},
+{name:'パラノイア',effect:'flash',charges:2},
+{name:'ダークカヴァー',effect:'smoke',charges:1},
+{name:'フロム・ザ・シャドウズ',effect:'teleport',charges:1}
+]},
+astra:{name:'アストラ',role:'controller',color:0x32093f,abilities:[
+{name:'グラビティウェル',effect:'pull',charges:2},
+{name:'ノヴァパルス',effect:'stun',charges:1},
+{name:'ネビュラ',effect:'smoke',charges:1},
+{name:'コズミックディバイド',effect:'wall',charges:1}
+]},
+harbor:{name:'ハーバー',role:'controller',color:0x2969a4,abilities:[
+{name:'カスケード',effect:'wall',charges:2},
+{name:'コーヴ',effect:'shield',charges:1},
+{name:'ハイタイド',effect:'wall',charges:1},
+{name:'レコニング',effect:'stun',charges:1}
+]},
+clove:{name:'クローヴ',role:'controller',color:0xb0779b,abilities:[
+{name:'ピック・ミー・アップ',effect:'speed',charges:1},
+{name:'メドル',effect:'decay',charges:2},
+{name:'ルース',effect:'smoke',charges:1},
+{name:'ノット・デッド・イェット',effect:'revive',charges:1}
+]},
+miks:{name:'ミクス',role:'controller',color:0x34251d,abilities:[
+{name:'M-パルス',effect:'stun',charges:2},
+{name:'ハーモナイズ',effect:'stim',charges:1},
+{name:'ウェーブフォーム',effect:'smoke',charges:2},
+{name:'ベースクエイク',effect:'stun',charges:1}
+]},
+jett:{name:'ジェット',role:'duelist',color:0xaf9f10,abilities:[
+{name:'クラウドバースト',effect:'special',charges:2},
+{name:'アップドラフト',effect:'special',charges:1},
+{name:'テイルウィンド',effect:'special',charges:1},
+{name:'ブレードストーム',effect:'damage',charges:1}
+]},
+phoenix:{name:'フェニックス',role:'duelist',color:0x2cd99e,abilities:[
+{name:'ブレイズ',effect:'wall',charges:2},
+{name:'カーブボール',effect:'flash',charges:1},
+{name:'ホットハンド',effect:'molly',charges:1},
+{name:'ラン・イット・バック',effect:'revive',charges:1}
+]},
+raze:{name:'レイズ',role:'duelist',color:0x9ea220,abilities:[
+{name:'ブームボット',effect:'trap',charges:2},
+{name:'ブラストパック',effect:'dash',charges:1},
+{name:'ペイント弾',effect:'damage',charges:1},
+{name:'ショーストッパー',effect:'damage',charges:1}
+]},
+reyna:{name:'レイナ',role:'duelist',color:0x082778,abilities:[
+{name:'リーア',effect:'flash',charges:2},
+{name:'デバウアー',effect:'heal',charges:1},
+{name:'ディスミス',effect:'drift',charges:1},
+{name:'エンプレス',effect:'speed',charges:1}
+]},
+yoru:{name:'ヨル',role:'duelist',color:0x0da8d2,abilities:[
+{name:'フェイクアウト',effect:'special',charges:1},
+{name:'ブラインドサイド',effect:'special',charges:2},
+{name:'ゲートクラッシュ',effect:'special',charges:1},
+{name:'ディメンショナルドリフト',effect:'special',charges:1}
+]},
+neon:{name:'ネオン',role:'duelist',color:0x76353b,abilities:[
+{name:'ファストレーン',effect:'wall',charges:1},
+{name:'リレーボルト',effect:'stun',charges:2},
+{name:'ハイギア',effect:'speed',charges:1},
+{name:'オーバードライブ',effect:'damage',charges:1}
+]},
+iso:{name:'アイソ',role:'duelist',color:0xa5d8da,abilities:[
+{name:'コンティンジェンシー',effect:'wall',charges:1},
+{name:'アンダーカット',effect:'decay',charges:2},
+{name:'ダブルタップ',effect:'shield',charges:1},
+{name:'キルコントラクト',effect:'damage',charges:1}
+]},
+waylay:{name:'ウェイレイ',role:'duelist',color:0x60d3db,abilities:[
+{name:'サチュレート',effect:'slow',charges:2},
+{name:'ライトスピード',effect:'dash',charges:1},
+{name:'リフラクト',effect:'teleport',charges:1},
+{name:'コンバージェントパス',effect:'speed',charges:1}
+]},
+sova:{name:'ソーヴァ',role:'initiator',color:0x568521,abilities:[
+{name:'オウルドローン',effect:'reveal',charges:1},
+{name:'ショックボルト',effect:'damage',charges:2},
+{name:'リコンボルト',effect:'reveal',charges:1},
+{name:'ハンターズフューリー',effect:'damage',charges:1}
+]},
+breach:{name:'ブリーチ',role:'initiator',color:0x7d9f9a,abilities:[
+{name:'アフターショック',effect:'damage',charges:2},
+{name:'フラッシュポイント',effect:'flash',charges:1},
+{name:'フォールトライン',effect:'stun',charges:1},
+{name:'ローリングサンダー',effect:'stun',charges:1}
+]},
+skye:{name:'スカイ',role:'initiator',color:0xa021ea,abilities:[
+{name:'リグロース',effect:'heal',charges:1},
+{name:'トレイルブレイザー',effect:'reveal',charges:2},
+{name:'ガイディングライト',effect:'flash',charges:1},
+{name:'シーカー',effect:'reveal',charges:1}
+]},
+kayo:{name:'KAY/O',role:'initiator',color:0xb96dea,abilities:[
+{name:'フラグメント',effect:'molly',charges:2},
+{name:'フラッシュドライブ',effect:'flash',charges:1},
+{name:'ゼロポイント',effect:'suppress',charges:1},
+{name:'ヌルコマンド',effect:'suppress',charges:1}
+]},
+fade:{name:'フェイド',role:'initiator',color:0x6cfee5,abilities:[
+{name:'プラウラー',effect:'reveal',charges:2},
+{name:'シーズ',effect:'pull',charges:1},
+{name:'ホウント',effect:'reveal',charges:1},
+{name:'ナイトフォール',effect:'decay',charges:1}
+]},
+gekko:{name:'ゲッコー',role:'initiator',color:0x8b06b6,abilities:[
+{name:'モッシュピット',effect:'molly',charges:2},
+{name:'ウィングマン',effect:'stun',charges:1},
+{name:'ディジー',effect:'flash',charges:1},
+{name:'スラッシュ',effect:'stun',charges:1}
+]},
+tejo:{name:'テホ',role:'initiator',color:0x9cac6f,abilities:[
+{name:'ステルスドローン',effect:'reveal',charges:2},
+{name:'スペシャルデリバリー',effect:'stun',charges:1},
+{name:'ガイデッドサルヴォ',effect:'damage',charges:1},
+{name:'アルマゲドン',effect:'damage',charges:1}
+]},
+sage:{name:'セージ',role:'sentinel',color:0x77c69a,abilities:[
+{name:'バリアオーブ',effect:'wall',charges:1},
+{name:'スロウオーブ',effect:'slow',charges:2},
+{name:'ヒーリングオーブ',effect:'heal',charges:1},
+{name:'リザレクション',effect:'revive',charges:1}
+]},
+cypher:{name:'サイファー',role:'sentinel',color:0x50d504,abilities:[
+{name:'トラップワイヤー',effect:'trap',charges:2},
+{name:'サイバーケージ',effect:'smoke',charges:1},
+{name:'スパイカメラ',effect:'reveal',charges:1},
+{name:'ニューラルセフト',effect:'reveal',charges:1}
+]},
+killjoy:{name:'キルジョイ',role:'sentinel',color:0x12783c,abilities:[
+{name:'ナノスワーム',effect:'molly',charges:2},
+{name:'アラームボット',effect:'trap',charges:1},
+{name:'タレット',effect:'trap',charges:1},
+{name:'ロックダウン',effect:'stun',charges:1}
+]},
+chamber:{name:'チェンバー',role:'sentinel',color:0x9f75dc,abilities:[
+{name:'トレードマーク',effect:'trap',charges:2},
+{name:'ヘッドハンター',effect:'damage',charges:1},
+{name:'ランデヴー',effect:'teleport',charges:1},
+{name:'ツール・ド・フォース',effect:'damage',charges:1}
+]},
+deadlock:{name:'デッドロック',role:'sentinel',color:0x150af3,abilities:[
+{name:'グラヴィネット',effect:'slow',charges:2},
+{name:'ソニックセンサー',effect:'trap',charges:1},
+{name:'バリアメッシュ',effect:'wall',charges:1},
+{name:'アナイアレーション',effect:'pull',charges:1}
+]},
+vyse:{name:'ヴァイス',role:'sentinel',color:0xe32d9b,abilities:[
+{name:'レーザーヴァイン',effect:'slow',charges:2},
+{name:'シアー',effect:'wall',charges:1},
+{name:'アークローズ',effect:'flash',charges:1},
+{name:'スティールガーデン',effect:'suppress',charges:1}
+]},
+veto:{name:'ヴィトー',role:'sentinel',color:0xea230c,abilities:[
+{name:'チョークホールド',effect:'trap',charges:2},
+{name:'インターセプター',effect:'shield',charges:1},
+{name:'クロスカット',effect:'teleport',charges:1},
+{name:'エボリューション',effect:'shield',charges:1}
+]}
+};
+const AGENT_IDS=Object.keys(AGENT_DATA);
+
 const BASE_MOUSE_SENSITIVITY=.00154; // 感度100%時
 const PLAYER_RADIUS=.25, PLAYER_EYE=1.62, CROUCH_DROP=.62, ARENA=18, GRAVITY=18, JUMP_SPEED=6.2;
 const game=document.getElementById('game');
@@ -324,6 +793,15 @@ const roundText=document.getElementById('roundText');
 const messageEl=document.getElementById('message');
 const hitmarker=document.getElementById('hitmarker');
 const damageFlash=document.getElementById('damageFlash');
+const flashOverlay=document.getElementById('flashOverlay');
+const agentButtons=[...document.querySelectorAll('.agentButton')];
+const abilityModeButtons=[...document.querySelectorAll('.abilityModeButton')];
+const agentChoiceArea=document.getElementById('agentChoiceArea');
+const touchUltimate=document.getElementById('touchUltimate');
+const abilityLabels=[1,2,3,4].map(i=>document.getElementById('abilityLabel'+i));
+const smokeCountEl=document.getElementById('smokeCount'),updraftCountEl=document.getElementById('updraftCount'),dashCountEl=document.getElementById('dashCount'),ultimateCountEl=document.getElementById('ultimateCount');
+const smokeKeyEl=document.getElementById('smokeKey'),updraftKeyEl=document.getElementById('updraftKey'),dashKeyEl=document.getElementById('dashKey'),ultimateKeyEl=document.getElementById('ultimateKey');
+const smokeAbilityButton=document.getElementById('smokeAbilityButton'),updraftAbilityButton=document.getElementById('updraftAbilityButton'),dashAbilityButton=document.getElementById('dashAbilityButton'),ultimateAbilityButton=document.getElementById('ultimateAbilityButton');
 const cross={top:document.getElementById('chTop'),bottom:document.getElementById('chBottom'),left:document.getElementById('chLeft'),right:document.getElementById('chRight'),dot:document.getElementById('chDot')};
 const previewCross={top:document.getElementById('previewTop'),bottom:document.getElementById('previewBottom'),left:document.getElementById('previewLeft'),right:document.getElementById('previewRight'),dot:document.getElementById('previewDot')};
 
@@ -432,27 +910,31 @@ const enemyHead=new THREE.Mesh(new THREE.SphereGeometry(.19,18,12),new THREE.Mes
 const enemyGun=new THREE.Mesh(new THREE.BoxGeometry(.12,.12,.7),new THREE.MeshStandardMaterial({color:0x1b222a,metalness:.5,roughness:.4})); enemyGun.position.set(.21,1.24,-.28);
 enemy.add(enemyBody,enemyHead,enemyGun); scene.add(enemy);
 
-const player={pos:new THREE.Vector3(0,PLAYER_EYE,7.2),vel:new THREE.Vector3(),verticalVelocity:0,onGround:true,health:100,ammo:MAG_SIZE,reloading:false,reloadTimer:0,lastShot:99,fireCd:0,dashCd:0,dashTimer:0,dashRecovery:0,crouchAmount:0,crouching:false,weapon:'revolver',weaponDrawTimer:0,weaponDrawDuration:.58,knifeCd:0,alive:true};
-const ai={health:100,alive:true,vel:new THREE.Vector3(),lastShot:99,fireCd:0,reloading:false,reloadTimer:0,ammo:MAG_SIZE,decision:0,strafe:1,target:new THREE.Vector3(),seenTime:0,heardPosition:new THREE.Vector3(),heardTimer:0,lastKnownPosition:new THREE.Vector3(),hasLastKnown:false,lookDirection:new THREE.Vector3(0,0,1),wallbangCd:0,strategy:'direct',strategyTimer:0,fastPeekTimer:0,peekNoiseTimer:0,jumpVelocity:0,onGround:true,feintPhase:0,attackLane:0};
-let yaw=0,pitch=0,keys={},playing=false,paused=false,roundEnding=false,blueWins=0,redWins=0,round=1,messageTimer=0,hitTimer=0,damageTimer=0,shotRecoil=0;
+const player={pos:new THREE.Vector3(0,PLAYER_EYE,7.2),vel:new THREE.Vector3(),verticalVelocity:0,onGround:true,health:100,ammo:MAG_SIZE,reloading:false,reloadTimer:0,lastShot:99,fireCd:0,dashCd:0,dashTimer:0,dashRecovery:0,dashDirection:new THREE.Vector3(),crouchAmount:0,crouching:false,weapon:'revolver',weaponDrawTimer:0,weaponDrawDuration:.58,knifeCd:0,smokes:SMOKE_MAX,updrafts:UPDRAFT_MAX,dashes:DASH_MAX,yoruFlashes:YORU_FLASH_MAX,yoruGates:YORU_GATE_MAX,yoruFakes:YORU_FAKE_MAX,yoruUlt:YORU_ULT_MAX,inDrift:false,driftTimer:0,genericCharges:[0,0,0,0],genericShield:0,genericSpeedTimer:0,suppressedTimer:0,reviveReady:false,alive:true};
+const ai={health:100,alive:true,vel:new THREE.Vector3(),lastShot:99,fireCd:0,reloading:false,reloadTimer:0,ammo:MAG_SIZE,decision:0,strafe:1,target:new THREE.Vector3(),seenTime:0,heardPosition:new THREE.Vector3(),heardTimer:0,lastKnownPosition:new THREE.Vector3(),hasLastKnown:false,lastKnownTimer:0,lookDirection:new THREE.Vector3(0,0,1),wallbangCd:0,michikoBurst:0,michikoBurstTimer:0,michikoFootstepSerial:0,michikoSoundWindow:0,crouching:false,crouchAmount:0,justReloaded:false,strategy:'direct',strategyTimer:0,fastPeekTimer:0,peekNoiseTimer:0,jumpVelocity:0,onGround:true,feintPhase:0,attackLane:0,abilityThink:0,smokes:SMOKE_MAX,updrafts:UPDRAFT_MAX,dashes:DASH_MAX,yoruFlashes:YORU_FLASH_MAX,yoruGates:YORU_GATE_MAX,yoruFakes:YORU_FAKE_MAX,yoruUlt:YORU_ULT_MAX,inDrift:false,driftTimer:0,gate:null,dashTimer:0,dashDirection:new THREE.Vector3(),flashCastTimer:0,flashTarget:new THREE.Vector3(),clone:null,genericCharges:[0,0,0,0],genericShield:0,genericSlowTimer:0,suppressedTimer:0,reviveReady:false};
+let yaw=0,pitch=0,keys={},playing=false,paused=false,roundEnding=false,blueWins=0,redWins=0,round=1,messageTimer=0,hitTimer=0,damageTimer=0,shotRecoil=0,roundElapsed=0;
 let totalDamageDealt=0,totalDamageTaken=0;
 let playerStepTimer=0,enemyStepTimer=0,intentionalPointerUnlock=false;
-let selectedDifficulty='normal';
+let selectedDifficulty='normal',abilityMode='none',selectedAgent='none',lastSelectedAgent='jett',enemyAgent='none';
+let roundTransitionTimer=null,matchSessionId=0;
 const DIFFICULTIES={
   easy:{label:'Easy',hitMoving:.15,hitStill:.38,headChance:.10,fireDelay:1.22,reaction:.68,shootChance:.50,hearingTime:1.8,hearingSpeed:1.9,seenSpeed:1.8,decisionMin:.95,decisionRandom:.90,tacticalChance:.14,fastPeekChance:.10,jumpPeekChance:.03,flankSpeed:2.0,wallbangRate:.001,wallbangHeadChance:.02},
   normal:{label:'Normal',hitMoving:.34,hitStill:.64,headChance:.34,fireDelay:.84,reaction:.32,shootChance:.78,hearingTime:2.8,hearingSpeed:2.5,seenSpeed:2.25,decisionMin:.62,decisionRandom:.62,tacticalChance:.36,fastPeekChance:.27,jumpPeekChance:.13,flankSpeed:2.7,wallbangRate:.003,wallbangHeadChance:.07},
   hard:{label:'Hard',hitMoving:.62,hitStill:.86,headChance:.66,fireDelay:.54,reaction:.12,shootChance:.94,hearingTime:5.2,hearingSpeed:3.35,seenSpeed:3.0,decisionMin:.27,decisionRandom:.31,tacticalChance:.66,fastPeekChance:.55,jumpPeekChance:.34,flankSpeed:3.7,wallbangRate:.006,wallbangHeadChance:.15},
   extra:{label:'Extra',hitMoving:1,hitStill:1,headChance:1,fireDelay:.29,reaction:0,shootChance:1,hearingTime:8.5,hearingSpeed:4.6,seenSpeed:4.0,decisionMin:.08,decisionRandom:.09,tacticalChance:.96,fastPeekChance:.90,jumpPeekChance:.72,flankSpeed:5.0,instantHead:true,wallbangRate:.16,wallbangHeadChance:.58,wallbangCooldown:.85},
-  michiko:{label:'ミチ子',hitMoving:1,hitStill:1,headChance:1,fireDelay:.22,reaction:0,shootChance:1,hearingTime:12,hearingSpeed:5.0,seenSpeed:4.5,decisionMin:.04,decisionRandom:.05,tacticalChance:1,fastPeekChance:.96,jumpPeekChance:.78,flankSpeed:5.5,instantHead:true,wallbangRate:1.65,wallbangHeadChance:.98,wallbangCooldown:.28,perfectWallbang:true}
+  michiko:{label:'ミチ子',hitMoving:1,hitStill:1,headChance:1,fireDelay:.13,reaction:0,shootChance:1,hearingTime:12,hearingSpeed:5.5,seenSpeed:5.0,decisionMin:.025,decisionRandom:.025,tacticalChance:1,fastPeekChance:1,jumpPeekChance:.82,flankSpeed:6.0,instantHead:true,wallbangRate:8,wallbangHeadChance:1,wallbangCooldown:.12,perfectWallbang:true}
 };
 let audioContext=null;
 const clock=new THREE.Clock(); const raycaster=new THREE.Raycaster();
 const tracers=[];
+const smokeClouds=[];
+const yoruProjectiles=[],yoruClones=[];let gateBeacon=null;let playerFlashTimer=0;
+const smokeProjectiles=[];
 const isTouchDevice=matchMedia('(pointer:coarse)').matches||navigator.maxTouchPoints>0;
 
 const DEFAULT_BINDINGS={
   forward:['KeyW','ArrowUp'],backward:['KeyS','ArrowDown'],left:['KeyA','ArrowLeft'],right:['KeyD','ArrowRight'],
-  shoot:['Mouse0',''],reload:['KeyR',''],walk:['ShiftLeft','ShiftRight'],crouch:['KeyC',''],jump:['Space',''],knife:['ControlLeft','ControlRight'],weapon:['KeyQ',''],pause:['Escape','KeyP']
+  shoot:['Mouse0',''],reload:['KeyR',''],walk:['ShiftLeft','ShiftRight'],crouch:['KeyC',''],jump:['Space',''],knife:['ControlLeft','ControlRight'],weapon:['KeyQ',''],abilitySmoke:['KeyZ',''],abilityUpdraft:['KeyX',''],abilityDash:['KeyE',''],abilityUltimate:['KeyV',''],pause:['Escape','KeyP']
 };
 const DEFAULT_SETTINGS={sensitivity:100,crosshairColor:'#f4fbff',crosshairLength:8,crosshairThickness:2,crosshairGap:5,crosshairDot:true};
 const BINDINGS_STORAGE_KEY='tacticalDuelKeyBindingsV2';
@@ -477,12 +959,12 @@ function loadBindings(){
   try{return normalizeBindings(JSON.parse(localStorage.getItem(BINDINGS_STORAGE_KEY)||localStorage.getItem('tacticalDuelKeyBindingsV1')||'null'));}
   catch{return normalizeBindings(null);}
 }
-function saveBindings(){localStorage.setItem(BINDINGS_STORAGE_KEY,JSON.stringify(bindings));}
+function saveBindings(){try{localStorage.setItem(BINDINGS_STORAGE_KEY,JSON.stringify(bindings));}catch(error){console.warn('キーバインドを保存できませんでした。',error);}}
 function loadGameSettings(){
   try{return {...DEFAULT_SETTINGS,...JSON.parse(localStorage.getItem(SETTINGS_STORAGE_KEY)||'{}')};}
   catch{return {...DEFAULT_SETTINGS};}
 }
-function saveGameSettings(){localStorage.setItem(SETTINGS_STORAGE_KEY,JSON.stringify(gameSettings));}
+function saveGameSettings(){try{localStorage.setItem(SETTINGS_STORAGE_KEY,JSON.stringify(gameSettings));}catch(error){console.warn('ゲーム設定を保存できませんでした。',error);}}
 function bindingLabel(code){
   if(!code)return '未設定';
   const labels={Space:'Space',Escape:'Esc',ShiftLeft:'左Shift',ShiftRight:'右Shift',ControlLeft:'左Ctrl',ControlRight:'右Ctrl',AltLeft:'左Alt',AltRight:'右Alt',ArrowUp:'↑',ArrowDown:'↓',ArrowLeft:'←',ArrowRight:'→',Mouse0:'左クリック',Mouse1:'ホイールクリック',Mouse2:'右クリック',Mouse3:'マウス戻る',Mouse4:'マウス進む'};
@@ -490,7 +972,8 @@ function bindingLabel(code){
 }
 function updateCompactInstructions(){
   const label=a=>bindings[a].filter(Boolean).map(bindingLabel).join(' / ')||'未設定';
-  compactInstructions.innerHTML=`移動：${label('forward')}・${label('backward')}・${label('left')}・${label('right')}<br>射撃：${label('shoot')}　リロード：${label('reload')}<br>低速歩行：${label('walk')}　しゃがみ：${label('crouch')}<br>ジャンプ：${label('jump')}　ナイフ：${label('knife')}　武器：${label('weapon')}　ポーズ：${label('pause')}`;
+  const abilityText=selectedAgent==='none'?'':`<br>アビリティ1 ${label('abilitySmoke')}　能力2 ${label('abilityUpdraft')}　能力3 ${label('abilityDash')}${selectedAgent!=='none'?`　ULT ${label('abilityUltimate')}`:''}`;
+  compactInstructions.innerHTML=`移動：${label('forward')}・${label('backward')}・${label('left')}・${label('right')}<br>射撃：${label('shoot')}　リロード：${label('reload')}<br>低速歩行：${label('walk')}　しゃがみ：${label('crouch')}<br>ジャンプ：${label('jump')}　ナイフ：${label('knife')}　武器：${label('weapon')}${abilityText}<br>ポーズ：${label('pause')}`;
 }
 function updateBindingUI(){
   for(const button of keybindButtons){
@@ -501,6 +984,10 @@ function updateBindingUI(){
   }
   reloadHint.textContent=bindingLabel(bindings.reload[0]||bindings.reload[1]);
   pauseHintKey.textContent=bindingLabel(bindings.pause[0]||bindings.pause[1]);
+  smokeKeyEl.textContent=bindingLabel(bindings.abilitySmoke[0]||bindings.abilitySmoke[1]);
+  updraftKeyEl.textContent=bindingLabel(bindings.abilityUpdraft[0]||bindings.abilityUpdraft[1]);
+  dashKeyEl.textContent=bindingLabel(bindings.abilityDash[0]||bindings.abilityDash[1]);
+  ultimateKeyEl.textContent=bindingLabel(bindings.abilityUltimate[0]||bindings.abilityUltimate[1]);
   updateCompactInstructions();
 }
 function beginBinding(action,slot){listeningTarget={action,slot};bindStatus.textContent='割り当てたいキーまたはマウスボタンを押してください。Esc単独はキャンセルではなく割り当て可能です。';updateBindingUI();}
@@ -697,10 +1184,320 @@ function clearTracers(){
   tracers.length=0;
 }
 
+function clearAbilityEffects(){
+  for(const cloud of smokeClouds){scene.remove(cloud.mesh);cloud.mesh.geometry.dispose();cloud.mesh.material.dispose()}
+  for(const projectile of smokeProjectiles){scene.remove(projectile.mesh);projectile.mesh.geometry.dispose();projectile.mesh.material.dispose()}
+  smokeClouds.length=0;smokeProjectiles.length=0;clearYoruEffects();
+}
+function spawnSmoke(position){
+  const geometry=new THREE.SphereGeometry(SMOKE_RADIUS,24,16);
+  const material=new THREE.MeshStandardMaterial({color:0xbfefff,roughness:1,transparent:true,opacity:.9,depthWrite:true,side:THREE.DoubleSide,emissive:0x285b73,emissiveIntensity:.35});
+  const mesh=new THREE.Mesh(geometry,material);mesh.position.copy(position);mesh.position.y=Math.max(SMOKE_RADIUS*.72,position.y);scene.add(mesh);
+  smokeClouds.push({mesh,life:SMOKE_DURATION,maxLife:SMOKE_DURATION});
+}
+function segmentIntersectsSmoke(a,b){
+  const ab=b.clone().sub(a),lenSq=ab.lengthSq();
+  if(lenSq<.0001)return false;
+  for(const cloud of smokeClouds){
+    const t=THREE.MathUtils.clamp(cloud.mesh.position.clone().sub(a).dot(ab)/lenSq,0,1);
+    const closest=a.clone().addScaledVector(ab,t);
+    if(closest.distanceToSquared(cloud.mesh.position)<=SMOKE_RADIUS*SMOKE_RADIUS)return true;
+  }
+  return false;
+}
+
+const genericObjects=[];
+function agentDef(id=selectedAgent){return AGENT_DATA[id]||null}
+function resetGenericAbilities(){
+  const pd=agentDef(selectedAgent),ed=agentDef(enemyAgent);
+  player.genericCharges=pd?pd.abilities.map(a=>a.charges):[0,0,0,0];
+  ai.genericCharges=ed?ed.abilities.map(a=>a.charges):[0,0,0,0];
+  player.genericShield=0;player.genericSpeedTimer=0;player.suppressedTimer=0;player.reviveReady=false;
+  ai.genericShield=0;ai.genericSlowTimer=0;ai.suppressedTimer=0;ai.reviveReady=false;
+  for(const o of genericObjects)disposeObject(o.mesh);genericObjects.length=0;
+}
+function safeForwardPosition(origin,dir,distance){
+  for(let d=distance;d>.5;d-=.5){const q=origin.clone().addScaledVector(dir,d);q.y=.1;if(!collides(q.x,q.z,PLAYER_RADIUS))return q}
+  return origin.clone();
+}
+function aimPoint(maxRange=12){
+  const dir=new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion).normalize();
+  raycaster.set(camera.position,dir);const hit=raycaster.intersectObjects(obstacleMeshes,false)[0];
+  const range=hit?Math.min(maxRange,Math.max(.8,hit.distance-.18)):maxRange;
+  return camera.position.clone().addScaledVector(dir,range).setY(.08);
+}
+function genericVisual(position,color=0x79dfff,size=.35,life=3,type='orb',data={}){
+  let geo;
+  if(type==='wall')geo=new THREE.BoxGeometry(.38,2.8,2.4);
+  else if(type==='line')geo=new THREE.BoxGeometry(.24,.24,Math.max(1,data.length||6));
+  else if(type==='zone'||type==='molly'||type==='gravity'||type==='slowZone')geo=new THREE.CylinderGeometry(size,size,.12,24);
+  else if(type==='trap'||type==='enemyTrap'||type==='turret')geo=new THREE.CylinderGeometry(size*.72,size,.45,10);
+  else geo=new THREE.SphereGeometry(size,14,10);
+  const mat=new THREE.MeshStandardMaterial({color,emissive:color,emissiveIntensity:.42,transparent:true,opacity:.76,depthWrite:type!=='zone'});
+  const mesh=new THREE.Mesh(geo,mat);mesh.position.copy(position);
+  if(type==='wall')mesh.position.y=1.4;
+  else if(type==='line'){mesh.position.y=1.1;mesh.rotation.y=data.yaw||0;}
+  else if(type==='zone'||type==='molly'||type==='gravity'||type==='slowZone')mesh.position.y=.08;
+  scene.add(mesh);genericObjects.push({mesh,life,maxLife:life,type,...data});return mesh;
+}
+function hurtEnemy(amount){
+  if(!ai.alive)return;const absorbed=Math.min(ai.genericShield||0,amount);ai.genericShield-=absorbed;amount-=absorbed;
+  if(amount<=0)return;totalDamageDealt+=Math.min(amount,Math.max(0,ai.health));ai.health-=amount;
+  if(ai.health<=0){if(ai.reviveReady){ai.reviveReady=false;ai.health=50;showMessage('敵が復帰！',.7)}else{ai.health=0;endRound(true)}}
+}
+function hurtPlayerAbility(amount){
+  if(!player.alive)return;const absorbed=Math.min(player.genericShield||0,amount);player.genericShield-=absorbed;amount-=absorbed;
+  if(amount<=0)return;totalDamageTaken+=Math.min(amount,Math.max(0,player.health));player.health-=amount;damageFlash.style.opacity='1';damageTimer=.12;
+  if(player.health<=0){if(player.reviveReady){player.reviveReady=false;player.health=50;showMessage('復帰！',.7)}else{player.health=0;endRound(false)}}updateHUD();
+}
+function abilityProfile(agentId,index,ability){
+  const name=ability.name;
+  const profile={radius:2.3,duration:4,damage:index===3?60:28,color:AGENT_DATA[agentId]?.color||0x79dfff};
+  if(/オービタル|ショーストッパー|アルマゲドン/.test(name)){profile.radius=3.1;profile.duration=2.8;profile.damage=82;}
+  if(/ハンターズフューリー/.test(name)){profile.radius=1.15;profile.duration=.8;profile.damage=65;profile.line=true;}
+  if(/ペイント弾|ショックボルト|アフターショック|ガイデッド/.test(name)){profile.radius=2.0;profile.damage=38;}
+  if(/ヴァイパーズピット/.test(name)){profile.radius=4.3;profile.duration=8;}
+  if(/コズミックディバイド/.test(name)){profile.duration=7;}
+  if(/ロックダウン/.test(name)){profile.radius=5.2;profile.duration=4.5;}
+  if(/ナノスワーム|モッシュピット|ホットハンド|スネークバイト|インセンディアリー|フラグメント/.test(name)){profile.radius=2.45;profile.duration=5;profile.damage=9;}
+  return profile;
+}
+function castWall(target,dir,color,duration=6){
+  const side=new THREE.Vector3(-dir.z,0,dir.x);
+  for(let i=-2;i<=2;i++){const p=target.clone().addScaledVector(side,i*1.15);genericVisual(p,color,.5,duration,'wall',{solid:false});}
+}
+function useGenericAbility(index){
+  if(!playing||paused||roundEnding||!player.alive||selectedAgent==='none'||player.suppressedTimer>0)return;
+  if(selectedAgent==='jett'){if(index===0)return useJettCloudburst();if(index===1)return useJettUpdraft();if(index===2)return useJettTailwind();}
+  if(selectedAgent==='yoru'){if(index===0)return useFakeout();if(index===1)return useBlindside();if(index===2)return useGatecrash();if(index===3)return useDimensionalDrift();}
+  const def=agentDef();if(!def||!player.genericCharges[index])return;
+  const ability=def.abilities[index],profile=abilityProfile(selectedAgent,index,ability);
+  player.genericCharges[index]--;
+  const dir=new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion).setY(0).normalize();
+  const target=aimPoint(index===3?13:10),dist=enemy.position.distanceTo(target),enemyDist=enemy.position.distanceTo(player.pos);
+  try{
+    switch(ability.effect){
+      case 'smoke': spawnSmoke(target);break;
+      case 'wall': castWall(target,dir,profile.color,profile.duration);break;
+      case 'flash': genericVisual(target,0xf8fbff,.34,.7,'orb');applyFlash(target,1.7);break;
+      case 'dash': player.dashDirection.copy(dir);player.dashTimer=.32;player.dashRecovery=.65;break;
+      case 'teleport': {const q=safeForwardPosition(player.pos,dir,index===3?9:6);player.pos.copy(q).setY(player.pos.y);player.weaponDrawTimer=.55;genericVisual(q,profile.color,.55,1.2,'orb');break;}
+      case 'heal': player.health=Math.min(100,player.health+(selectedAgent==='sage'?100:45));break;
+      case 'shield': player.genericShield=Math.min(50,player.genericShield+(selectedAgent==='iso'?40:30));break;
+      case 'speed': player.genericSpeedTimer=index===3?9:6;break;
+      case 'drift': player.inDrift=true;player.driftTimer=4.5;player.weaponDrawTimer=999;break;
+      case 'stim': player.genericSpeedTimer=6;player.fireCd=0;genericVisual(player.pos.clone(),profile.color,2.2,6,'zone',{owner:'player',stim:true});break;
+      case 'reveal': genericVisual(target,profile.color,.45,4,'orb',{reveal:true});if(enemy.position.distanceTo(target)<profile.radius+2){ai.hasLastKnown=true;ai.lastKnownPosition.copy(enemy.position);ai.lastKnownTimer=4;}break;
+      case 'slow': genericVisual(target,profile.color,profile.radius,profile.duration,'slowZone',{owner:'player',slow:true});break;
+      case 'stun': genericVisual(target,profile.color,profile.radius,2.5,'zone',{owner:'player',stun:true});if(dist<profile.radius)ai.blindedTimer=Math.max(ai.blindedTimer,2.5);break;
+      case 'suppress': genericVisual(target,profile.color,profile.radius,5,'zone',{owner:'player',suppress:true});if(dist<profile.radius+1)ai.suppressedTimer=5;break;
+      case 'pull': genericVisual(target,profile.color,profile.radius,3,'gravity',{owner:'player',pull:true});break;
+      case 'decay': genericVisual(target,profile.color,profile.radius,4,'zone',{owner:'player',decay:true});if(dist<profile.radius)ai.health=Math.max(1,ai.health-25);break;
+      case 'trap': genericVisual(target,profile.color,.42,14,'trap',{owner:'player',damage:18});break;
+      case 'molly': genericVisual(target,profile.color,profile.radius,profile.duration,'molly',{owner:'player',damage:profile.damage});break;
+      case 'damage':
+        if(profile.line){const yaw=Math.atan2(dir.x,dir.z);genericVisual(player.pos.clone().addScaledVector(dir,5),profile.color,.5,.75,'line',{owner:'player',damage:profile.damage,length:10,yaw});if(enemyDist<14&&!collides((player.pos.x+enemy.position.x)/2,(player.pos.z+enemy.position.z)/2,.05))hurtEnemy(profile.damage);}
+        else{genericVisual(target,profile.color,profile.radius,1.2,'zone',{owner:'player',burst:true});if(dist<profile.radius+1.0)hurtEnemy(profile.damage);}
+        break;
+      case 'revive': player.reviveReady=true;genericVisual(player.pos.clone(),profile.color,.7,2,'orb');break;
+    }
+  }catch(err){console.warn('Ability fallback:',selectedAgent,ability.name,err);genericVisual(target,profile.color,.45,1.2,'orb');}
+  showMessage(`${def.name}：${ability.name}`,.65);updateHUD();
+}
+function updateGenericEffects(dt){
+  player.genericSpeedTimer=player.genericSpeedTimer>0?Math.max(0,player.genericSpeedTimer-dt):Math.min(0,player.genericSpeedTimer+dt);player.suppressedTimer=Math.max(0,(player.suppressedTimer||0)-dt);
+  ai.genericSlowTimer=Math.max(0,(ai.genericSlowTimer||0)-dt);ai.suppressedTimer=Math.max(0,(ai.suppressedTimer||0)-dt);
+  for(let i=genericObjects.length-1;i>=0;i--){const o=genericObjects[i];o.life-=dt;if(!o.mesh?.parent){genericObjects.splice(i,1);continue;}o.mesh.rotation.y+=dt*(o.type==='wall'?0:.6);
+    const enemyD=enemy.position.distanceTo(o.mesh.position),playerD=player.pos.distanceTo(o.mesh.position),radius=o.mesh.geometry?.parameters?.radiusTop||o.mesh.geometry?.parameters?.radius||2.2;
+    if(o.type==='trap'&&enemyD<1.5){ai.genericSlowTimer=3;hurtEnemy(o.damage||18);o.life=0;}
+    if(o.type==='enemyTrap'&&playerD<1.5){player.genericSpeedTimer=Math.min(player.genericSpeedTimer,-3);hurtPlayerAbility(o.damage||18);o.life=0;}
+    if(o.type==='molly'){if(o.owner==='player'&&enemyD<radius)hurtEnemy((o.damage||8)*dt);if(o.owner==='enemy'&&playerD<radius)hurtPlayerAbility((o.damage||8)*dt);}
+    if(o.type==='slowZone'){if(o.owner==='player'&&enemyD<radius)ai.genericSlowTimer=Math.max(ai.genericSlowTimer,.35);if(o.owner==='enemy'&&playerD<radius)player.genericSpeedTimer=Math.min(player.genericSpeedTimer,-.35);}
+    if(o.type==='gravity'){if(o.owner==='player'&&enemyD<radius){const d=o.mesh.position.clone().sub(enemy.position).setY(0).normalize();moveCircle(enemy.position,d.x*dt*2.2,d.z*dt*2.2,.25);}if(o.owner==='enemy'&&playerD<radius){const d=o.mesh.position.clone().sub(player.pos).setY(0).normalize();moveCircle(player.pos,d.x*dt*2.2,d.z*dt*2.2,PLAYER_RADIUS);}}
+    if(o.type==='zone'&&o.decay){if(o.owner==='player'&&enemyD<radius)ai.health=Math.max(1,ai.health-5*dt);if(o.owner==='enemy'&&playerD<radius)hurtPlayerAbility(5*dt);}
+    const fade=Math.min(1,o.life/.25,(o.maxLife-o.life)/.18);if(o.mesh.material)o.mesh.material.opacity=.76*Math.max(0,fade);
+    if(o.life<=0){disposeObject(o.mesh);genericObjects.splice(i,1);}
+  }
+}
+function enemyUseGenericAbility(skill,sees,dist){
+  if(enemyAgent==='none'||enemyAgent==='jett'||enemyAgent==='yoru'||ai.suppressedTimer>0)return false;
+  const def=agentDef(enemyAgent);if(!def)return false;
+  const candidates=def.abilities.map((a,i)=>({a,i})).filter(x=>(ai.genericCharges[x.i]||0)>0);
+  if(!candidates.length)return false;
+  let pick=candidates[Math.floor(Math.random()*candidates.length)];
+  if(skill.smart>.55){const pref=ai.health<40?['heal','shield','teleport','revive','smoke','wall']:sees?['flash','stun','damage','slow','decay','pull','dash']:['reveal','trap','smoke','wall','speed'];const smart=candidates.find(x=>pref.includes(x.a.effect));if(smart)pick=smart;}
+  const hasInfo=sees||ai.heardTimer>0||ai.hasLastKnown;
+  if(!hasInfo&&!['heal','shield','speed','stim','revive','trap'].includes(pick.a.effect))return false;
+  ai.genericCharges[pick.i]--;const effect=pick.a.effect,profile=abilityProfile(enemyAgent,pick.i,pick.a);
+  const target=sees?player.pos.clone():(ai.heardTimer>0?ai.heardPosition.clone():ai.lastKnownPosition.clone());target.y=.08;
+  try{
+    if(effect==='heal')ai.health=Math.min(100,ai.health+(enemyAgent==='sage'?100:45));
+    else if(effect==='shield')ai.genericShield=Math.min(50,ai.genericShield+30);
+    else if(effect==='speed'||effect==='stim')ai.fastPeekTimer=4;
+    else if(effect==='smoke')spawnSmoke(target.clone());
+    else if(effect==='wall'){const forward=target.clone().sub(enemy.position).setY(0).normalize();castWall(enemy.position.clone().lerp(target,.55),forward,profile.color,profile.duration);}
+    else if(effect==='flash'&&dist<12){genericVisual(target,0xf8fbff,.34,.7,'orb');playerFlashTimer=Math.max(playerFlashTimer,1.2+skill.smart*.5);}
+    else if(effect==='stun'){genericVisual(target,profile.color,profile.radius,2.5,'zone',{owner:'enemy',stun:true});if(player.pos.distanceTo(target)<profile.radius)playerFlashTimer=Math.max(playerFlashTimer,.85);}
+    else if(effect==='slow')genericVisual(target,profile.color,profile.radius,profile.duration,'slowZone',{owner:'enemy',slow:true});
+    else if(effect==='suppress'){genericVisual(target,profile.color,profile.radius,5,'zone',{owner:'enemy',suppress:true});if(player.pos.distanceTo(target)<profile.radius+1)player.suppressedTimer=5;}
+    else if(effect==='teleport'){const away=enemy.position.clone().sub(target).setY(0).normalize();enemy.position.copy(safeForwardPosition(enemy.position,away,5)).setY(0);}
+    else if(effect==='dash'){const side=new THREE.Vector3(-(target.z-enemy.position.z),0,target.x-enemy.position.x).normalize();ai.dashDirection.copy(side);ai.dashTimer=.3;}
+    else if(effect==='reveal'){ai.hasLastKnown=true;ai.lastKnownPosition.copy(target);ai.lastKnownTimer=4;genericVisual(target,profile.color,.4,3,'orb');}
+    else if(effect==='trap')genericVisual(enemy.position.clone().lerp(target,.45),profile.color,.4,12,'enemyTrap',{owner:'enemy',damage:18});
+    else if(effect==='molly')genericVisual(target,profile.color,profile.radius,profile.duration,'molly',{owner:'enemy',damage:profile.damage});
+    else if(effect==='damage'){genericVisual(target,profile.color,profile.radius,1.2,'zone',{owner:'enemy',burst:true});if(player.pos.distanceTo(target)<profile.radius+1)hurtPlayerAbility(profile.damage);}
+    else if(effect==='decay'){genericVisual(target,profile.color,profile.radius,4,'zone',{owner:'enemy',decay:true});if(player.pos.distanceTo(target)<profile.radius)hurtPlayerAbility(18);}
+    else if(effect==='pull')genericVisual(target,profile.color,profile.radius,3,'gravity',{owner:'enemy',pull:true});
+    else if(effect==='revive')ai.reviveReady=true;
+  }catch(err){console.warn('Enemy ability fallback:',enemyAgent,pick.a.name,err);}
+  return true;
+}
+
+function useJettCloudburst(){
+  if(!playing||paused||roundEnding||!player.alive||player.smokes<=0)return;
+  player.smokes--;
+  const dir=new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion).normalize();
+  const mesh=new THREE.Mesh(new THREE.SphereGeometry(.13,12,8),new THREE.MeshBasicMaterial({color:0xbfefff,transparent:true,opacity:.95}));
+  mesh.position.copy(camera.position).addScaledVector(dir,.55);scene.add(mesh);
+  smokeProjectiles.push({mesh,velocity:dir.multiplyScalar(13),life:1.45});
+  showMessage('クラウドバースト',.45);updateHUD();
+}
+function useJettUpdraft(){
+  if(!playing||paused||roundEnding||!player.alive||player.updrafts<=0)return;
+  player.updrafts--;player.onGround=false;player.verticalVelocity=Math.max(player.verticalVelocity,10.8);shotRecoil=Math.max(shotRecoil,10);
+  showMessage('アップドラフト',.45);updateHUD();
+}
+function useJettTailwind(){
+  if(!playing||paused||roundEnding||!player.alive||player.dashes<=0||player.dashTimer>0)return;
+  let ix=0,iz=0;if(actionPressed('forward'))iz+=1;if(actionPressed('backward'))iz-=1;if(actionPressed('right'))ix+=1;if(actionPressed('left'))ix-=1;
+  const forward=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw)),right=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));
+  const dir=forward.multiplyScalar(iz).add(right.multiplyScalar(ix));if(dir.lengthSq()<.001)dir.set(-Math.sin(yaw),0,-Math.cos(yaw));dir.normalize();
+  player.dashes--;player.dashDirection.copy(dir);player.dashTimer=.24;player.dashRecovery=.62;player.reloading=false;player.weaponDrawTimer=Math.max(player.weaponDrawTimer,.32);
+  showMessage('テイルウィンド',.4);updateHUD();
+}
+function useCloudburst(){useGenericAbility(0)}
+function useUpdraft(){useGenericAbility(1)}
+function useTailwind(){useGenericAbility(2)}
+
+function updateAbilityEffects(dt){
+  for(let i=smokeProjectiles.length-1;i>=0;i--){
+    const p=smokeProjectiles[i],old=p.mesh.position.clone();p.life-=dt;
+    const step=p.velocity.clone().multiplyScalar(dt),next=old.clone().add(step);
+    const hitGround=next.y<=.2,hitWall=collides(next.x,next.z,.13);
+    if(hitGround||hitWall||p.life<=0){spawnSmoke(hitGround?new THREE.Vector3(next.x,.05,next.z):old);scene.remove(p.mesh);p.mesh.geometry.dispose();p.mesh.material.dispose();smokeProjectiles.splice(i,1)}
+    else p.mesh.position.copy(next);
+  }
+  for(let i=smokeClouds.length-1;i>=0;i--){
+    const c=smokeClouds[i];c.life-=dt;c.mesh.rotation.y+=dt*.35;
+    const fade=Math.min(1,c.life/.35,(c.maxLife-c.life)/.18);c.mesh.material.opacity=.9*Math.max(0,fade);
+    if(c.life<=0){scene.remove(c.mesh);c.mesh.geometry.dispose();c.mesh.material.dispose();smokeClouds.splice(i,1)}
+  }
+}
+
+
+function disposeObject(obj){
+  scene.remove(obj);
+  obj.traverse?.(child=>{child.geometry?.dispose?.();if(Array.isArray(child.material))child.material.forEach(m=>m.dispose?.());else child.material?.dispose?.()});
+}
+function createYoruCloneMesh(){
+  const group=new THREE.Group();
+  const mat=new THREE.MeshStandardMaterial({color:0x496dff,emissive:0x17216b,emissiveIntensity:.45,transparent:true,opacity:.88});
+  const body=new THREE.Mesh(new THREE.CapsuleGeometry(.235,.90,5,10),mat);body.position.y=1;
+  const head=new THREE.Mesh(new THREE.SphereGeometry(.19,16,10),mat.clone());head.position.y=1.76;
+  const weapon=new THREE.Mesh(new THREE.BoxGeometry(.12,.12,.7),new THREE.MeshStandardMaterial({color:0x202944,metalness:.45}));weapon.position.set(.21,1.24,-.28);
+  group.add(body,head,weapon);return group;
+}
+function throwYoruProjectile(type){
+  const dir=new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion).normalize();
+  const mesh=new THREE.Mesh(new THREE.SphereGeometry(.12,12,8),new THREE.MeshBasicMaterial({color:type==='flash'?0x9fc7ff:0x775cff,transparent:true,opacity:.95}));
+  mesh.position.copy(camera.position).addScaledVector(dir,.55);scene.add(mesh);
+  yoruProjectiles.push({type,mesh,velocity:dir.multiplyScalar(type==='flash'?15:8),life:type==='flash'?2:20,bounced:false,armed:false,armTimer:0});
+}
+function applyFlash(position,maxDuration=1.5){
+  const enemyEye=enemy.position.clone().add(new THREE.Vector3(0,1.55,0));
+  const enemyToFlash=position.clone().sub(enemyEye);const ed=enemyToFlash.length();
+  if(ed<11){
+    const facing=ai.lookDirection.dot(enemyToFlash.normalize());
+    const duration=maxDuration*THREE.MathUtils.clamp((facing+.15)/1.15,0,1)*THREE.MathUtils.clamp(1-ed/15,.25,1);
+    ai.blindedTimer=Math.max(ai.blindedTimer||0,duration);
+  }
+  const toFlash=position.clone().sub(camera.position);const pd=toFlash.length();
+  if(pd<11){
+    const camDir=new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion).normalize();
+    const facing=camDir.dot(toFlash.normalize());
+    playerFlashTimer=Math.max(playerFlashTimer,maxDuration*THREE.MathUtils.clamp((facing+.1)/1.1,0,1)*THREE.MathUtils.clamp(1-pd/15,.25,1));
+  }
+}
+function useBlindside(){
+  if(!playing||paused||roundEnding||!player.alive||player.yoruFlashes<=0||player.inDrift)return;
+  player.yoruFlashes--;throwYoruProjectile('flash');showMessage('ブラインドサイド',.45);updateHUD();
+}
+function useGatecrash(){
+  if(!playing||paused||roundEnding||!player.alive)return;
+  if(gateBeacon){
+    if(actionPressed('walk')){showMessage('フェイクテレポート',.55);ai.heardPosition.copy(gateBeacon.mesh.position);ai.heardTimer=3;disposeObject(gateBeacon.mesh);gateBeacon=null;updateHUD();return;}
+    const p=gateBeacon.mesh.position;if(!collides(p.x,p.z,PLAYER_RADIUS)){player.pos.x=p.x;player.pos.z=p.z;player.reloading=false;player.weaponDrawTimer=Math.max(player.weaponDrawTimer,.5);showMessage('ゲートクラッシュ',.55)}
+    disposeObject(gateBeacon.mesh);gateBeacon=null;updateHUD();return;
+  }
+  if(player.yoruGates<=0)return;
+  player.yoruGates--;const dir=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));
+  const mesh=new THREE.Mesh(new THREE.SphereGeometry(.18,14,10),new THREE.MeshStandardMaterial({color:0x7358ff,emissive:0x36249a,emissiveIntensity:1.2,transparent:true,opacity:.9}));
+  mesh.position.set(player.pos.x,.22,player.pos.z);scene.add(mesh);gateBeacon={mesh,velocity:dir.multiplyScalar(5.5),life:YORU_GATE_DURATION,moving:true,health:20};showMessage('ゲートクラッシュ設置',.55);updateHUD();
+}
+function useFakeout(){
+  if(!playing||paused||roundEnding||!player.alive||player.yoruFakes<=0||player.inDrift)return;
+  player.yoruFakes--;const mesh=createYoruCloneMesh();mesh.position.set(player.pos.x,0,player.pos.z);mesh.rotation.y=yaw;scene.add(mesh);
+  const dir=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));yoruClones.push({mesh,dir,life:10,triggered:false,explodeTimer:0});showMessage('フェイクアウト',.45);updateHUD();
+}
+function useDimensionalDrift(){
+  if(selectedAgent!=='yoru')return useGenericAbility(3);
+  if(!playing||paused||roundEnding||!player.alive)return;
+  if(player.inDrift){endDimensionalDrift();return;}
+  if(player.yoruUlt<=0)return;
+  player.yoruUlt--;player.inDrift=true;player.driftTimer=YORU_ULT_DURATION;player.reloading=false;player.weaponDrawTimer=999;showMessage('ディメンショナルドリフト',.75);updateHUD();
+}
+function endDimensionalDrift(){
+  if(!player.inDrift)return;player.inDrift=false;player.driftTimer=0;player.weaponDrawTimer=.8;showMessage('ドリフト解除',.45);updateHUD();
+}
+function updateYoruEffects(dt){
+  ai.blindedTimer=Math.max(0,(ai.blindedTimer||0)-dt);playerFlashTimer=Math.max(0,playerFlashTimer-dt);flashOverlay.style.opacity=String(Math.min(1,playerFlashTimer*1.35));
+  if(player.inDrift){player.driftTimer-=dt;if(player.driftTimer<=0)endDimensionalDrift();}
+  if(gateBeacon){gateBeacon.life-=dt;gateBeacon.mesh.rotation.y+=dt*4;if(gateBeacon.moving){const n=gateBeacon.mesh.position.clone().addScaledVector(gateBeacon.velocity,dt);if(collides(n.x,n.z,.18))gateBeacon.moving=false;else gateBeacon.mesh.position.copy(n)}if(gateBeacon.life<=0){disposeObject(gateBeacon.mesh);gateBeacon=null;updateHUD();}}
+  for(let i=yoruProjectiles.length-1;i>=0;i--){const p=yoruProjectiles[i];p.life-=dt;if(!p.armed){const next=p.mesh.position.clone().addScaledVector(p.velocity,dt);if(collides(next.x,next.z,.13)||next.y<=.15){if(p.type==='flash'&&!p.bounced){p.bounced=true;p.velocity.x*=-.65;p.velocity.z*=-.65;p.velocity.y=Math.abs(p.velocity.y)+1.2;p.mesh.position.addScaledVector(p.velocity,dt)}else{p.armed=true;p.armTimer=.6}}else{p.velocity.y-=GRAVITY*.18*dt;p.mesh.position.copy(next)}}else{p.armTimer-=dt;if(p.armTimer<=0){applyFlash(p.mesh.position,1.5);disposeObject(p.mesh);yoruProjectiles.splice(i,1);continue}}if(p.life<=0){disposeObject(p.mesh);yoruProjectiles.splice(i,1)}}
+  for(let i=yoruClones.length-1;i>=0;i--){const c=yoruClones[i];c.life-=dt;if(!c.triggered){moveCircle(c.mesh.position,c.dir.x*3.4*dt,c.dir.z*3.4*dt,.24);c.mesh.lookAt(c.mesh.position.x+c.dir.x,1.2,c.mesh.position.z+c.dir.z);const from=enemy.position.clone().add(new THREE.Vector3(0,1.55,0)),to=c.mesh.position.clone().add(new THREE.Vector3(0,1.2,0));const d=to.clone().sub(from),dist=d.length();raycaster.set(from,d.normalize());const wall=raycaster.intersectObjects(obstacleMeshes,false)[0];if((!wall||wall.distance>dist)&&dist<13&&ai.lookDirection.dot(d.normalize())>.35&&ai.fireCd<=0){c.triggered=true;c.explodeTimer=.8;playGunshot(enemy.position,true);ai.fireCd=.6}}else{c.explodeTimer-=dt;if(c.explodeTimer<=0){applyFlash(c.mesh.position,2);disposeObject(c.mesh);yoruClones.splice(i,1);continue}}if(c.life<=0){disposeObject(c.mesh);yoruClones.splice(i,1)}}
+}
+function clearYoruEffects(){if(ai.gate){disposeObject(ai.gate.mesh);ai.gate=null}if(ai.clone){disposeObject(ai.clone.mesh);ai.clone=null}ai.inDrift=false;enemy.visible=true;for(const p of yoruProjectiles)disposeObject(p.mesh);for(const c of yoruClones)disposeObject(c.mesh);yoruProjectiles.length=0;yoruClones.length=0;if(gateBeacon){disposeObject(gateBeacon.mesh);gateBeacon=null}playerFlashTimer=0;flashOverlay.style.opacity='0';}
+
 function emitPlayerFootstep(){
   playFootstep(player.pos,false);
   ai.heardPosition.copy(player.pos);
   ai.heardTimer=DIFFICULTIES[selectedDifficulty].hearingTime;
+  // 足音を聞いた瞬間に、現在の戦術を組み直す
+  ai.hasLastKnown=false;
+  ai.lastKnownTimer=0;
+  ai.decision=0;
+  if(selectedDifficulty==='michiko'){
+    // ミチ子は、実際に鳴った足音1回につき壁越し射撃を1発だけ予約する。
+    // リボルバーと同じく、前の射撃から0.75秒以上空いた場合だけ発射する。
+    ai.michikoFootstepSerial++;
+    ai.michikoBurst=1;
+    ai.michikoBurstTimer=0;
+    ai.michikoSoundWindow=.9;
+    ai.wallbangCd=0;
+    ai.strategy='soundHunt';
+    ai.target.copy(ai.heardPosition);
+    ai.strategyTimer=.75;
+  }else{
+    const cfg=DIFFICULTIES[selectedDifficulty];
+    const roll=Math.random();
+    if(roll<.32+cfg.tacticalChance*.25){
+      ai.strategy='ambush';
+      ai.target.copy(chooseTacticalTarget(ai.heardPosition,false,Math.random()<.5?-1:1));
+      ai.strategyTimer=1.4+Math.random()*2.0;
+    }else{
+      beginEnemyTactic(cfg,ai.heardPosition);
+    }
+  }
 }
 function pauseGame(){touchActions.clear();document.querySelectorAll('.touchBtn.active').forEach(b=>b.classList.remove('active'));
   if(!playing||roundEnding||paused)return;
@@ -717,11 +1514,32 @@ function collides(x,z,r=PLAYER_RADIUS){
 }
 function moveCircle(pos,dx,dz,r=PLAYER_RADIUS){if(!collides(pos.x+dx,pos.z,r))pos.x+=dx;if(!collides(pos.x,pos.z+dz,r))pos.z+=dz;}
 function showMessage(text,time=1.2){messageEl.textContent=text;messageEl.style.opacity='1';messageTimer=time;}
-function updateHUD(){healthEl.textContent=Math.max(0,Math.ceil(player.health));healthFill.style.width=`${Math.max(0,player.health)}%`;ammoEl.textContent=player.weapon==='knife'?'ナイフ':(player.weaponDrawTimer>0?'持ち替え中…':(player.reloading?`… / ${MAG_SIZE}`:`${player.ammo} / ${MAG_SIZE}`));scoreBlue.textContent=blueWins;scoreRed.textContent=redWins;roundText.textContent=`ROUND ${round}`;}
+function updateHUD(){
+  healthEl.textContent=Math.max(0,Math.ceil(player.health));healthFill.style.width=`${THREE.MathUtils.clamp(player.health,0,100)}%`;
+  ammoEl.textContent=player.inDrift?'次元移動中':(player.weapon==='knife'?'ナイフ':(player.weaponDrawTimer>0?'持ち替え中…':(player.reloading?`… / ${MAG_SIZE}`:`${player.ammo} / ${MAG_SIZE}`)));
+  scoreBlue.textContent=blueWins;scoreRed.textContent=redWins;roundText.textContent=`ROUND ${round}`;
+  const isNone=selectedAgent==='none',def=agentDef(),isY=selectedAgent==='yoru',isJ=selectedAgent==='jett';
+  const abilityBar=document.getElementById('abilityBar');if(abilityBar)abilityBar.style.display=isNone?'none':'flex';
+  const touchAbilityButtons=[document.querySelector('[data-touch-action="abilitySmoke"]'),document.querySelector('[data-touch-action="abilityUpdraft"]'),document.querySelector('[data-touch-action="abilityDash"]'),touchUltimate];
+  const specialized=isY?[['フェイクアウト',player.yoruFakes],['ブラインドサイド',player.yoruFlashes],['ゲートクラッシュ',gateBeacon?'TP':player.yoruGates],['ディメンショナルドリフト',player.inDrift?Math.ceil(player.driftTimer):player.yoruUlt]]:
+    isJ?[['クラウドバースト',player.smokes],['アップドラフト',player.updrafts],['テイルウィンド',player.dashes],['ブレードストーム',player.genericCharges?.[3]||1]]:
+    def?def.abilities.map((a,i)=>[a.name,player.genericCharges?.[i]??a.charges]):[['',0],['',0],['',0],['',0]];
+  touchAbilityButtons.forEach((b,i)=>{if(!b)return;b.style.display=isNone?'none':'block';b.textContent=specialized[i]?.[0]||`能力${i+1}`});
+  ultimateAbilityButton.style.display=isNone?'none':'block';touchUltimate.style.display=isNone?'none':'block';
+  const buttons=[smokeAbilityButton,updraftAbilityButton,dashAbilityButton,ultimateAbilityButton],counts=[smokeCountEl,updraftCountEl,dashCountEl,ultimateCountEl];
+  buttons.forEach((b,i)=>{if(!b)return;const title=specialized[i]?.[0]||'',count=specialized[i]?.[1]??0;b.childNodes[0].nodeValue=title+' ';counts[i].textContent=count;const available=count==='TP'||Number(count)>0||player.inDrift;b.classList.toggle('empty',!available);b.classList.toggle('ready',available)});
+  abilityLabels.forEach((el,i)=>{el.style.display='block';el.textContent=isNone?`能力${i+1}（スキル無し）`:`能力${i+1}（${specialized[i]?.[0]||''}）`});
+  updateCompactInstructions();
+}
 function updateCrosshair(gap){const l=gameSettings.crosshairLength,t=gameSettings.crosshairThickness,c=gameSettings.crosshairColor;Object.assign(cross.top.style,{width:`${t}px`,height:`${l}px`,left:`${-t/2}px`,top:'0',background:c,transform:`translateY(${-gap-l}px)`});Object.assign(cross.bottom.style,{width:`${t}px`,height:`${l}px`,left:`${-t/2}px`,top:'0',background:c,transform:`translateY(${gap}px)`});Object.assign(cross.left.style,{height:`${t}px`,width:`${l}px`,top:`${-t/2}px`,left:'0',background:c,transform:`translateX(${-gap-l}px)`});Object.assign(cross.right.style,{height:`${t}px`,width:`${l}px`,top:`${-t/2}px`,left:'0',background:c,transform:`translateX(${gap}px)`});const d=Math.max(2,t+1);Object.assign(cross.dot.style,{width:`${d}px`,height:`${d}px`,left:`${-d/2}px`,top:`${-d/2}px`,background:c,display:gameSettings.crosshairDot?'block':'none'});}
-function resetRound(){touchActions.clear();document.querySelectorAll('.touchBtn.active').forEach(b=>b.classList.remove('active'));clearTracers();paused=false;pauseScreen.classList.add('hidden');playerStepTimer=0;enemyStepTimer=0;buildArena();player.pos.set(0,PLAYER_EYE,7.2);player.vel.set(0,0,0);player.verticalVelocity=0;player.onGround=true;player.health=100;player.ammo=MAG_SIZE;player.reloading=false;player.reloadTimer=0;player.lastShot=99;player.fireCd=0;player.dashCd=0;player.dashTimer=0;player.dashRecovery=0;player.crouchAmount=0;player.crouching=false;player.weapon='revolver';player.weaponDrawTimer=0;player.knifeCd=0;player.alive=true;enemy.position.set(0,0,-7.2);ai.health=100;ai.alive=true;ai.vel.set(0,0,0);ai.lastShot=99;ai.fireCd=(selectedDifficulty==='extra'||selectedDifficulty==='michiko')?0:.8;ai.ammo=MAG_SIZE;ai.reloading=false;ai.reloadTimer=0;ai.decision=0;ai.heardTimer=0;ai.heardPosition.set(0,0,0);ai.lastKnownPosition.set(0,0,0);ai.hasLastKnown=false;ai.lookDirection.set(0,0,1);ai.wallbangCd=0;ai.strategy='direct';ai.strategyTimer=0;ai.fastPeekTimer=0;ai.peekNoiseTimer=0;ai.jumpVelocity=0;ai.onGround=true;ai.target.set(0,0,0);enemy.visible=true;yaw=0;pitch=0;camera.rotation.set(0,0,0);roundEnding=false;showMessage(`ROUND ${round}`,1.1);updateHUD();}
-function startMatch(){ensureAudio();paused=false;settingsScreen.classList.add('hidden');pauseScreen.classList.add('hidden');blueWins=0;redWins=0;round=1;totalDamageDealt=0;totalDamageTaken=0;endScreen.classList.add('hidden');startScreen.classList.add('hidden');playing=true;resetRound();if(!isTouchDevice)renderer.domElement.requestPointerLock();}
-function endRound(playerWon){if(roundEnding)return;roundEnding=true;player.alive=false;ai.alive=false;if(playerWon){blueWins++;showMessage('ROUND WIN',1.8)}else{redWins++;showMessage('ROUND LOST',1.8)}updateHUD();setTimeout(()=>{if(blueWins>=MAX_WINS||redWins>=MAX_WINS){playing=false;paused=false;pauseScreen.classList.add('hidden');intentionalPointerUnlock=true;document.exitPointerLock();finalResult.textContent=blueWins>redWins?'VICTORY':'DEFEAT';finalResult.style.color=blueWins>redWins?'#74cdff':'#ff6969';finalScore.innerHTML=`${blueWins} - ${redWins}<br><span style="font-size:18px;line-height:1.9">モード：${DIFFICULTIES[selectedDifficulty].label}<br>与えた合計ダメージ：${Math.round(totalDamageDealt)}<br>受けた合計ダメージ：${Math.round(totalDamageTaken)}</span>`;endScreen.classList.remove('hidden');}else{round++;resetRound();}},1900)}
+function resetRound(){roundElapsed=0;touchActions.clear();document.querySelectorAll('.touchBtn.active').forEach(b=>b.classList.remove('active'));clearTracers();clearAbilityEffects();paused=false;pauseScreen.classList.add('hidden');playerStepTimer=0;enemyStepTimer=0;buildArena();player.pos.set(0,PLAYER_EYE,7.2);player.vel.set(0,0,0);player.verticalVelocity=0;player.onGround=true;player.health=100;player.ammo=MAG_SIZE;player.reloading=false;player.reloadTimer=0;player.lastShot=99;player.fireCd=0;player.dashCd=0;player.dashTimer=0;player.dashRecovery=0;player.crouchAmount=0;player.crouching=false;player.weapon='revolver';player.weaponDrawTimer=0;player.knifeCd=0;player.smokes=SMOKE_MAX;player.updrafts=UPDRAFT_MAX;player.dashes=DASH_MAX;player.yoruFlashes=YORU_FLASH_MAX;player.yoruGates=YORU_GATE_MAX;player.yoruFakes=YORU_FAKE_MAX;player.yoruUlt=YORU_ULT_MAX;player.inDrift=false;player.driftTimer=0;player.alive=true;enemy.position.set(0,0,-7.2);ai.health=100;ai.alive=true;ai.blindedTimer=0;ai.abilityThink=.6+Math.random();ai.smokes=SMOKE_MAX;ai.updrafts=UPDRAFT_MAX;ai.dashes=DASH_MAX;ai.yoruFlashes=YORU_FLASH_MAX;ai.yoruGates=YORU_GATE_MAX;ai.yoruFakes=YORU_FAKE_MAX;ai.yoruUlt=YORU_ULT_MAX;ai.inDrift=false;ai.driftTimer=0;ai.dashTimer=0;ai.flashCastTimer=0;if(ai.gate){disposeObject(ai.gate.mesh);ai.gate=null}if(ai.clone){disposeObject(ai.clone.mesh);ai.clone=null}ai.vel.set(0,0,0);ai.lastShot=99;ai.fireCd=(selectedDifficulty==='extra'||selectedDifficulty==='michiko')?0:.8;ai.ammo=MAG_SIZE;ai.reloading=false;ai.reloadTimer=0;ai.decision=0;ai.heardTimer=0;ai.heardPosition.set(0,0,0);ai.lastKnownPosition.set(0,0,0);ai.hasLastKnown=false;ai.lastKnownTimer=0;ai.lookDirection.set(0,0,1);ai.wallbangCd=0;ai.michikoBurst=0;ai.michikoBurstTimer=0;ai.michikoFootstepSerial=0;ai.michikoSoundWindow=0;ai.crouching=false;ai.crouchAmount=0;ai.justReloaded=false;ai.strategy='direct';ai.strategyTimer=0;ai.fastPeekTimer=0;ai.peekNoiseTimer=0;ai.jumpVelocity=0;ai.onGround=true;ai.target.set(0,0,0);enemy.visible=true;enemy.rotation.set(0,0,0);enemyBody.position.y=1.0;enemyHead.position.y=1.76;enemyGun.position.y=1.24;enemyBody.rotation.set(0,0,0);enemyHead.rotation.set(0,0,0);enemyGun.rotation.set(0,0,0);yaw=0;pitch=0;camera.rotation.set(0,0,0);roundEnding=false;resetGenericAbilities();showMessage(enemyAgent==='none'?`ROUND ${round}`:`ROUND ${round}  VS ${AGENT_DATA[enemyAgent]?.name||enemyAgent}`,1.35);updateHUD();}
+function requestGamePointerLock(){
+  if(isTouchDevice||document.pointerLockElement===renderer.domElement)return;
+  try{const result=renderer.domElement.requestPointerLock();if(result?.catch)result.catch(()=>{});}catch(error){console.warn('ポインターを固定できませんでした。',error);}
+}
+function clearRoundTransition(){if(roundTransitionTimer!==null){clearTimeout(roundTransitionTimer);roundTransitionTimer=null;}}
+function startMatch(){ensureAudio();clearRoundTransition();matchSessionId++;if(abilityMode==='enabled'&&!AGENT_DATA[selectedAgent])selectedAgent=AGENT_DATA[lastSelectedAgent]?lastSelectedAgent:'jett';if(abilityMode!=='enabled')selectedAgent='none';enemyAgent=abilityMode==='enabled'?AGENT_IDS[Math.floor(Math.random()*AGENT_IDS.length)]:'none';enemyBody.material.color.set(enemyAgent==='none'?0xe84d55:(AGENT_DATA[enemyAgent]?.color||0xe84d55));paused=false;settingsScreen.classList.add('hidden');pauseScreen.classList.add('hidden');blueWins=0;redWins=0;round=1;totalDamageDealt=0;totalDamageTaken=0;endScreen.classList.add('hidden');startScreen.classList.add('hidden');playing=true;resetRound();requestGamePointerLock();}
+function endRound(playerWon){if(roundEnding)return;roundEnding=true;player.alive=false;ai.alive=false;if(playerWon){blueWins++;showMessage('ROUND WIN',1.8)}else{redWins++;showMessage('ROUND LOST',1.8)}updateHUD();clearRoundTransition();const sessionId=matchSessionId;roundTransitionTimer=setTimeout(()=>{roundTransitionTimer=null;if(sessionId!==matchSessionId||!playing)return;if(blueWins>=MAX_WINS||redWins>=MAX_WINS){playing=false;paused=false;pauseScreen.classList.add('hidden');intentionalPointerUnlock=true;document.exitPointerLock();finalResult.textContent=blueWins>redWins?'VICTORY':'DEFEAT';finalResult.style.color=blueWins>redWins?'#74cdff':'#ff6969';finalScore.innerHTML=`${blueWins} - ${redWins}<br><span style="font-size:18px;line-height:1.9">能力：${abilityMode==='none'?'お互いに能力なし':'能力あり'}<br>自分：${AGENT_DATA[selectedAgent]?.name||'スキル無し'}<br>敵：${AGENT_DATA[enemyAgent]?.name||'スキル無し'}<br>モード：${DIFFICULTIES[selectedDifficulty].label}<br>与えた合計ダメージ：${Math.round(totalDamageDealt)}<br>受けた合計ダメージ：${Math.round(totalDamageTaken)}</span>`;endScreen.classList.remove('hidden');}else{round++;resetRound();}},1900)}
 function startReload(entity,isPlayer){if(isPlayer&&player.weapon==='knife')return;if(entity.reloading||entity.ammo===MAG_SIZE||!entity.alive)return;entity.reloading=true;entity.reloadTimer=RELOAD_TIME;if(isPlayer)showMessage('RELOADING',.55)}
 function spreadForPlayer(speed){let deg=.08;if(speed>.08)deg=6+Math.min(10,speed*1.4);if(player.dashRecovery>0)deg+=8*(player.dashRecovery/.65);if(player.lastShot<RAPID_TIME)deg=Math.max(deg,18+Math.random()*12);if(!player.onGround)deg=Math.max(deg,60+Math.random()*25);deg+=shotRecoil*.5;return THREE.MathUtils.degToRad(deg);}
 function randomDirection(base,spread){const e=new THREE.Euler(pitch+(Math.random()-.5)*spread,yaw+(Math.random()-.5)*spread,0,'YXZ');return new THREE.Vector3(0,0,-1).applyEuler(e).normalize();}
@@ -732,8 +1550,10 @@ function countWallsBeforeTarget(origin,direction,targetDistance){
   return new Set(hits.filter(h=>h.distance<targetDistance-.02).map(h=>h.object)).size;
 }
 function playerShoot(){
+  if(player.inDrift)return;
+  if(ai.inDrift){showMessage('敵は次元移動中',.35);return;}
   if(player.weapon==='knife'){knifeAttack();return}
-  if(!playing||roundEnding||!player.alive||player.reloading||player.weaponDrawTimer>0||player.fireCd>0||player.ammo<=0||(!isTouchDevice&&document.pointerLockElement!==renderer.domElement))return;
+  if(!playing||roundEnding||!player.alive||player.reloading||player.weaponDrawTimer>0||player.fireCd>0||(!isTouchDevice&&document.pointerLockElement!==renderer.domElement))return;
   if(player.ammo<=0){startReload(player,true);return}
   const speed=Math.hypot(player.vel.x,player.vel.z),spread=spreadForPlayer(speed),dir=randomDirection(camera.rotation,spread);
   playGunshot(player.pos,false);player.ammo--;player.fireCd=.14;player.lastShot=0;weaponKick=1;shotRecoil=Math.min(22,shotRecoil+9);camera.rotation.x=Math.min(1.45,camera.rotation.x+.012);
@@ -762,6 +1582,7 @@ function playerShoot(){
   if(player.ammo===0)showMessage('弾切れ：Rでリロード',.9);updateHUD();
 }
 function lineOfSight(){
+  if(player.inDrift||(ai.blindedTimer||0)>0)return false;
   const from=enemy.position.clone().add(new THREE.Vector3(0,1.55,0));
   const to=camera.position.clone();
   const dir=to.clone().sub(from);const dist=dir.length();
@@ -769,17 +1590,42 @@ function lineOfSight(){
   // ミチ子以外は、実際に視野へ入ったプレイヤーだけ発見する
   if(selectedDifficulty!=='michiko'&&ai.lookDirection.dot(horizontal)<Math.cos(THREE.MathUtils.degToRad(58)))return false;
   raycaster.set(from,dir.normalize());const hit=raycaster.intersectObjects(obstacleMeshes,false)[0];
+  if(segmentIntersectsSmoke(from,to))return false;
   return !hit||hit.distance>dist;
 }
 function faceEnemyTarget(target,y=1.25){
   const direction=new THREE.Vector3(target.x-enemy.position.x,0,target.z-enemy.position.z);
-  if(direction.lengthSq()>.0001)ai.lookDirection.copy(direction.normalize());
-  enemy.lookAt(target.x,y,target.z);
+  if(direction.lengthSq()>.0001){
+    ai.lookDirection.copy(direction.normalize());
+    // 上下方向へ体ごと傾けず、水平旋回だけを行う。
+    enemy.rotation.set(0,Math.atan2(-direction.x,-direction.z),0);
+  }else{
+    enemy.rotation.x=0;
+    enemy.rotation.z=0;
+  }
+}
+function updateEnemyPosture(dt,sees){
+  // 待ち伏せ中だけしゃがむ。立ち・しゃがみのどちらも体軸は常に垂直。
+  ai.crouching=ai.onGround&&!sees&&ai.strategy==='ambush'&&Math.hypot(ai.vel.x,ai.vel.z)<1.1;
+  ai.crouchAmount=THREE.MathUtils.damp(ai.crouchAmount,ai.crouching?1:0,13,dt);
+  const drop=.48*ai.crouchAmount;
+  enemyBody.position.y=1.0-drop*.58;
+  enemyHead.position.y=1.76-drop;
+  enemyGun.position.y=1.24-drop*.78;
+  enemyBody.rotation.set(0,0,0);
+  enemyHead.rotation.set(0,0,0);
+  enemyGun.rotation.set(0,0,0);
+  enemy.rotation.x=0;
+  enemy.rotation.z=0;
 }
 function enemyShoot(options={}){
-  if(!ai.alive||ai.reloading||ai.fireCd>0||ai.ammo<=0)return;
+  if(ai.inDrift||player.inDrift||(ai.blindedTimer||0)>0)return;
+  // ミチ子もプレイヤーと同じリボルバー間隔を守る。戦闘開始直後の1秒間は射撃しない。
+  if(selectedDifficulty==='michiko'&&(roundElapsed<1||ai.lastShot<.75))return;
+  if(!ai.alive||ai.reloading||ai.fireCd>0)return;
+  if(ai.ammo<=0){startReload(ai,false);return;}
   const cfg=DIFFICULTIES[selectedDifficulty],wallbang=!!options.wallbang;
-  const rapid=ai.lastShot<RAPID_TIME;playGunshot(enemy.position,true);ai.ammo--;ai.fireCd=wallbang?(cfg.wallbangCooldown??cfg.fireDelay):cfg.fireDelay;ai.lastShot=0;
+  const rapid=ai.lastShot<RAPID_TIME;playGunshot(enemy.position,true);ai.ammo--;ai.fireCd=selectedDifficulty==='michiko'?.75:(wallbang?(cfg.wallbangCooldown??cfg.fireDelay):cfg.fireDelay);ai.lastShot=0;
   const moving=Math.hypot(ai.vel.x,ai.vel.z)>.2;
   const enemyJumping=!ai.onGround||enemy.position.y>.06;
   let hitChance=moving?cfg.hitMoving:cfg.hitStill;if(rapid&&!wallbang)hitChance*=.55;
@@ -810,8 +1656,8 @@ function enemyShoot(options={}){
   const tracerEnd=canReach?tracerTarget.clone():(()=>{raycaster.set(tracerStart,tracerDir);const h=raycaster.intersectObjects(obstacleMeshes,false)[0];return h?h.point.clone():tracerStart.clone().add(tracerDir.clone().multiplyScalar(45))})();
   createTracer(tracerStart,tracerEnd,wallbang?0xff8a45:0xff6b55);
   if(didHit&&canReach){
-    const baseDamage=aimedAtHead?100:25,dmg=wallbang?baseDamage*.5:baseDamage;
-    totalDamageTaken+=Math.min(dmg,Math.max(0,player.health));
+    const baseDamage=aimedAtHead?100:25;let dmg=wallbang?baseDamage*.5:baseDamage;
+    const absorbed=Math.min(player.genericShield||0,dmg);player.genericShield-=absorbed;dmg-=absorbed;totalDamageTaken+=Math.min(dmg,Math.max(0,player.health));
     player.health-=dmg;damageFlash.style.opacity='1';damageTimer=.12;
     if(player.health<=0){player.health=0;endRound(false)}
   }
@@ -836,13 +1682,17 @@ function updatePlayer(dt){
   let max=4.2;
   if(walking)max=2.1;
   if(player.crouching)max=walking?1.25:1.65;
-  if(player.weapon==='knife')max*=1.3;
+  if(player.weapon==='knife')max*=1.3;if(player.inDrift)max*=1.35;
 
   const desired=input.multiplyScalar(max);
   const accel=player.dashTimer>0?50:22;
-  player.vel.x=THREE.MathUtils.damp(player.vel.x,desired.x,accel,dt);
-  player.vel.z=THREE.MathUtils.damp(player.vel.z,desired.z,accel,dt);
-  if(ix===0&&iz===0){
+  if(player.dashTimer>0){
+    player.vel.x=player.dashDirection.x*18;player.vel.z=player.dashDirection.z*18;
+  }else{
+    player.vel.x=THREE.MathUtils.damp(player.vel.x,desired.x,accel,dt);
+    player.vel.z=THREE.MathUtils.damp(player.vel.z,desired.z,accel,dt);
+  }
+  if(player.dashTimer<=0&&ix===0&&iz===0){
     player.vel.x=THREE.MathUtils.damp(player.vel.x,0,40,dt);
     player.vel.z=THREE.MathUtils.damp(player.vel.z,0,40,dt);
     shotRecoil=THREE.MathUtils.damp(shotRecoil,0,7,dt);
@@ -948,6 +1798,89 @@ function beginEnemyTactic(cfg,reference){
     ai.strategyTimer=2.8+Math.random()*2.4;
   }
 }
+
+const AI_ABILITY_SKILL={
+  easy:{rate:.18,smart:.12,combo:.04,aimError:5.5},
+  normal:{rate:.42,smart:.45,combo:.25,aimError:2.6},
+  hard:{rate:.72,smart:.76,combo:.58,aimError:1.1},
+  extra:{rate:.96,smart:.96,combo:.90,aimError:.25},
+  michiko:{rate:1,smart:1,combo:1,aimError:0}
+};
+function enemyAbilityTarget(skill){
+  // ミチ子以外は、未視認時に現在位置を透視しない。足音位置か最後に見た位置のみ使う
+  let t;
+  if(lineOfSight())t=player.pos.clone();
+  else if(ai.heardTimer>0)t=ai.heardPosition.clone();
+  else if(ai.hasLastKnown)t=ai.lastKnownPosition.clone();
+  else t=enemy.position.clone().add(new THREE.Vector3(Math.random()-.5,0,Math.random()-.5).normalize().multiplyScalar(5));
+  t.x+=(Math.random()-.5)*2*skill.aimError;t.z+=(Math.random()-.5)*2*skill.aimError;t.y=0;
+  return t;
+}
+function enemyUseSmoke(skill){
+  if(ai.smokes<=0)return false;ai.smokes--;
+  const target=(Math.random()<skill.smart?player.pos:enemyAbilityTarget(skill)).clone();target.y=.05;
+  if(Math.random()<skill.smart*.7){const mid=enemy.position.clone().lerp(player.pos,.55);target.x=mid.x;target.z=mid.z;}
+  spawnSmoke(target);ai.strategy='flank';ai.target.copy(chooseTacticalTarget(player.pos,true,Math.random()<.5?-1:1));ai.strategyTimer=2.2;
+  return true;
+}
+function enemyUseUpdraft(skill){
+  if(ai.updrafts<=0||!ai.onGround)return false;ai.updrafts--;ai.jumpVelocity=10.8;ai.onGround=false;ai.fastPeekTimer=1.0;return true;
+}
+function enemyUseDash(skill){
+  if(ai.dashes<=0||ai.dashTimer>0)return false;ai.dashes--;
+  let dir;
+  if(Math.random()<skill.smart){const to=player.pos.clone().sub(enemy.position).setY(0).normalize();dir=new THREE.Vector3(-to.z,0,to.x).multiplyScalar(Math.random()<.5?-1:1);if(ai.health<45)dir.copy(to).multiplyScalar(-1);}
+  else dir=new THREE.Vector3(Math.random()-.5,0,Math.random()-.5).normalize();
+  ai.dashDirection.copy(dir);ai.dashTimer=.24;ai.fastPeekTimer=.8;return true;
+}
+function enemyUseFlash(skill){
+  if(ai.yoruFlashes<=0||ai.flashCastTimer>0)return false;ai.yoruFlashes--;ai.flashTarget.copy(enemyAbilityTarget(skill));ai.flashCastTimer=.55+Math.random()*.2;return true;
+}
+function enemyPlaceGate(skill){
+  if(ai.yoruGates<=0||ai.gate)return false;ai.yoruGates--;
+  const mesh=new THREE.Mesh(new THREE.SphereGeometry(.18,14,10),new THREE.MeshStandardMaterial({color:0x7358ff,emissive:0x36249a,emissiveIntensity:1.2,transparent:true,opacity:.9}));
+  const target=Math.random()<skill.smart?chooseTacticalTarget(player.pos,true,Math.random()<.5?-1:1):enemyAbilityTarget(skill);target.y=.22;mesh.position.copy(target);scene.add(mesh);ai.gate={mesh,life:YORU_GATE_DURATION};return true;
+}
+function enemyUseGate(skill){
+  if(!ai.gate)return enemyPlaceGate(skill);
+  const p=ai.gate.mesh.position;if(!collides(p.x,p.z,.25)){enemy.position.x=p.x;enemy.position.z=p.z;ai.fireCd=Math.max(ai.fireCd,.45);ai.fastPeekTimer=.7;}
+  disposeObject(ai.gate.mesh);ai.gate=null;return true;
+}
+function enemyUseFakeout(skill){
+  if(ai.yoruFakes<=0||ai.clone)return false;ai.yoruFakes--;const mesh=createYoruCloneMesh();mesh.position.copy(enemy.position);scene.add(mesh);
+  const dir=(Math.random()<skill.smart?player.pos.clone().sub(enemy.position):new THREE.Vector3(Math.random()-.5,0,Math.random()-.5)).setY(0).normalize();ai.clone={mesh,dir,life:8};return true;
+}
+function enemyUseDrift(skill){
+  if(ai.yoruUlt<=0||ai.inDrift)return false;ai.yoruUlt--;ai.inDrift=true;ai.driftTimer=Math.random()<skill.smart?3.2+Math.random()*2.8:YORU_ULT_DURATION;enemy.visible=false;ai.strategy='flank';ai.target.copy(chooseTacticalTarget(player.pos,false,Math.random()<.5?-1:1));return true;
+}
+function updateEnemyAbilityEffects(dt){
+  ai.dashTimer=Math.max(0,ai.dashTimer-dt);
+  if(ai.flashCastTimer>0){ai.flashCastTimer-=dt;if(ai.flashCastTimer<=0){const d=player.pos.distanceTo(ai.flashTarget);if(d<12){const camDir=new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion).normalize();const to=ai.flashTarget.clone().sub(camera.position).normalize();const facing=camDir.dot(to);playerFlashTimer=Math.max(playerFlashTimer,1.5*THREE.MathUtils.clamp((facing+.15)/1.15,0,1)*THREE.MathUtils.clamp(1-d/15,.25,1));}}}
+  if(ai.gate){ai.gate.life-=dt;ai.gate.mesh.rotation.y+=dt*4;if(ai.gate.life<=0){disposeObject(ai.gate.mesh);ai.gate=null;}}
+  if(ai.clone){const c=ai.clone;c.life-=dt;moveCircle(c.mesh.position,c.dir.x*3.4*dt,c.dir.z*3.4*dt,.24);c.mesh.lookAt(c.mesh.position.x+c.dir.x,1.2,c.mesh.position.z+c.dir.z);if(c.life<=0){disposeObject(c.mesh);ai.clone=null;}}
+  if(ai.inDrift){ai.driftTimer-=dt;if(ai.driftTimer<=0){ai.inDrift=false;enemy.visible=true;ai.fireCd=Math.max(ai.fireCd,.8);}}
+}
+function enemyThinkAbilities(sees,dist,dt){
+  if(enemyAgent==='none')return;
+  if(!Number.isFinite(dt)||dt<=0)dt=1/60;
+  const skill=AI_ABILITY_SKILL[selectedDifficulty];ai.abilityThink-=dt;if(ai.abilityThink>0||Math.random()>skill.rate)return;
+  ai.abilityThink=(1.1-Math.min(.75,skill.smart))+.35+Math.random()*(1.7-skill.smart);
+  if(enemyAgent==='jett'){
+    if(sees&&ai.health<48&&ai.smokes>0&&Math.random()<.45+skill.smart*.45){enemyUseSmoke(skill);return;}
+    if(sees&&dist<7&&ai.dashes>0&&Math.random()<.25+skill.smart*.6){enemyUseDash(skill);return;}
+    if(sees&&ai.updrafts>0&&Math.random()<.12+skill.smart*.42){enemyUseUpdraft(skill);return;}
+    if(ai.smokes>0&&Math.random()<.18+skill.smart*.3)enemyUseSmoke(skill);
+  }else if(enemyAgent==='yoru'){
+    if(ai.health<38&&ai.gate&&Math.random()<.35+skill.smart*.6){enemyUseGate(skill);return;}
+    if(sees&&ai.yoruFlashes>0&&Math.random()<.3+skill.smart*.55){enemyUseFlash(skill);ai.fastPeekTimer=.9;return;}
+    if(!sees&&ai.yoruFakes>0&&Math.random()<.18+skill.smart*.45){enemyUseFakeout(skill);return;}
+    if(ai.yoruUlt>0&&((ai.health<45&&Math.random()<skill.smart)||Math.random()<.05*skill.smart)){enemyUseDrift(skill);return;}
+    if(!ai.gate&&ai.yoruGates>0&&Math.random()<.2+skill.smart*.45){enemyPlaceGate(skill);return;}
+    if(ai.gate&&sees&&Math.random()<.08+skill.combo*.35)enemyUseGate(skill);
+  }else{
+    enemyUseGenericAbility(skill,sees,dist);
+  }
+}
 function updateAI(dt){
   if(!ai.alive||roundEnding)return;
   const cfg=DIFFICULTIES[selectedDifficulty];
@@ -956,6 +1889,12 @@ function updateAI(dt){
   ai.fastPeekTimer=Math.max(0,ai.fastPeekTimer-dt);
   ai.peekNoiseTimer=Math.max(0,ai.peekNoiseTimer-dt);
   ai.wallbangCd=Math.max(0,ai.wallbangCd-dt);
+  ai.michikoBurstTimer=Math.max(0,ai.michikoBurstTimer-dt);ai.michikoSoundWindow=Math.max(0,(ai.michikoSoundWindow||0)-dt);
+  ai.lastKnownTimer=Math.max(0,ai.lastKnownTimer-dt);
+  if(selectedDifficulty!=='michiko'&&ai.lastKnownTimer<=0){ai.hasLastKnown=false;}
+
+  // 弾切れを検知したら必ずリロードする
+  if(ai.ammo<=0&&!ai.reloading)startReload(ai,false);
 
   // 敵のジャンプ。グループ全体を上下させるため、頭と当たり判定も一緒に動く
   ai.jumpVelocity-=GRAVITY*dt;
@@ -965,15 +1904,39 @@ function updateAI(dt){
   const toPlayer=player.pos.clone().sub(enemy.position);toPlayer.y=0;
   const dist=toPlayer.length();
   const sees=lineOfSight();
-  if(sees){ai.lastKnownPosition.copy(player.pos);ai.hasLastKnown=true;}
+  enemyThinkAbilities(sees,dist,dt);
+  if(sees){ai.lastKnownPosition.copy(player.pos);ai.hasLastKnown=true;ai.lastKnownTimer=1.35;}
+
+  // ミチ子：実際に足音が鳴った後、リボルバー間隔を守って壁越しに1発だけ撃つ
+  if(selectedDifficulty==='michiko'&&roundElapsed>=1&&ai.michikoSoundWindow>0&&ai.michikoBurst>0&&!sees&&!ai.reloading&&ai.lastShot>=.75&&ai.michikoBurstTimer<=0){
+    const origin=enemy.position.clone().add(new THREE.Vector3(0,1.32,0));
+    const target=ai.heardPosition.clone();target.y=camera.position.y+.12;
+    const shotVector=target.clone().sub(origin),shotDistance=shotVector.length();
+    const walls=shotDistance>.1?countWallsBeforeTarget(origin,shotVector.normalize(),shotDistance):0;
+    if(walls===1){
+      faceEnemyTarget(target,target.y);
+      enemyShoot({wallbang:true,target});
+      ai.michikoBurst--;
+      ai.michikoBurstTimer=.75;
+    }else if(walls===0){
+      faceEnemyTarget(target,target.y);
+      enemyShoot({target});
+      ai.michikoBurst--;
+      ai.michikoBurstTimer=.75;
+    }else{
+      ai.target.copy(chooseTacticalTarget(ai.heardPosition,false,Math.random()<.5?-1:1));
+      ai.strategy='fastPeek';ai.fastPeekTimer=.7;
+    }
+  }
+  if(selectedDifficulty==='michiko'&&ai.michikoSoundWindow<=0)ai.michikoBurst=0;
   ai.seenTime=sees?ai.seenTime+dt:0;
   ai.decision-=dt;
   if(ai.decision<=0){
     ai.decision=cfg.decisionMin+Math.random()*cfg.decisionRandom;
     ai.strafe=Math.random()<.5?-1:1;
-    const knowsReference=selectedDifficulty==='michiko'||ai.heardTimer>0||ai.hasLastKnown;
+    const knowsReference=ai.heardTimer>0||ai.hasLastKnown;
     if(!sees&&knowsReference&&Math.random()<cfg.tacticalChance){
-      const reference=selectedDifficulty==='michiko'?player.pos:(ai.heardTimer>0?ai.heardPosition:ai.lastKnownPosition);
+      const reference=ai.heardTimer>0?ai.heardPosition:ai.lastKnownPosition;
       beginEnemyTactic(cfg,reference);
     }
   }
@@ -992,7 +1955,10 @@ function updateAI(dt){
       ai.jumpVelocity=JUMP_SPEED*.82;
       ai.onGround=false;
     }
-    if(ai.seenTime>cfg.reaction&&Math.random()<cfg.shootChance)enemyShoot();
+    if(ai.seenTime>cfg.reaction&&(ai.justReloaded||Math.random()<cfg.shootChance)){
+      enemyShoot();
+      ai.justReloaded=false;
+    }
   }else{
     const wallbangReference=cfg.perfectWallbang?player.pos:ai.heardPosition;
     const wallbangOrigin=enemy.position.clone().add(new THREE.Vector3(0,1.32,0));
@@ -1004,13 +1970,28 @@ function updateAI(dt){
       enemyShoot({wallbang:true,target:wallbangTarget});
       ai.wallbangCd=cfg.wallbangCooldown??2.2;
     }
-    const hasReference=selectedDifficulty==='michiko'||ai.heardTimer>0||ai.hasLastKnown;
-    const reference=selectedDifficulty==='michiko'?player.pos:(ai.heardTimer>0?ai.heardPosition:ai.lastKnownPosition);
+    const hasReference=ai.heardTimer>0||ai.hasLastKnown;
+    const reference=ai.heardTimer>0?ai.heardPosition:ai.lastKnownPosition;
     if(hasReference&&ai.strategyTimer<=0&&Math.random()<cfg.tacticalChance){
       beginEnemyTactic(cfg,reference);
     }
 
-    if(ai.strategy!=='direct'&&ai.target.lengthSq()>0){
+    if(ai.strategy==='ambush'&&ai.target.lengthSq()>0){
+      const toAmbush=ai.target.clone().sub(enemy.position);toAmbush.y=0;
+      if(toAmbush.length()>.42){
+        move.copy(toAmbush.normalize());
+      }else{
+        // 足音位置の角を見ながら静止し、一定時間待ち伏せする
+        move.set(0,0,0);
+        faceEnemyTarget(ai.heardPosition,1.25);
+        if(ai.strategyTimer<=0||ai.heardTimer<=0){
+          ai.strategy='fastPeek';
+          ai.fastPeekTimer=.75+Math.random()*.55;
+          ai.target.copy(chooseTacticalTarget(ai.heardPosition,false,Math.random()<.5?-1:1));
+          ai.strategyTimer=1.1+Math.random()*.7;
+        }
+      }
+    }else if(ai.strategy!=='direct'&&ai.target.lengthSq()>0){
       const toTarget=ai.target.clone().sub(enemy.position);toTarget.y=0;
       if(toTarget.length()>.48){
         move.copy(toTarget.normalize());
@@ -1036,7 +2017,7 @@ function updateAI(dt){
         // 最初の進路を見せた後、反対側の壁へ切り返して別方向から攻める
         ai.feintPhase=1;
         ai.attackLane=ai.attackLane===-1?1:ai.attackLane===1?-1:(Math.random()<.5?-1:1);
-        const feintReference=selectedDifficulty==='michiko'?player.pos:(ai.heardTimer>0?ai.heardPosition:(ai.hasLastKnown?ai.lastKnownPosition:new THREE.Vector3(0,PLAYER_EYE,0)));
+        const feintReference=ai.heardTimer>0?ai.heardPosition:(ai.hasLastKnown?ai.lastKnownPosition:new THREE.Vector3(0,PLAYER_EYE,0));
         ai.target.copy(chooseTacticalTarget(feintReference,true,ai.attackLane));
         ai.strategy='deepFlank';
         ai.strategyTimer=2.2+Math.random()*1.5;
@@ -1052,7 +2033,7 @@ function updateAI(dt){
         ai.fastPeekTimer=.9+Math.random()*.55;
         ai.peekNoiseTimer=1.0+Math.random()*.4;
         ai.strategyTimer=1.3+Math.random()*.9;
-        const peekReference=selectedDifficulty==='michiko'?player.pos:(ai.heardTimer>0?ai.heardPosition:(ai.hasLastKnown?ai.lastKnownPosition:new THREE.Vector3(0,PLAYER_EYE,0)));
+        const peekReference=ai.heardTimer>0?ai.heardPosition:(ai.hasLastKnown?ai.lastKnownPosition:new THREE.Vector3(0,PLAYER_EYE,0));
         const direct=peekReference.clone().sub(enemy.position);direct.y=0;
         if(direct.lengthSq()>0)move.copy(direct.normalize());
         if(ai.strategy==='jumpPeek'&&ai.onGround){ai.jumpVelocity=JUMP_SPEED*.85;ai.onGround=false;}
@@ -1081,13 +2062,15 @@ function updateAI(dt){
   }
 
   if(move.lengthSq()>0)move.normalize();
+  if(ai.inDrift&&ai.target.lengthSq()>0)move.copy(ai.target).sub(enemy.position).setY(0).normalize();
   let speed;
   const noisyPeek=ai.fastPeekTimer>0||ai.peekNoiseTimer>0||ai.strategy==='searchPeek';
   if(sees)speed=cfg.seenSpeed*(ai.fastPeekTimer>0?1.35:1);
   else if(noisyPeek)speed=cfg.flankSpeed*1.12;
   else if(ai.strategy!=='direct')speed=Math.min(1.55,cfg.flankSpeed*.43); // 探索移動はスニーク中心
   else speed=ai.heardTimer>0?Math.min(1.65,cfg.hearingSpeed*.52):1.25;
-  ai.vel.lerp(move.multiplyScalar(speed),1-Math.exp(-7*dt));
+  if(ai.inDrift)speed*=1.35;
+  if(ai.dashTimer>0){ai.vel.x=ai.dashDirection.x*18;ai.vel.z=ai.dashDirection.z*18;}else ai.vel.lerp(move.multiplyScalar(speed),1-Math.exp(-7*dt));
   moveCircle(enemy.position,ai.vel.x*dt,ai.vel.z*dt,.25);
 
   const aiSpeed=Math.hypot(ai.vel.x,ai.vel.z);
@@ -1100,8 +2083,9 @@ function updateAI(dt){
   if(sees)faceEnemyTarget(camera.position,camera.position.y);
   else if(ai.heardTimer>0)faceEnemyTarget(ai.heardPosition,1.25);
   else if(ai.strategy!=='direct'&&ai.target.lengthSq()>0)faceEnemyTarget(ai.target,1.25);
+  updateEnemyPosture(dt,sees);
 }
-function updateTimers(dt){player.fireCd=Math.max(0,player.fireCd-dt);player.lastShot+=dt;player.dashCd=Math.max(0,player.dashCd-dt);player.dashTimer=Math.max(0,player.dashTimer-dt);player.dashRecovery=Math.max(0,player.dashRecovery-dt);player.weaponDrawTimer=Math.max(0,player.weaponDrawTimer-dt);player.knifeCd=Math.max(0,player.knifeCd-dt);ai.fireCd=Math.max(0,ai.fireCd-dt);ai.lastShot+=dt;if(player.reloading){player.reloadTimer-=dt;if(player.reloadTimer<=0){player.reloading=false;player.ammo=MAG_SIZE;updateHUD()}}if(ai.reloading){ai.reloadTimer-=dt;if(ai.reloadTimer<=0){ai.reloading=false;ai.ammo=MAG_SIZE}}if(messageTimer>0){messageTimer-=dt;if(messageTimer<=0)messageEl.style.opacity='0'}if(hitTimer>0){hitTimer-=dt;if(hitTimer<=0)hitmarker.style.opacity='0'}if(damageTimer>0){damageTimer-=dt;if(damageTimer<=0)damageFlash.style.opacity='0'}const gap=gameSettings.crosshairGap+Math.min(25,Math.hypot(player.vel.x,player.vel.z)*3.2+player.dashRecovery*18+shotRecoil);updateCrosshair(gap)}
+function updateTimers(dt){updateAbilityEffects(dt);updateYoruEffects(dt);updateGenericEffects(dt);updateEnemyAbilityEffects(dt);player.fireCd=Math.max(0,player.fireCd-dt);player.lastShot+=dt;player.dashCd=Math.max(0,player.dashCd-dt);player.dashTimer=Math.max(0,player.dashTimer-dt);player.dashRecovery=Math.max(0,player.dashRecovery-dt);player.weaponDrawTimer=Math.max(0,player.weaponDrawTimer-dt);player.knifeCd=Math.max(0,player.knifeCd-dt);ai.fireCd=Math.max(0,ai.fireCd-dt);ai.lastShot+=dt;if(player.reloading){player.reloadTimer-=dt;if(player.reloadTimer<=0){player.reloading=false;player.ammo=MAG_SIZE;updateHUD()}}if(ai.reloading){ai.reloadTimer-=dt;if(ai.reloadTimer<=0){ai.reloading=false;ai.ammo=MAG_SIZE;ai.fireCd=Math.min(ai.fireCd,.08);ai.decision=0;ai.justReloaded=true;if(selectedDifficulty==='michiko'){ai.michikoBurst=0;ai.michikoBurstTimer=0;}}}if(messageTimer>0){messageTimer-=dt;if(messageTimer<=0)messageEl.style.opacity='0'}if(hitTimer>0){hitTimer-=dt;if(hitTimer<=0)hitmarker.style.opacity='0'}if(damageTimer>0){damageTimer-=dt;if(damageTimer<=0)damageFlash.style.opacity='0'}const gap=gameSettings.crosshairGap+Math.min(25,Math.hypot(player.vel.x,player.vel.z)*3.2+player.dashRecovery*18+shotRecoil);updateCrosshair(gap)}
 function equipKnife(){
   if(!playing||!player.alive||roundEnding||player.weapon==='knife')return;
   player.weapon='knife';player.reloading=false;player.weaponDrawTimer=0;
@@ -1191,6 +2175,10 @@ window.addEventListener('keydown',e=>{
   if(actions.includes('knife')){e.preventDefault();equipKnife()}
   if(actions.includes('weapon')){e.preventDefault();equipWeapon()}
   if(actions.includes('shoot'))playerShoot();
+  if(actions.includes('abilitySmoke'))useCloudburst();
+  if(actions.includes('abilityUpdraft'))useUpdraft();
+  if(actions.includes('abilityDash'))useTailwind();
+  if(actions.includes('abilityUltimate'))useDimensionalDrift();
 });
 window.addEventListener('keyup',e=>keys[e.code]=false);
 window.addEventListener('mousemove',e=>{if(document.pointerLockElement!==renderer.domElement||!playing||paused)return;const sensitivity=BASE_MOUSE_SENSITIVITY*(gameSettings.sensitivity/100);yaw-=e.movementX*sensitivity;pitch-=e.movementY*sensitivity;pitch=THREE.MathUtils.clamp(pitch,-1.35,1.35)});
@@ -1209,12 +2197,16 @@ window.addEventListener('mousedown',e=>{
     if(actions.includes('knife'))equipKnife();
     if(actions.includes('weapon'))equipWeapon();
     if(actions.includes('reload'))startReload(player,true);
+    if(actions.includes('abilitySmoke'))useCloudburst();
+    if(actions.includes('abilityUpdraft'))useUpdraft();
+    if(actions.includes('abilityDash'))useTailwind();
+    if(actions.includes('abilityUltimate'))useDimensionalDrift();
     if(actions.includes('pause'))pauseGame();
   }else if(playing){renderer.domElement.requestPointerLock();}
 });
 window.addEventListener('mouseup',e=>keys[`Mouse${e.button}`]=false);
 window.addEventListener('contextmenu',e=>e.preventDefault());
-renderer.domElement.addEventListener('click',()=>{ensureAudio();if(paused){resumeGame();return}if(playing&&document.pointerLockElement!==renderer.domElement)renderer.domElement.requestPointerLock()});
+renderer.domElement.addEventListener('click',()=>{ensureAudio();if(paused){resumeGame();return}if(playing&&document.pointerLockElement!==renderer.domElement)requestGamePointerLock()});
 document.addEventListener('pointerlockchange',()=>{if(document.pointerLockElement===renderer.domElement)return;if(intentionalPointerUnlock){intentionalPointerUnlock=false;return}if(playing&&!roundEnding)pauseGame()});
 function resizeGame(){const w=playArea.clientWidth,h=playArea.clientHeight;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}
 window.addEventListener('resize',resizeGame);
@@ -1231,6 +2223,10 @@ function triggerTouchAction(action){
   else if(action==='jump')jump();
   else if(action==='knife')equipKnife();
   else if(action==='weapon')equipWeapon();
+  else if(action==='abilitySmoke')useCloudburst();
+  else if(action==='abilityUpdraft')useUpdraft();
+  else if(action==='abilityDash')useTailwind();
+  else if(action==='abilityUltimate')useDimensionalDrift();
   else if(action==='pause')pauseGame();
 }
 for(const button of touchButtons){
@@ -1243,15 +2239,36 @@ let lookPointer=null,lookX=0,lookY=0;
 lookPad.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();lookPointer=e.pointerId;lookX=e.clientX;lookY=e.clientY;lookPad.setPointerCapture?.(e.pointerId);ensureAudio()});
 lookPad.addEventListener('pointermove',e=>{if(e.pointerId!==lookPointer||!playing||paused)return;e.preventDefault();const dx=e.clientX-lookX,dy=e.clientY-lookY;lookX=e.clientX;lookY=e.clientY;const sensitivity=BASE_MOUSE_SENSITIVITY*(gameSettings.sensitivity/100)*2.15;yaw-=dx*sensitivity;pitch-=dy*sensitivity;pitch=THREE.MathUtils.clamp(pitch,-1.35,1.35)});
 const endLook=e=>{if(e.pointerId===lookPointer)lookPointer=null};lookPad.addEventListener('pointerup',endLook);lookPad.addEventListener('pointercancel',endLook);
+abilityModeButtons.forEach(button=>button.addEventListener('click',()=>{
+  abilityMode=button.dataset.abilityMode;
+  abilityModeButtons.forEach(b=>b.classList.toggle('selected',b===button));
+  if(abilityMode==='none'){
+    selectedAgent='none';
+    agentChoiceArea.classList.add('hidden');
+  }else{
+    selectedAgent=lastSelectedAgent;
+    agentChoiceArea.classList.remove('hidden');
+    agentChoiceArea.scrollTop=0;
+  }
+  agentButtons.forEach(b=>b.classList.toggle('selected',b.dataset.agent===lastSelectedAgent));
+  // 選択欄の展開でブラウザが画面中央を維持し、上部が画面外へ押し出されるのを防ぐ。
+  requestAnimationFrame(()=>{
+    startScreen.scrollTop=0;
+    requestAnimationFrame(()=>{startScreen.scrollTop=0;});
+  });
+  updateHUD();updateBindingUI();
+}));
+agentButtons.forEach(button=>button.addEventListener('click',()=>{lastSelectedAgent=button.dataset.agent;if(abilityMode==='enabled')selectedAgent=lastSelectedAgent;agentButtons.forEach(b=>b.classList.toggle('selected',b===button));updateHUD();updateBindingUI();}));
 difficultyButtons.forEach(button=>button.addEventListener('click',()=>{
   selectedDifficulty=button.dataset.difficulty;
   difficultyButtons.forEach(b=>b.classList.toggle('selected',b===button));
 }));
 function returnHome(){
+  clearRoundTransition();matchSessionId++;
   touchActions.clear();
   document.querySelectorAll('.touchBtn.active').forEach(b=>b.classList.remove('active'));
   playing=false;paused=false;roundEnding=false;keys={};
-  clearTracers();
+  clearTracers();clearAbilityEffects();
   pauseScreen.classList.add('hidden');
   endScreen.classList.add('hidden');
   settingsScreen.classList.add('hidden');
@@ -1266,8 +2283,12 @@ restartButton.addEventListener('click',startMatch);
 pauseHomeButton.addEventListener('click',returnHome);
 endHomeButton.addEventListener('click',returnHome);
 resumeButton.addEventListener('click',resumeGame);
+smokeAbilityButton.addEventListener('click',e=>{e.stopPropagation();useCloudburst()});
+updraftAbilityButton.addEventListener('click',e=>{e.stopPropagation();useUpdraft()});
+dashAbilityButton.addEventListener('click',e=>{e.stopPropagation();useTailwind()});
+ultimateAbilityButton.addEventListener('click',e=>{e.stopPropagation();useDimensionalDrift()});
 
-function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.033);if(playing&&!paused){updateTracers(dt)}if(playing&&!paused&&!roundEnding){updateTimers(dt);updatePlayer(dt);updateAI(dt)}updateViewModel(dt);renderer.render(scene,camera)}
+function loop(){requestAnimationFrame(loop);const dt=Math.min(clock.getDelta(),.033);if(playing&&!paused){updateTracers(dt)}if(playing&&!paused&&!roundEnding){roundElapsed+=dt;updateTimers(dt);updatePlayer(dt);updateAI(dt)}updateViewModel(dt);renderer.render(scene,camera)}
 buildArena();resizeGame();camera.position.copy(player.pos);updateHUD();updateBindingUI();applyGameSettings();loop();
 </script>
 </body>
